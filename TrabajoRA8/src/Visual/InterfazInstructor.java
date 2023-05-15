@@ -3,6 +3,8 @@ package Visual;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +19,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+
+import com.mysql.cj.xdevapi.Statement;
+
+import Servicios.Conexion;
 
 /*Instructores (Modificar perfil)
 Instructores (Aceptar la clase solicitada)
@@ -33,23 +40,27 @@ public class InterfazInstructor extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JComboBox<String> cbOpciones;
 	private JList<String> jlClases;
-	private JScrollPane scrListaClases, scrTablaClase;
+	private JScrollPane scrListaClases, scrTablaClase, scrTextoAveria, scrTablaEvaluaciones;
 	private Icon imgPerfil;
 	private JPanel panelOpciones, panelVerPerfil, panelModPerfil, panelVerClases, panelAceptarClases, panelParteAveria,
 			panelEvaluaciones;
-	private JLabel lbImg, lbTexto, lbBienvenido, lbTextoDNIPerfil, lbTextoDireccionPerfil, lbTextoContrasenya, lbTextoNombre, lbTextoNombrePerfil, lbTextoDireccion, lbTextoDNIPA, lbTextoInfoPA, lbTextoIDVehiculo;
-	private JTextField textoNombrePerfil, textoDNIPerfil, textoDireccion, textoCambiarNombre, textoCambiarNombreUsuario, textoCambiarContrasenya,
-			textoCambiarDireccion, textoDNIPA, textoInfoPA, textoIDVehiculo;
+	private JLabel lbImg, lbTexto, lbBienvenido, lbTextoDNIPerfil, lbTextoDireccionPerfil, lbTextoContrasenya,
+			lbTextoNombre, lbTextoNombrePerfil, lbTextoDireccion, lbTextoDNIPA, lbTextoInfoPA, lbTextoIDVehiculo,
+			lbTextoNombreUsuario, lbTextoNombreUsuarioPerfil;
+	private JTextField textoNombrePerfil, textoDNIPerfil, textoDireccion, textoCambiarNombre, textoCambiarNombreUsuario,
+			textoCambiarContrasenya, textoCambiarDireccion, textoDNIPA, textoIDVehiculo, textoNombreUsuarioPerfil;
+	private JTextArea textoInfoPA;
 	private JButton btnConfirmar, btnAceptar;
-	private DefaultTableModel modeloTablaClases;
-	private JTable tablaClases;
-	private Object[][] data = { { null, null, null }, { null, null, null }, { null, null, null }, { null, null, null },
-			{ null, null, null }, { null, null, null }, { null, null, null } };
-	private String[] cabeceraTabla = { "Clase", "Dia", "Hora" },
-			solicitudesClases = { "opcion1", "opcion2", "opcion3" }, listaOpciones = { "Ver perfil", "Modificar Perfil", "Ver clases",
-					"Aceptar Clases", "Partes de averia", "Ver evaluaciones" };
+	private DefaultTableModel modeloTablaClases, modeloTablaEvaluaciones;
+	private JTable tablaClases, tablaEvaluaciones;
+	private Object[][] dataTablaClases = { { null, null, null }, { null, null, null }, { null, null, null },
+			{ null, null, null }, { null, null, null }, { null, null, null }, { null, null, null } },
+			dataTablaEvaluaciones = { null, null, null, null };
+	private String[] cabeceraTablaClases = { "Clase", "Dia", "Hora" },
+			solicitudesClases = { "opcion1", "opcion2", "opcion3" }, listaOpciones = { "Ver perfil", "Modificar Perfil",
+					"Ver clases", "Aceptar Clases", "Partes de averia", "Ver evaluaciones" },
+			cabeceraTablaEvaluaciones = { "Alumno", "1º Eva", "2º Eva", "3º Eva" };
 	private List<String> listaSolicitudesClases = new ArrayList<>();
-	private JLabel lbTextoNombreUsuario;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public InterfazInstructor() {
@@ -60,30 +71,42 @@ public class InterfazInstructor extends JFrame {
 		getContentPane().setLayout(null);
 		getContentPane();
 		setLocationRelativeTo(null);
-
+		
 		for (String s : solicitudesClases) {
 			listaSolicitudesClases.add(s);
 		}
 
-		modeloTablaClases = new DefaultTableModel(data, cabeceraTabla) {
+		modeloTablaClases = new DefaultTableModel(dataTablaClases, cabeceraTablaClases) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
-		//JTables
+
+		modeloTablaEvaluaciones = new DefaultTableModel(dataTablaEvaluaciones, cabeceraTablaEvaluaciones) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		// JTables
 		tablaClases = new JTable(modeloTablaClases);
 		tablaClases.setRowHeight(40);
 		tablaClases.setLocation(40, 30);
 		tablaClases.setSize(350, 282);
-		
-		//JButtons
+		tablaEvaluaciones = new JTable(modeloTablaEvaluaciones);
+		tablaEvaluaciones.setRowHeight(40);
+		tablaEvaluaciones.setLocation(40, 30);
+		tablaEvaluaciones.setSize(290, 290);
+
+		// JButtons
 		btnConfirmar = new JButton("Confirmar");
 		btnConfirmar.setBounds(150, 350, 100, 45);
 		btnAceptar = new JButton("Aceptar");
 		btnAceptar.setBounds(150, 350, 100, 45);
 
-		//JTextFields
+		// JTextFields
 		textoNombrePerfil = new JTextField();
 		textoNombrePerfil.setBounds(190, 125, 100, 20);
 		textoNombrePerfil.setEditable(false);
@@ -101,14 +124,19 @@ public class InterfazInstructor extends JFrame {
 		textoCambiarNombre.setBounds(190, 125, 100, 20);
 		textoCambiarNombreUsuario = new JTextField();
 		textoCambiarNombreUsuario.setBounds(190, 75, 100, 20);
-		textoInfoPA = new JTextField();
-		textoInfoPA.setBounds(0, 0, 100, 20);
-		textoIDVehiculo = new JTextField();
-		textoIDVehiculo.setBounds(0, 0, 100, 20);
-		textoDNIPA = new JTextField();
-		textoDNIPA.setBounds(0, 0, 100, 20);
+		textoNombreUsuarioPerfil = new JTextField();
+		textoNombreUsuarioPerfil.setEditable(false);
+		textoNombreUsuarioPerfil.setBounds(190, 50, 100, 20);
 
-		//JPanels
+		// JTextArea
+		textoInfoPA = new JTextArea();
+		textoInfoPA.setBounds(190, 200, 150, 100);
+		textoIDVehiculo = new JTextField();
+		textoIDVehiculo.setBounds(190, 150, 100, 20);
+		textoDNIPA = new JTextField();
+		textoDNIPA.setBounds(190, 100, 100, 20);
+
+		// JPanels
 		panelVerPerfil = new JPanel();
 		panelVerPerfil.setBounds(150, 0, 435, 460);
 		panelOpciones = new JPanel();
@@ -124,12 +152,12 @@ public class InterfazInstructor extends JFrame {
 		panelEvaluaciones = new JPanel();
 		panelEvaluaciones.setBounds(150, 0, 435, 460);
 
-		//JComboBox
+		// JComboBox
 		cbOpciones = new JComboBox(listaOpciones);
 		cbOpciones.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		cbOpciones.setBounds(0, 205, 150, 50);
 
-		//JList
+		// JList
 		jlClases = new JList();
 		jlClases.setListData(solicitudesClases);
 		jlClases.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -138,23 +166,45 @@ public class InterfazInstructor extends JFrame {
 		jlClases.setFixedCellWidth(100);
 		jlClases.setFixedCellHeight(15);
 
-		//JScrollPane
+		// JScrollPane
 		scrListaClases = new JScrollPane(jlClases);
 		scrListaClases.setBounds(150, 30, 150, 200);
 		scrTablaClase = new JScrollPane(tablaClases);
 		scrTablaClase.setBounds(10, 0, 425, 450);
+		scrTextoAveria = new JScrollPane(textoInfoPA);
+		scrTextoAveria.setBounds(190, 200, 200, 200);
+		scrTablaEvaluaciones = new JScrollPane(tablaEvaluaciones);
+		scrTablaEvaluaciones.setBounds(0, 0, 300, 300);
 
-		//JLabel
+		// JLabel
 		lbImg = new JLabel();
 		lbImg.setLocation(-50, 0);
 		lbImg.setSize(200, 169);
 		lbImg.setIcon(new ImageIcon(InterfazInstructor.class.getResource("/Visual/imagenes/profesor.jpg")));
+		lbTextoDNIPA = new JLabel();
+		lbTextoDNIPA.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lbTextoDNIPA.setText("DNI instructor: ");
+		lbTextoDNIPA.setBounds(40, 100, 150, 20);
+		lbTextoIDVehiculo = new JLabel();
+		lbTextoIDVehiculo.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lbTextoIDVehiculo.setHorizontalAlignment(SwingConstants.CENTER);
+		lbTextoIDVehiculo.setText("ID Vehiculo: ");
+		lbTextoIDVehiculo.setBounds(40, 150, 150, 20);
+		lbTextoInfoPA = new JLabel();
+		lbTextoInfoPA.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lbTextoInfoPA.setText("Datos averia: ");
+		lbTextoInfoPA.setBounds(40, 200, 150, 20);
+		lbTextoNombreUsuarioPerfil = new JLabel("Nombre de usuario: ");
+		lbTextoNombreUsuarioPerfil.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lbTextoNombreUsuarioPerfil.setBounds(15, 50, 200, 20);
 
 		getContentPane().add(panelVerPerfil);
 		panelVerPerfil.setLayout(null);
 		panelVerPerfil.add(textoNombrePerfil);
 		panelVerPerfil.add(textoDNIPerfil);
 		panelVerPerfil.add(textoDireccion);
+		panelVerPerfil.add(textoNombreUsuarioPerfil);
+		panelVerPerfil.add(lbTextoNombreUsuarioPerfil);
 
 		lbTextoNombrePerfil = new JLabel("Nombre: ");
 		lbTextoNombrePerfil.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -200,10 +250,14 @@ public class InterfazInstructor extends JFrame {
 		panelParteAveria.setLayout(null);
 		panelParteAveria.add(textoDNIPA);
 		panelParteAveria.add(textoIDVehiculo);
-		panelParteAveria.add(textoInfoPA);
+		panelParteAveria.add(scrTextoAveria);
+		panelParteAveria.add(lbTextoIDVehiculo);
+		panelParteAveria.add(lbTextoInfoPA);
+		panelParteAveria.add(lbTextoDNIPA);
 
 		getContentPane().add(panelEvaluaciones);
 		panelEvaluaciones.setLayout(null);
+		panelEvaluaciones.add(scrTablaEvaluaciones);
 
 		lbTextoNombre = new JLabel("Cambiar Nombre: ");
 		lbTextoNombre.setHorizontalAlignment(SwingConstants.CENTER);
@@ -219,7 +273,7 @@ public class InterfazInstructor extends JFrame {
 		lbTextoDireccion.setHorizontalAlignment(SwingConstants.CENTER);
 		lbTextoDireccion.setBounds(50, 275, 140, 20);
 		panelModPerfil.add(lbTextoDireccion);
-		
+
 		lbTextoNombreUsuario = new JLabel("Cambiar nombre de usuario: ");
 		lbTextoNombreUsuario.setHorizontalAlignment(SwingConstants.CENTER);
 		lbTextoNombreUsuario.setBounds(20, 75, 170, 20);
@@ -244,12 +298,22 @@ public class InterfazInstructor extends JFrame {
 		btnAceptar.addActionListener(mBtn);
 		btnConfirmar.addActionListener(mBtn);
 
+		iniciarPerfil();
+		
 		setVisible(true);
 		panelAceptarClases.setVisible(false);
 		panelModPerfil.setVisible(false);
 		panelVerClases.setVisible(false);
 		panelEvaluaciones.setVisible(false);
 		panelParteAveria.setVisible(false);
+	}
+	
+	private void iniciarPerfil() {
+		String consulta = "SELECT u.nombre, i.nombre, i.dni, i.direccion FROM usuario u, instructor i WHERE u.nombre LIKE '" + MenuPrincipal.nombreUsuario + "'";
+		textoNombreUsuarioPerfil.setText("");
+		textoNombrePerfil.setText("Datos");
+		textoDNIPerfil.setText("datos");
+		textoDireccion.setText("");
 	}
 
 	// Manejador para los JComboBox
@@ -260,7 +324,8 @@ public class InterfazInstructor extends JFrame {
 			String opcion = (String) cbOpciones.getSelectedItem();
 			gestionPaneles(opcion);
 		}
-		//Metodo que gestiona el visionado de los paneles del JFrame
+
+		// Metodo que gestiona el visionado de los paneles del JFrame
 		private void gestionPaneles(String opcion) {
 			if (opcion.equalsIgnoreCase("modificar perfil")) {
 				panelVerPerfil.setVisible(false);
@@ -329,11 +394,15 @@ public class InterfazInstructor extends JFrame {
 				nombre = textoCambiarNombre.getText();
 				contrasenya = textoCambiarContrasenya.getText();
 				direccion = textoCambiarDireccion.getText();
-				textoCambiarNombreUsuario.setText("");
-				textoCambiarNombre.setText("");
-				textoCambiarContrasenya.setText("");
-				textoCambiarDireccion.setText("");
-				// Mandar datos a la base de datos
+				if (nombre.isEmpty() || direccion.isEmpty() || contrasenya.isEmpty() || nombreUsuario.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Faltan datos");
+				} else {
+					textoCambiarNombreUsuario.setText("");
+					textoCambiarNombre.setText("");
+					textoCambiarContrasenya.setText("");
+					textoCambiarDireccion.setText("");
+					// Mandar datos a la base de datos
+				}
 			}
 		}
 	}
