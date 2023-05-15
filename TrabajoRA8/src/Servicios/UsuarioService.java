@@ -15,13 +15,13 @@ public class UsuarioService {
 	      try{
 	         PreparedStatement consulta;
 	         if(user.getId() == 0){
-	            consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(nombre, password, rol) VALUES(?, ?, ?)");
+	            consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(nombre, contrasenya, rol) VALUES(?, ?, ?)");
 	            consulta.setString(1, user.getNombre());
 	            consulta.setString(2, user.getPassword());
 	            consulta.setString(3, user.getRol());
 	            
 	         }else{
-	            consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET nombre = ?,password = ?, rol = ? WHERE id = ?");
+	            consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET nombre = ?,contrasenya = ?, rol = ? WHERE id = ?");
 	            consulta.setString(1, user.getNombre());
 	            consulta.setString(2, user.getPassword());
 	            consulta.setString(3, user.getRol());
@@ -36,12 +36,12 @@ public class UsuarioService {
 	public Usuario getUsuario(Connection conexion, int idUsuario) throws SQLException {
 		Usuario user = null;
 	      try{
-	         PreparedStatement consulta = conexion.prepareStatement("SELECT nombre,contraseña,rol "
+	         PreparedStatement consulta = conexion.prepareStatement("SELECT nombre,contrasenya,rol "
 	                 + " FROM " + this.tabla + " WHERE idUsuario = ?" );
 	         consulta.setInt(1, idUsuario);
 	         ResultSet resultado = consulta.executeQuery();
 	         while(resultado.next()){
-	        	 user = new Usuario(idUsuario,resultado.getString("nombre"), resultado.getString("contraseña"), 
+	        	 user = new Usuario(idUsuario,resultado.getString("nombre"), resultado.getString("contrasenya"), 
 	                    resultado.getString("rol") );
 	         }
 	      }catch(SQLException ex){

@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import Modelos.Alumno;
 
@@ -32,7 +34,7 @@ public class AlumnosService {
 	      }
 	   }
 	
-	public Alumno getEstudiante(Connection conexion, int id_Alumno) throws SQLException {
+	public Alumno getAlumno(Connection conexion, int id_Alumno) throws SQLException {
 		Alumno estudiante = null;
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("SELECT dni,nombre,direccion "
@@ -48,6 +50,25 @@ public class AlumnosService {
 	      }
 	      System.out.println(estudiante);
 	      return estudiante;
+	   }
+	
+	public List<Alumno> getAllAlumnos(Connection conexion) throws SQLException{
+	      List<Alumno> alumnos = new ArrayList<>();
+	      try{
+	         PreparedStatement consulta = conexion.prepareStatement("SELECT dni,nombre,direccion,id_Alumno "
+	                 + " FROM " + this.tabla);
+	         ResultSet resultado = consulta.executeQuery();
+	         while(resultado.next()){
+	        	 alumnos.add(new Alumno(resultado.getString("dni"), resultado.getString("nombre"), 
+		                    resultado.getString("direccion"), resultado.getInt("id_Alumno")));
+	         }
+	      }catch(SQLException ex){
+	         throw new SQLException(ex);
+	      }
+	      for(Alumno a:alumnos) {
+	    	  System.out.println(a.getDni()+" "+a.getNombre());
+	      }
+	      return alumnos;
 	   }
 	
 }

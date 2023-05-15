@@ -10,7 +10,8 @@ public class Test {
 //		new InterfazAdmin();
 		
 		AlumnosService s=new AlumnosService();
-		s.getEstudiante(Conexion.obtener(), 1);
+		s.getAlumno(Conexion.obtener(), 1);
+		s.getAllAlumnos(Conexion.obtener());
 		UsuarioService u=new UsuarioService();
 		u.getUsuario(Conexion.obtener(), 1);
 //		try {
