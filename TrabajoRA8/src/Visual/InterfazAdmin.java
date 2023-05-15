@@ -209,9 +209,8 @@ public class InterfazAdmin extends JFrame {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
             
-            String item = (String) e.getItem();	
-        	comboOpciones.setEnabled(false);
-        	volver.setEnabled(true);
+            String item = (String) e.getItem();
+            principioManejador();
             if(	item.equalsIgnoreCase("Selecciona...")) {
             	volverOpciones();
             }else if(item.equalsIgnoreCase("Gestionar estudiantes")) {
@@ -240,6 +239,17 @@ public class InterfazAdmin extends JFrame {
 
 	public static JTable getTablaAveria() {
 		return tablaAveria;
+	}
+
+	public void principioManejador() {
+		// TODO Auto-generated method stub
+		comboOpciones.setEnabled(false);
+    	volver.setEnabled(true);        	
+        // Ocultar todos los paneles antes de mostrar el panel correspondiente
+        panelEstudiantes.setVisible(false);
+        panelClave.setVisible(false);
+        panelBaja.setVisible(false);
+        panelAverias.setVisible(false);
 	}
 
 	public void volverOpciones() {
