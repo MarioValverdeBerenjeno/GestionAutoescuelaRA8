@@ -42,7 +42,7 @@ public class InterfazAdmin extends JFrame {
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 		//icono
-		setIconImage(Toolkit.getDefaultToolkit().getImage(pruebas.class.getResource("/Visual/imagenes/admin.jpg")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(InterfazAdmin.class.getResource("/Visual/imagenes/admin.jpg")));
 		// panel opciones
 		creaOpciones();
 		// panel activar/desactivar estudiantes
@@ -142,7 +142,7 @@ public class InterfazAdmin extends JFrame {
 		labelFoto = new JLabel();
 		labelFoto.setBounds(-60, -23, 209, 142);
 		panelOpciones.add(labelFoto);
-		labelFoto.setIcon(new ImageIcon(pruebas.class.getResource("/Visual/imagenes/admin.jpg")));
+		labelFoto.setIcon(new ImageIcon(InterfazAdmin.class.getResource("/Visual/imagenes/admin.jpg")));
 		// bienvenida, texto
 		labelSaludo = new JLabel("Bienvenido administrador");
 		labelSaludo.setBounds(5, 130, 150, 27);

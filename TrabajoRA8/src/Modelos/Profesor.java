@@ -1,18 +1,18 @@
 package Modelos;
 
 public class Profesor extends Persona{
-	private String idProfesor;
+	private int idProfesor;
 	
-	public Profesor(String dni, String nombre, String direccion, String idProfesor) {
+	public Profesor(String dni, String nombre, String direccion, int idProfesor) {
 		super(dni, nombre, direccion);
 		this.idProfesor = idProfesor;
 	}
 
-	public String getIdProfesor() {
+	public int getIdProfesor() {
 		return idProfesor;
 	}
 
-	public void setIdProfesor(String idProfesor) {
+	public void setIdProfesor(int idProfesor) {
 		this.idProfesor = idProfesor;
 	}
 
