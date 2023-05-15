@@ -23,11 +23,11 @@ public class InterfazAlumno extends JFrame {
 	private JPanel principal;
 	private JLabel imgPerfil, lblBienvenida;
 	private JComboBox opciones;
-	private static String[] listaOpciones = { "Modificar perfil", "Solicitar clase", "Ver clases solicitadas",
-			"Evaluaciones" };
+	private static String[] listaOpciones = { "Ver perfil", "Modificar perfil", "Solicitar clase",
+			"Ver clases solicitadas", "Evaluaciones" };
 	private JButton btnVolver;
 	// Paneles
-	private static JPanel verClases, evaluaciones, modificarPerfil, solicitarClase;
+	private static JPanel verClases, evaluaciones, modificarPerfil, solicitarClase, verPerfil;
 	// ModificarPerfil
 	private JTextField fieldNombreUsuario, fieldNombre, fieldDNI, fieldDireccion;
 	private JPasswordField fieldNPassword, fieldRPassword;
@@ -45,13 +45,17 @@ public class InterfazAlumno extends JFrame {
 	private String[] cabeceraTabla = { "Clase", "Estado" };
 	private JScrollPane scrollTablaClases;
 	private JTable tableClasesSolicitadas;
-	// VerClases
+	// Evaluacion
 	private JLabel lblTituloEvaluaciones;
 	private DefaultTableModel modeloTablaEval;
 	private Object[][] dataE = { { null } };
 	private String[] cabeceraTablaE = { "Evaluacion" };
 	private JScrollPane scrollTablaEvaluaciones;
 	private JTable tableEvaluaciones;
+	// Ver Perfil
+	private JLabel lblTituloVerPerfil;
+	private JLabel lblUsuarioP, lblNombreP, lblDniP, lblDireccionP;
+	private JTextField textUsuarioP, textNombreP, textDniP, textDireccionP;
 
 	public InterfazAlumno() {
 		super("Interfaz Alumno");
@@ -89,6 +93,64 @@ public class InterfazAlumno extends JFrame {
 		principal.add(lblBienvenida);
 		lblBienvenida.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
+		// Panel Ver perfil
+
+		verPerfil = new JPanel();
+		verPerfil.setBounds(260, 0, 326, 463);
+		getContentPane().add(verPerfil);
+		verPerfil.setLayout(null);
+
+		lblTituloVerPerfil = new JLabel("Perfil");
+		lblTituloVerPerfil.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblTituloVerPerfil.setBounds(140, 10, 43, 46);
+		verPerfil.add(lblTituloVerPerfil);
+
+		lblUsuarioP = new JLabel("Usuario");
+		lblUsuarioP.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblUsuarioP.setBounds(10, 86, 90, 29);
+		verPerfil.add(lblUsuarioP);
+
+		lblNombreP = new JLabel("Nombre");
+		lblNombreP.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNombreP.setBounds(10, 125, 90, 29);
+		verPerfil.add(lblNombreP);
+
+		lblDniP = new JLabel("DNI");
+		lblDniP.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblDniP.setBounds(10, 164, 90, 29);
+		verPerfil.add(lblDniP);
+
+		lblDireccionP = new JLabel("Direcci\u00F3n");
+		lblDireccionP.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblDireccionP.setBounds(10, 203, 90, 29);
+		verPerfil.add(lblDireccionP);
+
+		textUsuarioP = new JTextField();
+		textUsuarioP.setEditable(false);
+		textUsuarioP.setBounds(110, 92, 146, 19);
+		verPerfil.add(textUsuarioP);
+		textUsuarioP.setColumns(10);
+
+		textNombreP = new JTextField();
+		textNombreP.setEditable(false);
+		textNombreP.setColumns(10);
+		textNombreP.setBounds(110, 131, 146, 19);
+		verPerfil.add(textNombreP);
+
+		textDniP = new JTextField();
+		textDniP.setEditable(false);
+		textDniP.setColumns(10);
+		textDniP.setBounds(110, 170, 146, 19);
+		verPerfil.add(textDniP);
+
+		textDireccionP = new JTextField();
+		textDireccionP.setEditable(false);
+		textDireccionP.setColumns(10);
+		textDireccionP.setBounds(110, 209, 146, 19);
+		verPerfil.add(textDireccionP);
+
+		verPerfil.setVisible(true);
+
 		// Panel Evaluaciones
 
 		evaluaciones = new JPanel();
@@ -96,7 +158,7 @@ public class InterfazAlumno extends JFrame {
 		getContentPane().add(evaluaciones);
 		evaluaciones.setLayout(null);
 
-		lblTituloEvaluaciones = new JLabel("Ver clases");
+		lblTituloEvaluaciones = new JLabel("Evaluaciones");
 		lblTituloEvaluaciones.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblTituloEvaluaciones.setBounds(128, 10, 98, 46);
 		evaluaciones.add(lblTituloEvaluaciones);
@@ -114,7 +176,7 @@ public class InterfazAlumno extends JFrame {
 		scrollTablaEvaluaciones.setBounds(10, 66, 306, 384);
 		evaluaciones.add(scrollTablaEvaluaciones);
 
-		evaluaciones.setVisible(true);
+		evaluaciones.setVisible(false);
 
 		// Panel Ver clases
 
@@ -259,6 +321,7 @@ public class InterfazAlumno extends JFrame {
 		}
 
 		private static void controlarVentanas(String s) {
+			verPerfil.setVisible(false);
 			modificarPerfil.setVisible(false);
 			solicitarClase.setVisible(false);
 			verClases.setVisible(false);
@@ -275,6 +338,9 @@ public class InterfazAlumno extends JFrame {
 			}
 			if (s.equals("Evaluaciones")) {
 				evaluaciones.setVisible(true);
+			}
+			if (s.equals("Ver perfil")) {
+				verPerfil.setVisible(true);
 			}
 		}
 
