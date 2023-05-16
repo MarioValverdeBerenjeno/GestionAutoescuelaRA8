@@ -9,6 +9,14 @@ public class Usuario {
 		super();
 	}
 
+	
+	public Usuario(String nombre, String password) {
+		super();
+		this.nombre = nombre;
+		this.password = password;
+		this.rol="ALUMNO";
+	}
+
 	public Usuario(int id, String nombre, String password) {
 		super();
 		this.id = id;

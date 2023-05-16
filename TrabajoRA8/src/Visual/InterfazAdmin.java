@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,32 +20,41 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
+import Modelos.Alumno;
+import Servicios.AlumnosService;
+import Servicios.Conexion;
 
 @SuppressWarnings("serial")
 public class InterfazAdmin extends JFrame {
-	private JLabel labelFoto, labelSaludo, labelHacer, labelClave, labelNuevaClave,lblEligeAlEstudiante;
+	private JLabel labelFoto, labelSaludo, labelHacer, labelClave, labelNuevaClave, lblEligeAlEstudiante;
 	@SuppressWarnings("rawtypes")
 	private JComboBox comboOpciones, comboClaveEstudiantes;
 	private JPanel panelOpciones, panelEstudiantes, panelClave, panelBaja, panelAverias;
-	private JButton activarEstudiante, desactivarEstudiante, volver, darbaja, confirmar,reestablecer;
+	private JButton activarEstudiante, desactivarEstudiante, volver, darbaja, confirmar, reestablecer;
 	private JTextField reestablecerclave, reestablecernueva;
-	//tabla
+	// tabla
 	DefaultTableModel comboAveria, comboBajaEstudiante, comboADEstudiante;
 	private static JTable tablaAveria, tablaBaja, tablaAD;
 	private JScrollPane scrollAverias, scrollBaja, scrollActDes;
-	//arrays
-	private String[] opcionesAdministrador = { "Selecciona...","Averias", "Gestionar estudiantes", "Reestablecer clave",
-	"Dar de baja" }, columnas;
-	ManejadorEventos me=new ManejadorEventos();
-	ManejadorAction ma=new ManejadorAction();
+	// arrays list
+	private String[] opcionesAdministrador = { "Selecciona...", "Averias", "Gestionar estudiantes",
+			"Reestablecer clave", "Dar de baja" }, columnas;
+	private List<Alumno> ListaAlumnos;
+	// manejadores
+	ManejadorEventos me = new ManejadorEventos();
+	ManejadorAction ma = new ManejadorAction();
+
 	public InterfazAdmin() {
 		super("Interfaz administrador");
 		setBounds(100, 100, 600, 500);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
-		//icono
-		setIconImage(Toolkit.getDefaultToolkit().getImage(InterfazAdmin.class.getResource("/Visual/imagenes/admin.jpg")));
+		// icono
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(InterfazAdmin.class.getResource("/Visual/imagenes/admin.jpg")));
 		// panel opciones
 		creaOpciones();
 		// panel activar/desactivar estudiantes
@@ -88,11 +100,16 @@ public class InterfazAdmin extends JFrame {
 		panelBaja.setBounds(153, 0, 433, 463);
 		// JTABLE
 		// Crear el JTable
-		columnas = new String[] { "DNI", "Nombre", "Direccion", "ID_Alumno" };
+		columnas = new String[] { "ID_Alumno", "DNI", "Nombre", "Direccion", };
 		comboBajaEstudiante = new DefaultTableModel(columnas, 0);
 		setTablaBaja(new JTable(comboBajaEstudiante));
 		getTablaBaja().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablaBaja().getTableHeader().setReorderingAllowed(false);
+		// Crear el ordenador de filas
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(comboBajaEstudiante);
+		tablaBaja.setRowSorter(sorter);
+		// Ordenar por la columna "ID" de forma ascendente
+		sorter.sort();
 		// scrollpanel
 		scrollBaja = new JScrollPane(getTablaBaja());
 		scrollBaja.setBounds(10, 10, 413, 401);
@@ -101,6 +118,24 @@ public class InterfazAdmin extends JFrame {
 		darbaja = new JButton("Dar de baja");
 		darbaja.setBounds(140, 421, 140, 21);
 		panelBaja.add(darbaja);
+		// Rellenar tabla alumno
+
+		try {
+			AlumnosService AlumnoServi = new AlumnosService();
+			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
+			for (Alumno a : ListaAlumnos) {
+				String[] data = { String.valueOf(a.getId_Alumno()), a.getDni(), a.getNombre(), a.getDireccion() };
+				comboBajaEstudiante.addRow(data);
+			}
+		} catch (java.lang.NullPointerException e) {
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		add(panelBaja);
 		panelBaja.setVisible(false);
 	}
@@ -171,7 +206,7 @@ public class InterfazAdmin extends JFrame {
 		panelClave = new JPanel();
 		panelClave.setLayout(null);
 		panelClave.setBounds(153, 0, 433, 463);
-		//etiqueta
+		// etiqueta
 		lblEligeAlEstudiante = new JLabel("Elige al estudiante:");
 		lblEligeAlEstudiante.setBounds(59, 94, 110, 13);
 		panelClave.add(lblEligeAlEstudiante);
@@ -196,46 +231,48 @@ public class InterfazAdmin extends JFrame {
 		reestablecernueva.setBounds(220, 61, 153, 19);
 		panelClave.add(reestablecernueva);
 		add(panelClave);
-		//btn reestablecer
-		reestablecer=new JButton("Reestablecer");
+		// btn reestablecer
+		reestablecer = new JButton("Reestablecer");
 		reestablecer.setBounds(122, 405, 163, 35);
 		panelClave.add(reestablecer);
 		panelClave.setVisible(false);
 	}
-	
-	//"Averias", "Gestionar estudiantes", "Reestablecer clave","Dar de baja"
-	//Manejador de eventos
-	private class ManejadorEventos implements ItemListener{
+
+	// "Averias", "Gestionar estudiantes", "Reestablecer clave","Dar de baja"
+	// Manejador de eventos
+	private class ManejadorEventos implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-            
-            String item = (String) e.getItem();
-            principioManejador();
-            if(	item.equalsIgnoreCase("Selecciona...")) {
-            	volverOpciones();
-            }else if(item.equalsIgnoreCase("Gestionar estudiantes")) {
-            	panelEstudiantes.setVisible(true);
-            }else if(item.equalsIgnoreCase("Reestablecer clave")) {
-            	panelClave.setVisible(true);
-            }else if(item.equalsIgnoreCase("Dar de baja")) {
-            	panelBaja.setVisible(true);
-            }else if(item.equalsIgnoreCase("Averias")) {
-            	panelAverias.setVisible(true);
-            }
+
+			String item = (String) e.getItem();
+			principioManejador();
+			if (item.equalsIgnoreCase("Selecciona...")) {
+				volverOpciones();
+			} else if (item.equalsIgnoreCase("Gestionar estudiantes")) {
+				panelEstudiantes.setVisible(true);
+			} else if (item.equalsIgnoreCase("Reestablecer clave")) {
+				panelClave.setVisible(true);
+			} else if (item.equalsIgnoreCase("Dar de baja")) {
+				panelBaja.setVisible(true);
+			} else if (item.equalsIgnoreCase("Averias")) {
+				panelAverias.setVisible(true);
+			}
 		}
 	}
-	//activarEstudiante, desactivarEstudiante, volver, darbaja, confirmar,reestablecer;
-	//Botones
-	private class ManejadorAction implements ActionListener{
+
+	// activarEstudiante, desactivarEstudiante, volver, darbaja,
+	// confirmar,reestablecer;
+	// Botones
+	private class ManejadorAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Object o=e.getSource();
-			if(o==volver) {
+			Object o = e.getSource();
+			if (o == volver) {
 				volverOpciones();
 			}
 		}
 	}
-	//getter-setters JTable
+	// getter-setters JTable
 
 	public static JTable getTablaAveria() {
 		return tablaAveria;
@@ -244,16 +281,16 @@ public class InterfazAdmin extends JFrame {
 	public void principioManejador() {
 		// TODO Auto-generated method stub
 		comboOpciones.setEnabled(false);
-    	volver.setEnabled(true);        	
-        // Ocultar todos los paneles antes de mostrar el panel correspondiente
-        panelEstudiantes.setVisible(false);
-        panelClave.setVisible(false);
-        panelBaja.setVisible(false);
-        panelAverias.setVisible(false);
+		volver.setEnabled(true);
+		// Ocultar todos los paneles antes de mostrar el panel correspondiente
+		panelEstudiantes.setVisible(false);
+		panelClave.setVisible(false);
+		panelBaja.setVisible(false);
+		panelAverias.setVisible(false);
 	}
 
 	public void volverOpciones() {
-    	comboOpciones.setEnabled(true);
+		comboOpciones.setEnabled(true);
 		volver.setEnabled(false);
 		panelEstudiantes.setVisible(false);
 		panelClave.setVisible(false);
