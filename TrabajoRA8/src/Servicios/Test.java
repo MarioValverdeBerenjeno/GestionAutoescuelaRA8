@@ -2,8 +2,6 @@ package Servicios;
 
 import java.sql.SQLException;
 
-import Modelos.Alumno;
-import Modelos.Usuario;
 import Visual.InterfazAdmin;
 
 public class Test {

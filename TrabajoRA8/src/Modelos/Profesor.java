@@ -1,23 +1,23 @@
 package Modelos;
 
 public class Profesor extends Persona{
-	private int idProfesor;
+	private int id_Profesor;
 	
-	public Profesor(String dni, String nombre, String direccion, int idProfesor) {
+	public Profesor(String dni, String nombre, String direccion, int id_Profesor) {
 		super(dni, nombre, direccion);
-		this.idProfesor = idProfesor;
+		this.id_Profesor = id_Profesor;
 	}
 
-	public int getIdProfesor() {
-		return idProfesor;
+	public int getId_Profesor() {
+		return id_Profesor;
 	}
 
-	public void setIdProfesor(int idProfesor) {
-		this.idProfesor = idProfesor;
+	public void setId_Profesor(int idProfesor) {
+		this.id_Profesor = idProfesor;
 	}
 
 	@Override
 	public String toString() {
-		return "Profesor [idProfesor=" + idProfesor + ", toString()=" + super.toString() + "]";
+		return "Profesor [idProfesor=" + id_Profesor + ", toString()=" + super.toString() + "]";
 	}
 }
