@@ -3,22 +3,22 @@ package Modelos;
 import java.sql.Date;
 
 public class ClaseConducir {
-	private int idClase;
+	private int id_Clase;
 	private Date fecha,hora;
 	public ClaseConducir() {
 		super();
 	}
-	public ClaseConducir(int idClase, Date fecha, Date hora) {
+	public ClaseConducir(int id_Clase, Date fecha, Date hora) {
 		super();
-		this.idClase = idClase;
+		this.id_Clase = id_Clase;
 		this.fecha = fecha;
 		this.hora = hora;
 	}
-	public int getIdClase() {
-		return idClase;
+	public int getId_Clase() {
+		return id_Clase;
 	}
-	public void setIdClase(int idClase) {
-		this.idClase = idClase;
+	public void setId_Clase(int id_Clase) {
+		this.id_Clase = id_Clase;
 	}
 	public Date getFecha() {
 		return fecha;
@@ -34,7 +34,7 @@ public class ClaseConducir {
 	}
 	@Override
 	public String toString() {
-		return "ClaseConducir [idClase=" + idClase + ", fecha=" + fecha + ", hora=" + hora + "]";
+		return "ClaseConducir [id_Clase=" + id_Clase + ", fecha=" + fecha + ", hora=" + hora + "]";
 	}
 	
 }

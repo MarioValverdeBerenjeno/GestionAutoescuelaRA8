@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -22,9 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Modelos.Alumno;
-import Servicios.EstudianteService;
+import Modelos.Estudiantes;
 import Servicios.Conexion;
+import Servicios.EstudianteService;
 
 @SuppressWarnings("serial")
 public class InterfazAdmin extends JFrame {
@@ -41,7 +40,7 @@ public class InterfazAdmin extends JFrame {
 	// arrays list
 	private String[] opcionesAdministrador = { "Selecciona...", "Averias", "Gestionar estudiantes",
 			"Reestablecer clave", "Dar de baja" }, columnas;
-	private List<Alumno> ListaAlumnos;
+	private List<Estudiantes> ListaAlumnos;
 	// manejadores
 	ManejadorEventos me = new ManejadorEventos();
 	ManejadorAction ma = new ManejadorAction();
@@ -123,7 +122,7 @@ public class InterfazAdmin extends JFrame {
 		try {
 			EstudianteService AlumnoServi = new EstudianteService();
 			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
-			for (Alumno a : ListaAlumnos) {
+			for (Estudiantes a : ListaAlumnos) {
 				String[] data = { String.valueOf(a.getId_Alumno()), a.getDni(), a.getNombre(), a.getDireccion() };
 				comboBajaEstudiante.addRow(data);
 			}

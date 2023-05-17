@@ -7,14 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Modelos.Alumno;
+import Modelos.Estudiantes;
 import Modelos.Usuario;
 
 public class EstudianteService {
 	private final String tabla = "alumno";
 
 	//Update de Alumnos
-	public void saveUpdate(Connection conexion, Alumno estudiante) throws SQLException {
+	public void saveUpdate(Connection conexion, Estudiantes estudiante) throws SQLException {
 		try {
 			PreparedStatement consulta;
 //	         if(estudiante.getId_Alumno() == 0){
@@ -39,7 +39,7 @@ public class EstudianteService {
 	}
 	
 	//Crear nuevo alumno
-	public void saveNewAlumno(Connection conexion, Alumno estudiante) throws SQLException, ClassNotFoundException {
+	public void saveNewAlumno(Connection conexion, Estudiantes estudiante) throws SQLException, ClassNotFoundException {
 		try {
 			UsuarioService usu=new UsuarioService();
 			
@@ -59,15 +59,15 @@ public class EstudianteService {
 	}
 
 	//Obtener un solo alumno
-	public Alumno getAlumno(Connection conexion, int id_Alumno) throws SQLException {
-		Alumno estudiante = null;
+	public Estudiantes getAlumno(Connection conexion, int id_Alumno) throws SQLException {
+		Estudiantes estudiante = null;
 		try {
 			PreparedStatement consulta = conexion
 					.prepareStatement("SELECT dni,nombre,direccion " + " FROM " + this.tabla + " WHERE id_Alumno = ?");
 			consulta.setInt(1, id_Alumno);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				estudiante = new Alumno(resultado.getString("dni"), resultado.getString("nombre"),
+				estudiante = new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
 						resultado.getString("direccion"), id_Alumno);
 			}
 		} catch (SQLException ex) {
@@ -78,27 +78,32 @@ public class EstudianteService {
 	}
 	
 	//Obtener todos los alumnos
-	public List<Alumno> getAllAlumnos(Connection conexion) throws SQLException {
-		List<Alumno> alumnos = new ArrayList<>();
+	public List<Estudiantes> getAllAlumnos(Connection conexion) throws SQLException {
+		List<Estudiantes> alumnos = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
 					.prepareStatement("SELECT dni,nombre,direccion,id_Alumno " + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				alumnos.add(new Alumno(resultado.getString("dni"), resultado.getString("nombre"),
+				alumnos.add(new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
 						resultado.getString("direccion"), resultado.getInt("id_Alumno")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		for (Alumno a : alumnos) {
+		for (Estudiantes a : alumnos) {
 			System.out.println(a.getDni() + " " + a.getNombre());
 		}
 		return alumnos;
 	}
 	
+<<<<<<< Updated upstream:TrabajoRA8/src/Servicios/EstudianteService.java
 	//Eliminar alumno pasandole como parametro un alumno
 	public void remove(Connection conexion, Alumno alumno) throws SQLException{
+=======
+	//Eliminar alumno
+	public void remove(Connection conexion, Estudiantes alumno) throws SQLException{
+>>>>>>> Stashed changes:TrabajoRA8/src/Servicios/AlumnosService.java
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
 	      + this.tabla + " WHERE id = ?");
