@@ -1,11 +1,11 @@
 package Modelos;
 
 public class Vehiculo {
-	private int idVehiculo;
+	private int id_Vehiculo;
 	private String imagenVehiculo,modelo,tipo;
-	public Vehiculo(int idVehiculo, String imagenVehiculo, String modelo, String tipo) {
+	public Vehiculo(int id_Vehiculo, String imagenVehiculo, String modelo, String tipo) {
 		super();
-		this.idVehiculo = idVehiculo;
+		this.id_Vehiculo = id_Vehiculo;
 		this.imagenVehiculo = imagenVehiculo;
 		this.modelo = modelo;
 		this.tipo = tipo;
@@ -14,10 +14,10 @@ public class Vehiculo {
 		super();
 	}
 	public int getIdVehiculo() {
-		return idVehiculo;
+		return id_Vehiculo;
 	}
 	public void setIdVehiculo(int idVehiculo) {
-		this.idVehiculo = idVehiculo;
+		this.id_Vehiculo = idVehiculo;
 	}
 	public String getImagenVehiculo() {
 		return imagenVehiculo;
@@ -39,7 +39,7 @@ public class Vehiculo {
 	}
 	@Override
 	public String toString() {
-		return "Vehiculo [idVehiculo=" + idVehiculo + ", imagenVehiculo=" + imagenVehiculo + ", modelo=" + modelo
+		return "Vehiculo [idVehiculo=" + id_Vehiculo + ", imagenVehiculo=" + imagenVehiculo + ", modelo=" + modelo
 				+ ", tipo=" + tipo + "]";
 	}
 	

@@ -1,22 +1,23 @@
 package Modelos;
 
 public class ParteAveria {
-	private int idParte, idVehiculoAveriado;
+	private int id_Parte, idVehiculoAveriado;
 	private String datosAveria, dniInstructor;
 
-	public ParteAveria(int idVehiculoAveriado, String datosAveria, String dniInstructor) {
+	public ParteAveria(int id_Parte, int idVehiculoAveriado, String datosAveria, String dniInstructor) {
 		super();
+		this.id_Parte = id_Parte;
 		this.idVehiculoAveriado = idVehiculoAveriado;
 		this.datosAveria = datosAveria;
 		this.dniInstructor = dniInstructor;
 	}
 
 	public int getIdParte() {
-		return idParte;
+		return id_Parte;
 	}
 
 	public void setIdParte(int idParte) {
-		this.idParte = idParte;
+		this.id_Parte = idParte;
 	}
 
 	public int getIdVehiculoAveriado() {
@@ -45,7 +46,7 @@ public class ParteAveria {
 
 	@Override
 	public String toString() {
-		return "ParteAveria [idParte=" + idParte + ", idVehiculoAveriado=" + idVehiculoAveriado + ", datosAveria="
+		return "ParteAveria [idParte=" + id_Parte + ", idVehiculoAveriado=" + idVehiculoAveriado + ", datosAveria="
 				+ datosAveria + ", dniInstructor=" + dniInstructor + "]";
 	}
 }

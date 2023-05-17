@@ -23,7 +23,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import Modelos.Alumno;
-import Servicios.AlumnosService;
+import Servicios.EstudianteService;
 import Servicios.Conexion;
 
 @SuppressWarnings("serial")
@@ -121,7 +121,7 @@ public class InterfazAdmin extends JFrame {
 		// Rellenar tabla alumno
 
 		try {
-			AlumnosService AlumnoServi = new AlumnosService();
+			EstudianteService AlumnoServi = new EstudianteService();
 			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
 			for (Alumno a : ListaAlumnos) {
 				String[] data = { String.valueOf(a.getId_Alumno()), a.getDni(), a.getNombre(), a.getDireccion() };
@@ -183,7 +183,7 @@ public class InterfazAdmin extends JFrame {
 		labelSaludo.setBounds(5, 130, 150, 27);
 		panelOpciones.add(labelSaludo);
 		// texto que quieres hacer
-		labelHacer = new JLabel("¿Qué deseas hacer?");
+		labelHacer = new JLabel("¿Que deseas hacer?");
 		labelHacer.setBounds(15, 144, 120, 41);
 		panelOpciones.add(labelHacer);
 		// combo box-

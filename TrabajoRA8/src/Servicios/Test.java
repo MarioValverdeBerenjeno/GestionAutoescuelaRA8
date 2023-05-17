@@ -7,7 +7,7 @@ import Visual.InterfazAdmin;
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		AlumnosService s=new AlumnosService();
+		EstudianteService s=new EstudianteService();
 //		//Buscar alumno ID
 //		Alumno e=s.getAlumno(Conexion.obtener(), 1);
 //		//Tener toda la lista de usuarios

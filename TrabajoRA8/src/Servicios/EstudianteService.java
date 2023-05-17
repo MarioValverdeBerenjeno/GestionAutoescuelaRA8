@@ -10,7 +10,7 @@ import java.util.List;
 import Modelos.Alumno;
 import Modelos.Usuario;
 
-public class AlumnosService {
+public class EstudianteService {
 	private final String tabla = "alumno";
 
 	//Update de Alumnos
@@ -97,7 +97,7 @@ public class AlumnosService {
 		return alumnos;
 	}
 	
-	//Eliminar alumno
+	//Eliminar alumno pasandole como parametro un alumno
 	public void remove(Connection conexion, Alumno alumno) throws SQLException{
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
@@ -110,5 +110,16 @@ public class AlumnosService {
 	      UsuarioService userServi=new UsuarioService();
 	      userServi.removeId(conexion, alumno.getId_Alumno());
 	   }
-
+	
+	//Eliminar alumno pasandole como parametro un id de alumno
+	public void removeId(Connection conexion, int id_Alumno) throws SQLException{
+	      try{
+	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
+	      + this.tabla + " WHERE id = ?");
+	         consulta.setInt(1, id_Alumno);
+	         consulta.executeUpdate();
+	      }catch(SQLException ex){
+	         throw new SQLException(ex);
+	      }
+	   }
 }
