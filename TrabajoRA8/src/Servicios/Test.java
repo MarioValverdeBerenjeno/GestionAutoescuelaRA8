@@ -23,7 +23,7 @@ public class Test {
 		
 		//Crear Alumno
 		Instructor instructorA=new Instructor("12345679A","Pepe2","Cadiz",usu.getUsuarioNombre(Conexion.obtener(), "PepeUser2").getId());
-		s.saveNewAlumno(Conexion.obtener(), instructorA);
+		s.saveNewInstructor(Conexion.obtener(), instructorA);
 		//new InterfazAdmin();	
 
 		//Update Alumno

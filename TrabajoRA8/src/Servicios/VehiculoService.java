@@ -40,7 +40,7 @@ public class VehiculoService {
 
 	// Crear nuevo vehiculo
 
-	public void saveNewAlumno(Connection conexion, Vehiculo vehiculo) throws SQLException, ClassNotFoundException {
+	public void saveNewVehiculo(Connection conexion, Vehiculo vehiculo) throws SQLException, ClassNotFoundException {
 		try {
 
 			PreparedStatement consulta;

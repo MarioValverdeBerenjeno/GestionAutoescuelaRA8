@@ -56,7 +56,7 @@ public class ClaseConducirService {
 			consulta.setTime(2, clase_conducir.getHora());
 			consulta.setInt(3, clase_conducir.getId_Clase());
 			consulta.setInt(4, instructor.getId_Instructor());
-			consulta.setInt(5, vehiculo.getid_Vehiculo());
+			consulta.setInt(5, vehiculo.getId_Vehiculo());
 
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
