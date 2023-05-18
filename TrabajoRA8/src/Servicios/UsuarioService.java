@@ -31,7 +31,7 @@ public class UsuarioService {
 	         }
 	         consulta.executeUpdate();
 	      }catch(SQLException ex){
-	        // throw new SQLException(ex);
+	         throw new SQLException(ex);
 	      }
 	   }
 	//devuelve el usuario a traves de pasarle como parametro el id de usuario

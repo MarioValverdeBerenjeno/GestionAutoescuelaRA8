@@ -12,7 +12,8 @@ import Modelos.Instructor;
 public class InstructorService {
 	private final String tabla = "instructor";
 
-	//Update de instructor
+	// Update de instructor
+
 	public void saveUpdate(Connection conexion, Instructor instructor) throws SQLException {
 		try {
 			PreparedStatement consulta;
@@ -25,23 +26,25 @@ public class InstructorService {
 //			consulta.setInt(4, instructor.getId_Alumno());
 
 //	         }else{
-	            consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET dni = ?,nombre = ?, direccion = ? WHERE Id_instructor = ?");
-	            consulta.setString(1, instructor.getDni());
-	            consulta.setString(2, instructor.getNombre());
-	            consulta.setString(3, instructor.getDireccion());
-	            consulta.setInt(4, instructor.getId_Instructor());
+			consulta = conexion.prepareStatement(
+					"UPDATE " + this.tabla + " SET dni = ?,nombre = ?, direccion = ? WHERE Id_instructor = ?");
+			consulta.setString(1, instructor.getDni());
+			consulta.setString(2, instructor.getNombre());
+			consulta.setString(3, instructor.getDireccion());
+			consulta.setInt(4, instructor.getId_Instructor());
 //	         }
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
 	}
-	
-	//Crear nuevo instructor
-	public void saveNewAlumno(Connection conexion, Instructor instructor) throws SQLException, ClassNotFoundException {
+
+	// Crear nuevo instructor
+
+	public void saveNewInstructor(Connection conexion, Instructor instructor) throws SQLException, ClassNotFoundException {
 		try {
-			UsuarioService usu=new UsuarioService();
-			
+			UsuarioService usu = new UsuarioService();
+
 			PreparedStatement consulta;
 
 			consulta = conexion.prepareStatement(
@@ -57,12 +60,13 @@ public class InstructorService {
 		}
 	}
 
-	//Obtener un solo instructor
-	public Instructor getAlumno(Connection conexion, int Id_instructor) throws SQLException {
+	// Obtener un solo instructor
+
+	public Instructor getInstructor(Connection conexion, int Id_instructor) throws SQLException {
 		Instructor instructor = null;
 		try {
-			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT dni,nombre,direccion " + " FROM " + this.tabla + " WHERE id_Instructor = ?");
+			PreparedStatement consulta = conexion.prepareStatement(
+					"SELECT dni,nombre,direccion " + " FROM " + this.tabla + " WHERE id_Instructor = ?");
 			consulta.setInt(1, Id_instructor);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
@@ -75,9 +79,10 @@ public class InstructorService {
 		System.out.println(instructor);
 		return instructor;
 	}
-	
-	//Obtener todos los alumnos
-	public List<Instructor> getAllinstructores(Connection conexion) throws SQLException {
+
+	// Obtener todos los alumnos
+
+	public List<Instructor> getAllInstructores(Connection conexion) throws SQLException {
 		List<Instructor> instructores = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
@@ -95,20 +100,19 @@ public class InstructorService {
 		}
 		return instructores;
 	}
-	
-	//Eliminar instructor
-	public void remove(Connection conexion, Instructor instructor) throws SQLException{
-	      try{
-	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
-	      + this.tabla + " WHERE id = ?");
-	         consulta.setInt(1, instructor.getId_Instructor());
-	         consulta.executeUpdate();
-	      }catch(SQLException ex){
-	         throw new SQLException(ex);
-	      }
-	      UsuarioService userServi=new UsuarioService();
-	      userServi.removeId(conexion, instructor.getId_Instructor());
-	   }
+
+	// Eliminar instructor
+
+	public void remove(Connection conexion, Instructor instructor) throws SQLException {
+		try {
+			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id = ?");
+			consulta.setInt(1, instructor.getId_Instructor());
+			consulta.executeUpdate();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+		UsuarioService userServi = new UsuarioService();
+		userServi.removeId(conexion, instructor.getId_Instructor());
+	}
 
 }
-

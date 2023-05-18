@@ -16,21 +16,12 @@ public class Vehiculo {
 		super();
 	}
 
-	public int getIdVehiculo() {
+	public int getId_Vehiculo() {
 		return id_Vehiculo;
 	}
 
-	public void setIdVehiculo(int id_Vehiculo) {
+	public void setId_Vehiculo(int id_Vehiculo) {
 		this.id_Vehiculo = id_Vehiculo;
-	}
-
-	public int getid_Vehiculo() {
-		return id_Vehiculo;
-	}
-
-	public void setid_Vehiculo(int id_Vehiculo) {
-		this.id_Vehiculo = id_Vehiculo;
-
 	}
 
 	public String getImagenVehiculo() {

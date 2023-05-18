@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import Modelos.Alumno;
+import Modelos.Estudiantes;
 import Modelos.ParteAveria;
 
 public class AveriaService {
