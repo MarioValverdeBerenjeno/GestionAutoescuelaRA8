@@ -66,7 +66,7 @@ public class ClaseConducirService {
 
 	// Obtener una sola clase
 
-	public ClaseConducir getAlumno(Connection conexion, int id_Clase) throws SQLException {
+	public ClaseConducir getClaseConducir(Connection conexion, int id_Clase) throws SQLException {
 		ClaseConducir claseconducir = null;
 		try {
 			PreparedStatement consulta = conexion.prepareStatement(

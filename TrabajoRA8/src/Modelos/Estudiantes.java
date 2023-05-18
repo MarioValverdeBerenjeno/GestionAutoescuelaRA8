@@ -7,15 +7,13 @@ public class Estudiantes extends Persona {
 
 	public Estudiantes(String dni, String nombre, String direccion) {
 		super(dni, nombre, direccion);
+		activado = true;
 	}
 
-	public Estudiantes(String dni, String nombre, String direccion, int id_Alumno, float evaluacion1, float evaluacion2,
-			float evaluacion3) {
+	public Estudiantes(String dni, String nombre, String direccion, int id_Alumno) {
 		super(dni, nombre, direccion);
 		this.id_Alumno = id_Alumno;
-		this.evaluacion1 = evaluacion1;
-		this.evaluacion2 = evaluacion2;
-		this.evaluacion3 = evaluacion3;
+		activado = true;
 	}
 
 	public int getId_Alumno() {
