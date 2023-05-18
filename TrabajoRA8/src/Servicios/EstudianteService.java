@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Modelos.Estudiantes;
-import Modelos.Usuario;
 
 public class EstudianteService {
 	private final String tabla = "alumno";
@@ -63,12 +62,12 @@ public class EstudianteService {
 		Estudiantes estudiante = null;
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT dni,nombre,direccion " + " FROM " + this.tabla + " WHERE id_Alumno = ?");
+					.prepareStatement("SELECT dni,nombre,direccion,evaluacion1,evaluacion2,evaluacion3 " + " FROM " + this.tabla + " WHERE id_Alumno = ?");
 			consulta.setInt(1, id_Alumno);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				estudiante = new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
-						resultado.getString("direccion"), id_Alumno);
+						resultado.getString("direccion"), id_Alumno, resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3"));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
@@ -82,11 +81,11 @@ public class EstudianteService {
 		List<Estudiantes> alumnos = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT dni,nombre,direccion,id_Alumno " + " FROM " + this.tabla);
+					.prepareStatement("SELECT dni,nombre,direccion,id_Alumno,evaluacion1,evaluacion2,evaluacion3" + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				alumnos.add(new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
-						resultado.getString("direccion"), resultado.getInt("id_Alumno")));
+						resultado.getString("direccion"), resultado.getInt("id_Alumno"), resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
@@ -96,14 +95,8 @@ public class EstudianteService {
 		}
 		return alumnos;
 	}
-	
-<<<<<<< Updated upstream:TrabajoRA8/src/Servicios/EstudianteService.java
-	//Eliminar alumno pasandole como parametro un alumno
-	public void remove(Connection conexion, Alumno alumno) throws SQLException{
-=======
 	//Eliminar alumno
 	public void remove(Connection conexion, Estudiantes alumno) throws SQLException{
->>>>>>> Stashed changes:TrabajoRA8/src/Servicios/AlumnosService.java
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
 	      + this.tabla + " WHERE id = ?");

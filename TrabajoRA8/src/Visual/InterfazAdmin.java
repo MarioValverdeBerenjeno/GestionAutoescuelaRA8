@@ -9,6 +9,7 @@ import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,17 +23,22 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import Modelos.Estudiantes;
+import Modelos.ParteAveria;
+import Servicios.AveriaService;
 import Servicios.Conexion;
 import Servicios.EstudianteService;
+import Servicios.UsuarioService;
 
 @SuppressWarnings("serial")
 public class InterfazAdmin extends JFrame {
 	private JLabel labelFoto, labelSaludo, labelHacer, labelClave, labelNuevaClave, lblEligeAlEstudiante;
 	@SuppressWarnings("rawtypes")
-	private JComboBox comboOpciones, comboClaveEstudiantes;
+	private JComboBox comboOpciones;
+	private JComboBox<Estudiantes> comboClaveEstudiantes;
 	private JPanel panelOpciones, panelEstudiantes, panelClave, panelBaja, panelAverias;
 	private JButton activarEstudiante, desactivarEstudiante, volver, darbaja, confirmar, reestablecer;
 	private JTextField reestablecerclave, reestablecernueva;
+	DefaultComboBoxModel<Estudiantes> modeloClave = new DefaultComboBoxModel<>();
 	// tabla
 	DefaultTableModel comboAveria, comboBajaEstudiante, comboADEstudiante;
 	private static JTable tablaAveria, tablaBaja, tablaAD;
@@ -41,9 +47,14 @@ public class InterfazAdmin extends JFrame {
 	private String[] opcionesAdministrador = { "Selecciona...", "Averias", "Gestionar estudiantes",
 			"Reestablecer clave", "Dar de baja" }, columnas;
 	private List<Estudiantes> ListaAlumnos;
+	private List<ParteAveria> ListaAverias;
 	// manejadores
 	ManejadorEventos me = new ManejadorEventos();
 	ManejadorAction ma = new ManejadorAction();
+	//Instancias
+	EstudianteService es=new EstudianteService();
+	UsuarioService us=new UsuarioService();
+	// Comparator
 
 	public InterfazAdmin() {
 		super("Interfaz administrador");
@@ -74,17 +85,37 @@ public class InterfazAdmin extends JFrame {
 		panelAverias.setBounds(153, 0, 433, 463);
 		// JTABLE
 		// Crear el JTable
-		columnas = new String[] { "id_Parte", "datos_Averia", "id_Vehiculo_Averiado", "dni_Instructor_Informante" };
+		columnas = new String[] { "id_Parte", "id_Vehiculo_Averiado", "datos_Averia", "dni_Instructor_Informante" };
 		comboAveria = new DefaultTableModel(columnas, 0);
 		setTablaAveria(new JTable(comboAveria));
 		getTablaAveria().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablaAveria().getTableHeader().setReorderingAllowed(false);
-
+		// Crear el ordenador de filas
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(comboAveria);
+		tablaAveria.setRowSorter(sorter);
+		// Ordenar por la columna "ID" de forma ascendente
+		sorter.sort();
 		// scrollpanel
 		scrollAverias = new JScrollPane(getTablaAveria());
 		scrollAverias.setBounds(10, 10, 413, 401);
 		panelAverias.add(scrollAverias);
+		try {
+			AveriaService av = new AveriaService();
+			ListaAverias = av.getAllAverias(Conexion.obtener());
+			for (ParteAveria a : ListaAverias) {
+				String[] data = { String.valueOf(a.getIdParte()), String.valueOf(a.getIdVehiculoAveriado()),
+						a.getDatosAveria(), a.getDniInstructor() };
+				comboAveria.addRow(data);
+			}
+		} catch (java.lang.NullPointerException e) {
 
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// boton arreglar
 		confirmar = new JButton("Confirmar arreglo");
 		confirmar.setBounds(140, 421, 140, 21);
@@ -150,10 +181,32 @@ public class InterfazAdmin extends JFrame {
 		setTablaAD(new JTable(comboADEstudiante));
 		getTablaAD().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablaAD().getTableHeader().setReorderingAllowed(false);
+		// Crear el ordenador de filas
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(comboADEstudiante);
+		tablaAD.setRowSorter(sorter);
+		// ordenar
+		sorter.sort();
 		// scrollpanel
 		scrollActDes = new JScrollPane(getTablaAD());
 		scrollActDes.setBounds(10, 10, 413, 401);
 		panelEstudiantes.add(scrollActDes);
+		// Rellenar tabla alumno
+		try {
+			EstudianteService AlumnoServi = new EstudianteService();
+			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
+			for (Estudiantes a : ListaAlumnos) {
+				String[] data = { String.valueOf(a.getId_Alumno()), a.getDni(), a.getNombre(), a.getDireccion() };
+				comboADEstudiante.addRow(data);
+			}
+		} catch (java.lang.NullPointerException e) {
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// boton activar
 		activarEstudiante = new JButton("Activar");
 		activarEstudiante.setBounds(41, 421, 102, 21);
@@ -192,7 +245,6 @@ public class InterfazAdmin extends JFrame {
 		panelOpciones.add(comboOpciones);
 		// volver
 		volver = new JButton("Volver");
-		volver.setEnabled(false);
 		volver.setBounds(20, 389, 113, 51);
 		volver.addActionListener(ma);
 		panelOpciones.add(volver);
@@ -209,9 +261,23 @@ public class InterfazAdmin extends JFrame {
 		lblEligeAlEstudiante = new JLabel("Elige al estudiante:");
 		lblEligeAlEstudiante.setBounds(59, 94, 110, 13);
 		panelClave.add(lblEligeAlEstudiante);
+		// añadir estudiantes a combo box
+		EstudianteService AlumnoServi = new EstudianteService();
+		try {
+			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// seleccionar estudiante ??
-		comboClaveEstudiantes = new JComboBox();
-		comboClaveEstudiantes.setBounds(195, 90, 168, 21);
+		modeloClave = new DefaultComboBoxModel<>();
+//
+		modeloClave.addAll(ListaAlumnos);
+		comboClaveEstudiantes = new JComboBox<Estudiantes>(modeloClave);
+		comboClaveEstudiantes.setBounds(195, 90, 200, 21);
 		panelClave.add(comboClaveEstudiantes);
 		// etiqueta
 		labelClave = new JLabel("Introduce la nueva clave:");
@@ -233,6 +299,7 @@ public class InterfazAdmin extends JFrame {
 		// btn reestablecer
 		reestablecer = new JButton("Reestablecer");
 		reestablecer.setBounds(122, 405, 163, 35);
+		reestablecer.addActionListener(ma);
 		panelClave.add(reestablecer);
 		panelClave.setVisible(false);
 	}
@@ -242,20 +309,8 @@ public class InterfazAdmin extends JFrame {
 	private class ManejadorEventos implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-
 			String item = (String) e.getItem();
-			principioManejador();
-			if (item.equalsIgnoreCase("Selecciona...")) {
-				volverOpciones();
-			} else if (item.equalsIgnoreCase("Gestionar estudiantes")) {
-				panelEstudiantes.setVisible(true);
-			} else if (item.equalsIgnoreCase("Reestablecer clave")) {
-				panelClave.setVisible(true);
-			} else if (item.equalsIgnoreCase("Dar de baja")) {
-				panelBaja.setVisible(true);
-			} else if (item.equalsIgnoreCase("Averias")) {
-				panelAverias.setVisible(true);
-			}
+			principioManejador(item);
 		}
 	}
 
@@ -268,6 +323,14 @@ public class InterfazAdmin extends JFrame {
 			Object o = e.getSource();
 			if (o == volver) {
 				volverOpciones();
+			} else if (o == darbaja) {
+//				tablaAD.get
+//				int[] filas=tablaAD.getSelectedRows();
+//				for(int i:filas) {
+//					es.remove(Conexion.obtener(), i);
+//				}
+			}else if(o==confirmar) {
+				
 			}
 		}
 	}
@@ -277,24 +340,29 @@ public class InterfazAdmin extends JFrame {
 		return tablaAveria;
 	}
 
-	public void principioManejador() {
-		// TODO Auto-generated method stub
-		comboOpciones.setEnabled(false);
-		volver.setEnabled(true);
+	public void principioManejador(String item) {
 		// Ocultar todos los paneles antes de mostrar el panel correspondiente
 		panelEstudiantes.setVisible(false);
 		panelClave.setVisible(false);
 		panelBaja.setVisible(false);
 		panelAverias.setVisible(false);
+
+		if (item.equalsIgnoreCase("Gestionar estudiantes")) {
+			panelEstudiantes.setVisible(true);
+		} else if (item.equalsIgnoreCase("Reestablecer clave")) {
+			panelClave.setVisible(true);
+		} else if (item.equalsIgnoreCase("Dar de baja")) {
+			panelBaja.setVisible(true);
+		} else if (item.equalsIgnoreCase("Averias")) {
+			panelAverias.setVisible(true);
+		}
 	}
 
 	public void volverOpciones() {
-		comboOpciones.setEnabled(true);
-		volver.setEnabled(false);
-		panelEstudiantes.setVisible(false);
-		panelClave.setVisible(false);
-		panelBaja.setVisible(false);
-		panelAverias.setVisible(false);
+		// Cerrar interfaz admin
+		InterfazAdmin.this.dispose();
+		// Abrir menu principal
+		new MenuPrincipal();
 	}
 
 	public void setTablaAveria(JTable tablaJuegos) {
@@ -316,5 +384,19 @@ public class InterfazAdmin extends JFrame {
 	public void setTablaAD(JTable tablaAD) {
 		InterfazAdmin.tablaAD = tablaAD;
 	}
+
+//	public int compare(Estudiantes a,Estudiantes e) {
+//	    Comparator<Estudiantes> comparator = new Comparator<Estudiantes>(); {
+//
+//		return 0;
+//	}
+//	@Override
+//	public int compareTo(Object o) {
+//		Estudiantes e=(Estudiantes) o;
+//		if(e.getId_Alumno()>getId_Alumno()) {
+//			
+//		}
+//		return 0;
+//	}
 
 }
