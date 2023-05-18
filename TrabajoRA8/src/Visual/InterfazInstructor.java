@@ -71,7 +71,7 @@ public class InterfazInstructor extends JFrame {
 		getContentPane().setLayout(null);
 		getContentPane();
 		setLocationRelativeTo(null);
-		
+
 		for (String s : solicitudesClases) {
 			listaSolicitudesClases.add(s);
 		}
@@ -143,14 +143,19 @@ public class InterfazInstructor extends JFrame {
 		panelOpciones.setBounds(0, 0, 150, 460);
 		panelModPerfil = new JPanel();
 		panelModPerfil.setBounds(150, 0, 435, 460);
+		panelModPerfil.setVisible(false);
 		panelVerClases = new JPanel();
 		panelVerClases.setBounds(150, 0, 435, 460);
+		panelVerClases.setVisible(false);
 		panelAceptarClases = new JPanel();
 		panelAceptarClases.setBounds(150, 0, 435, 460);
+		panelAceptarClases.setVisible(false);
 		panelParteAveria = new JPanel();
 		panelParteAveria.setBounds(150, 0, 435, 460);
+		panelParteAveria.setVisible(false);
 		panelEvaluaciones = new JPanel();
 		panelEvaluaciones.setBounds(150, 0, 435, 460);
+		panelEvaluaciones.setVisible(false);
 
 		// JComboBox
 		cbOpciones = new JComboBox(listaOpciones);
@@ -299,17 +304,13 @@ public class InterfazInstructor extends JFrame {
 		btnConfirmar.addActionListener(mBtn);
 
 		iniciarPerfil();
-		
+
 		setVisible(true);
-		panelAceptarClases.setVisible(false);
-		panelModPerfil.setVisible(false);
-		panelVerClases.setVisible(false);
-		panelEvaluaciones.setVisible(false);
-		panelParteAveria.setVisible(false);
 	}
-	
+
 	private void iniciarPerfil() {
-		String consulta = "SELECT u.nombre, i.nombre, i.dni, i.direccion FROM usuario u, instructor i WHERE u.nombre LIKE '" + MenuPrincipal.nombreUsuario + "'";
+		String consulta = "SELECT u.nombre, i.nombre, i.dni, i.direccion FROM usuario u, instructor i WHERE u.nombre LIKE '"
+				+ MenuPrincipal.nombreUsuario + "'";
 		textoNombreUsuarioPerfil.setText("");
 		textoNombrePerfil.setText("Datos");
 		textoDNIPerfil.setText("datos");
@@ -327,49 +328,30 @@ public class InterfazInstructor extends JFrame {
 
 		// Metodo que gestiona el visionado de los paneles del JFrame
 		private void gestionPaneles(String opcion) {
-			if (opcion.equalsIgnoreCase("modificar perfil")) {
-				panelVerPerfil.setVisible(false);
-				panelAceptarClases.setVisible(false);
+			panelVerPerfil.setVisible(false);
+			panelAceptarClases.setVisible(false);
+			panelModPerfil.setVisible(false);
+			panelVerClases.setVisible(false);
+			panelEvaluaciones.setVisible(false);
+			panelParteAveria.setVisible(false);
+
+			if (opcion.equalsIgnoreCase("modificar perfil"))
 				panelModPerfil.setVisible(true);
-				panelEvaluaciones.setVisible(false);
-				panelParteAveria.setVisible(false);
-				panelVerClases.setVisible(false);
-			} else if (opcion.equalsIgnoreCase("ver perfil")) {
+
+			if (opcion.equalsIgnoreCase("ver perfil"))
 				panelVerPerfil.setVisible(true);
-				panelAceptarClases.setVisible(false);
-				panelModPerfil.setVisible(false);
-				panelEvaluaciones.setVisible(false);
-				panelParteAveria.setVisible(false);
-				panelVerClases.setVisible(false);
-			} else if (opcion.equalsIgnoreCase("ver clases")) {
-				panelVerPerfil.setVisible(false);
-				panelAceptarClases.setVisible(false);
-				panelModPerfil.setVisible(false);
-				panelEvaluaciones.setVisible(false);
-				panelParteAveria.setVisible(false);
+
+			if (opcion.equalsIgnoreCase("ver clases"))
 				panelVerClases.setVisible(true);
-			} else if (opcion.equalsIgnoreCase("aceptar clases")) {
-				panelVerPerfil.setVisible(false);
+
+			if (opcion.equalsIgnoreCase("aceptar clases"))
 				panelAceptarClases.setVisible(true);
-				panelModPerfil.setVisible(false);
-				panelEvaluaciones.setVisible(false);
-				panelParteAveria.setVisible(false);
-				panelVerClases.setVisible(false);
-			} else if (opcion.equalsIgnoreCase("Partes de averia")) {
-				panelVerPerfil.setVisible(false);
-				panelAceptarClases.setVisible(false);
-				panelModPerfil.setVisible(false);
-				panelEvaluaciones.setVisible(false);
+
+			if (opcion.equalsIgnoreCase("Partes de averia"))
 				panelParteAveria.setVisible(true);
-				panelVerClases.setVisible(false);
-			} else if (opcion.equalsIgnoreCase("ver evaluaciones")) {
-				panelVerPerfil.setVisible(false);
-				panelAceptarClases.setVisible(false);
-				panelModPerfil.setVisible(false);
+
+			if (opcion.equalsIgnoreCase("ver evaluaciones"))
 				panelEvaluaciones.setVisible(true);
-				panelParteAveria.setVisible(false);
-				panelVerClases.setVisible(false);
-			}
 		}
 	}
 
