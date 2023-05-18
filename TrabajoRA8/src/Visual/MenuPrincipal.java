@@ -1,6 +1,7 @@
 package Visual;
 
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -34,8 +35,10 @@ public class MenuPrincipal extends JFrame {
 	private JPanel panelOpcion, panelIS, panelRU;
 	private JRadioButton rbRegistrar, rbIniciarS;
 	private JButton btnRegistrar, btnIS;
-	private UsuarioService usuarioService;
+	private UsuarioService usuarioService = new UsuarioService();
 	private EstudianteService estudianteService;
+	private Usuario u;
+	private Estudiantes estudiante;
 
 	public MenuPrincipal() {
 		super("Iniciar sesion");
@@ -43,11 +46,11 @@ public class MenuPrincipal extends JFrame {
 		setSize(450, 250);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
-		
-		//JPasword
+
+		// JPasword
 		textoContrasenyaIS = new JPasswordField();
 		textoContrasenyaIS.setBounds(150, 100, 100, 20);
-		
+
 		// JTextField
 		textoNombreUsuarioIS = new JTextField();
 		textoNombreUsuarioIS.setBounds(150, 75, 100, 20);
@@ -96,12 +99,12 @@ public class MenuPrincipal extends JFrame {
 		lbTextoNombreUsuarioRU.setText("Nombre de usuario:");
 		lbTextoNombreUsuarioRU.setHorizontalAlignment(SwingConstants.CENTER);
 		lbTextoNombreUsuarioRU.setBounds(50, 25, 130, 20);
-		
-		//JButton
+
+		// JButton
 		btnRegistrar = new JButton("Confirmar");
-		btnRegistrar.setBounds(150,150,115,30);
+		btnRegistrar.setBounds(150, 150, 115, 30);
 		btnIS = new JButton("Iniciar sesion");
-		btnIS.setBounds(310,140,115,30);
+		btnIS.setBounds(310, 140, 115, 30);
 
 		// JRadioButton
 		rbIniciarS = new JRadioButton("Iniciar sesion", true);
@@ -162,35 +165,62 @@ public class MenuPrincipal extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getSource().equals(btnRegistrar)) {
-				Usuario u = new Usuario(textoNombreUsuarioRU.getText(), textoContrasenyaRU.getText());
-				//Estudiantes e = new Estudiantes();
-				new InterfazAlumno();
-				MenuPrincipal.this.dispose();
+			if (e.getSource().equals(btnRegistrar)) {
+				u = new Usuario(textoNombreUsuarioRU.getText(), textoContrasenyaRU.getText());
+				try {
+					if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioRU.getText()) == null) {
+						try {
+							estudiante = new Estudiantes(textoDNIRU.getText(), textoNombreRU.getText(),
+									textoDireccionRU.getText(), usuarioService
+											.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioRU.getText()).getId());
+						} catch (ClassNotFoundException | SQLException e2) {
+							e2.printStackTrace();
+						}
+						try {
+							usuarioService.save(Conexion.obtener(), u);
+							estudianteService.saveNewAlumno(Conexion.obtener(), estudiante);
+						} catch (ClassNotFoundException | SQLException e1) {
+							e1.printStackTrace();
+						}
+						new InterfazAlumno();
+						MenuPrincipal.this.dispose();
+					}else 
+						JOptionPane.showMessageDialog(null, "Ya existe ese nombre de usuario", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (HeadlessException | ClassNotFoundException | SQLException e1) {
+					e1.printStackTrace();
+				}
 			} else if (e.getSource().equals(btnIS)) {
-				
+
 				try {
 					if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()) != null) {
-						if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getPassword() == textoContrasenyaIS.getText()) {
-							if(usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol().equalsIgnoreCase("admin")) {
+						if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText())
+								.getPassword() == textoContrasenyaIS.getText()) {
+							if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText())
+									.getRol().equalsIgnoreCase("admin")) {
 								new InterfazAdmin();
 								MenuPrincipal.this.dispose();
-							} else if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol().equalsIgnoreCase("instructor")) {
+							} else if (usuarioService
+									.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol()
+									.equalsIgnoreCase("instructor")) {
 								new InterfazInstructor();
 								MenuPrincipal.this.dispose();
-							} else if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol().equalsIgnoreCase("estudiante")) {
-								/*if() {
-									new InterfazAlumno();
-									MenuPrincipal.this.dispose();
-								} else {
-									JOptionPane.showMessageDialog(null, "Su cuenta no se encuentra activada en estos momentos", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-								}*/
+							} else if (usuarioService
+									.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol()
+									.equalsIgnoreCase("estudiante")) {
+								/*
+								 * if() { new InterfazAlumno(); MenuPrincipal.this.dispose(); } else {
+								 * JOptionPane.showMessageDialog(null,
+								 * "Su cuenta no se encuentra activada en estos momentos", "Informacion",
+								 * JOptionPane.INFORMATION_MESSAGE); }
+								 */
 							}
 						} else {
-							JOptionPane.showMessageDialog(null, "Contrasenya incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Contrasenya incorrecta", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					} else {
-						JOptionPane.showMessageDialog(null, "No se encuentra la cuenta", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "No se encuentra la cuenta", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (ClassNotFoundException | SQLException e1) {
 					e1.printStackTrace();
@@ -220,5 +250,5 @@ public class MenuPrincipal extends JFrame {
 				panelRU.setVisible(true);
 		}
 	}
-	
+
 }

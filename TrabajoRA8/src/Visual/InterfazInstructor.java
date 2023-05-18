@@ -63,7 +63,7 @@ public class InterfazInstructor extends JFrame {
 	private List<String> listaSolicitudesClases = new ArrayList<>();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public InterfazInstructor() {
+	public InterfazInstructor(String nombre) {
 		super("Interfaz Instructor");
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 11));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
