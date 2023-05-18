@@ -4,6 +4,14 @@ public class Vehiculo {
 	private int id_Vehiculo;
 	private String imagenVehiculo, modelo, tipo;
 
+	
+	public Vehiculo(String imagenVehiculo, String modelo, String tipo) {
+		super();
+		this.imagenVehiculo = imagenVehiculo;
+		this.modelo = modelo;
+		this.tipo = tipo;
+	}
+
 	public Vehiculo(int id_Vehiculo, String imagenVehiculo, String modelo, String tipo) {
 		super();
 		this.id_Vehiculo = id_Vehiculo;

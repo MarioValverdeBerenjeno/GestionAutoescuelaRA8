@@ -30,12 +30,12 @@ public class ClaseConducirService {
 
 //	         }else{
 			consulta = conexion.prepareStatement("UPDATE " + this.tabla
-					+ " SET fecha = ?,hora = ?, id_vehhiculo = ?, dni_instructor = ? WHERE id_Clase = ?");
+					+ " SET fecha = ?,hora = ?, id_vehiculo = ?, dni_instructor = ? WHERE id_Clase = ?");
 			consulta.setDate(1, claseconducir.getFecha());
 			consulta.setTime(2, claseconducir.getHora());
-			consulta.setInt(3, claseconducir.getId_Clase());
-			consulta.setInt(4, claseconducir.getId_Vehiculo());
-			consulta.setString(5, claseconducir.getDni_Instructor());
+			consulta.setInt(3, claseconducir.getId_Vehiculo());
+			consulta.setString(4, claseconducir.getDni_Instructor());
+			consulta.setInt(5, claseconducir.getId_Clase());
 //	         }
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
@@ -45,18 +45,17 @@ public class ClaseConducirService {
 
 	// Crear nueva Clase de conducir
 
-	public void saveNewClaseConducir(Connection conexion, ClaseConducir clase_conducir, Instructor instructor,
-			Vehiculo vehiculo) throws SQLException, ClassNotFoundException {
+	public void saveNewClaseConducir(Connection conexion, ClaseConducir clase_conducir) throws SQLException, ClassNotFoundException {
 		try {
 
 			PreparedStatement consulta;
 
-			consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "() VALUES(?, ?, ?, ?, ?)");
-			consulta.setDate(1, clase_conducir.getFecha());
-			consulta.setTime(2, clase_conducir.getHora());
-			consulta.setInt(3, clase_conducir.getId_Clase());
-			consulta.setInt(4, instructor.getId_Instructor());
-			consulta.setInt(5, vehiculo.getId_Vehiculo());
+			consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(id_Clase,fecha,hora,dni_Instructor,id_Vehiculo) VALUES(?, ?, ?, ?, ?)");
+			consulta.setInt(1, clase_conducir.getId_Clase());
+			consulta.setDate(2, clase_conducir.getFecha());
+			consulta.setTime(3, clase_conducir.getHora());
+			consulta.setString(4, clase_conducir.getDni_Instructor());
+			consulta.setInt(5, clase_conducir.getId_Vehiculo());
 
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
@@ -70,7 +69,7 @@ public class ClaseConducirService {
 		ClaseConducir claseconducir = null;
 		try {
 			PreparedStatement consulta = conexion.prepareStatement(
-					"SELECT fecha, hora, id_vehiculo, dni_instructor " + " FROM " + this.tabla + " WHERE id = ?");
+					"SELECT fecha, hora, id_vehiculo, dni_instructor " + " FROM " + this.tabla + " WHERE id_Clase = ?");
 			consulta.setInt(1, id_Clase);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
@@ -110,7 +109,7 @@ public class ClaseConducirService {
 
 	public void remove(Connection conexion, ClaseConducir claseconducir) throws SQLException {
 		try {
-			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id = ?");
+			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id_Clase = ?");
 			consulta.setInt(1, claseconducir.getId_Clase());
 			consulta.executeUpdate();
 		} catch (SQLException ex) {

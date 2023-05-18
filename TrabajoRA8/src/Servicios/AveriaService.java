@@ -1,9 +1,11 @@
-package Servicios;
+ package Servicios;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import Modelos.Estudiantes;
 import Modelos.ParteAveria;
@@ -94,6 +96,26 @@ public class AveriaService {
 //	      System.out.println(user.getId());
 //	      return user;
 //	   }
+	
+	// id_Parte, int idVehiculoAveriado, String datosAveria, String dniInstructor
+	//listar todas las averias
+	public List<ParteAveria> getAllAverias(Connection conexion) throws SQLException {
+		List<ParteAveria> averias = new ArrayList<>();
+		try {
+			PreparedStatement consulta = conexion
+					.prepareStatement("SELECT id_Parte,idVehiculoAveriado,datosAveria,dniInstructor" + " FROM " + this.tabla);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				averias.add(new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("idVehiculoAveriado"), resultado.getString("datosAveria"), resultado.getString("dniInstructor")));
+			}
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+		for (ParteAveria a : averias) {
+			System.out.println(a.getIdParte() + " " + a.getDatosAveria());
+		}
+		return averias;
+	}
 	// elimina pasandole un usuario como parametro
 	public void remove(Connection conexion, ParteAveria parte) throws SQLException {
 		try {

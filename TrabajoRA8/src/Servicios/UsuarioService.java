@@ -34,6 +34,17 @@ public class UsuarioService {
 	         throw new SQLException(ex);
 	      }
 	   }
+	
+	public void saveInstructor(Connection conexion, Usuario user) throws SQLException{
+
+		PreparedStatement consulta;		
+		consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(nombre, contrasenya, rol) VALUES(?, ?, ?)");
+        consulta.setString(1, user.getNombre());
+        consulta.setString(2, user.getPassword());
+        consulta.setString(3, "INSTRUCTOR");
+        
+        consulta.executeUpdate();
+	}
 	//devuelve el usuario a traves de pasarle como parametro el id de usuario
 	public Usuario getUsuario(Connection conexion, int idUsuario) throws SQLException {
 		Usuario user = null;

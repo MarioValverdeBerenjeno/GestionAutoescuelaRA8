@@ -4,6 +4,18 @@ public class ParteAveria {
 	private int id_Parte, idVehiculoAveriado;
 	private String datosAveria, dniInstructor;
 
+	
+	public ParteAveria() {
+		super();
+	}
+
+	public ParteAveria(int idVehiculoAveriado, String datosAveria, String dniInstructor) {
+		super();
+		this.idVehiculoAveriado = idVehiculoAveriado;
+		this.datosAveria = datosAveria;
+		this.dniInstructor = dniInstructor;
+	}
+
 	public ParteAveria(int id_Parte, int idVehiculoAveriado, String datosAveria, String dniInstructor) {
 		super();
 		this.id_Parte = id_Parte;

@@ -62,12 +62,12 @@ public class EstudianteService {
 		Estudiantes estudiante = null;
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT dni,nombre,direccion,evaluacion1,evaluacion2,evaluacion3 " + " FROM " + this.tabla + " WHERE id_Alumno = ?");
+					.prepareStatement("SELECT dni,nombre,direccion,activado,evaluacion1,evaluacion2,evaluacion3 " + " FROM " + this.tabla + " WHERE id_Alumno = ?");
 			consulta.setInt(1, id_Alumno);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				estudiante = new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
-						resultado.getString("direccion"), id_Alumno, resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3"));
+						resultado.getString("direccion"), id_Alumno,resultado.getBoolean("activado"), resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3"));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
@@ -81,11 +81,11 @@ public class EstudianteService {
 		List<Estudiantes> alumnos = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT dni,nombre,direccion,id_Alumno,evaluacion1,evaluacion2,evaluacion3" + " FROM " + this.tabla);
+					.prepareStatement("SELECT dni,nombre,direccion,id_Alumno,evaluacion1,evaluacion2,evaluacion3,activado" + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				alumnos.add(new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
-						resultado.getString("direccion"), resultado.getInt("id_Alumno"), resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3")));
+						resultado.getString("direccion"), resultado.getInt("id_Alumno"),resultado.getBoolean("activado"), resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);

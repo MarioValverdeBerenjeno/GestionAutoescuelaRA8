@@ -48,11 +48,12 @@ public class InstructorService {
 			PreparedStatement consulta;
 
 			consulta = conexion.prepareStatement(
-					"INSERT INTO " + this.tabla + "(dni, nombre, direccion,Id_instructor) VALUES(?, ?, ?, ?)");
+					"INSERT INTO " + this.tabla + "(dni, nombre, direccion) VALUES(?, ?, ?, ?)");
 			consulta.setString(1, instructor.getDni());
 			consulta.setString(2, instructor.getNombre());
 			consulta.setString(3, instructor.getDireccion());
-			consulta.setInt(4, instructor.getId_Instructor());
+			//El id se crea solo
+//			consulta.setInt(4, instructor.getId_Instructor());
 
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
@@ -105,7 +106,7 @@ public class InstructorService {
 
 	public void remove(Connection conexion, Instructor instructor) throws SQLException {
 		try {
-			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id = ?");
+			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id_Instructor = ?");
 			consulta.setInt(1, instructor.getId_Instructor());
 			consulta.executeUpdate();
 		} catch (SQLException ex) {

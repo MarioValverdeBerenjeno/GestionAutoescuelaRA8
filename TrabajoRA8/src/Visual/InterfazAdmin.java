@@ -331,6 +331,10 @@ public class InterfazAdmin extends JFrame {
 //				}
 			}else if(o==confirmar) {
 				
+			}else if(o==reestablecer) {
+				
+			}else if(o==desactivarEstudiante) {
+				
 			}
 		}
 	}

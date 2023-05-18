@@ -12,6 +12,14 @@ public class ClaseConducir {
 	public ClaseConducir() {
 		super();
 	}
+	
+	public ClaseConducir(int id_Vehiculo, Date fecha, Time hora, String dni_Instructor) {
+		super();
+		this.id_Vehiculo = id_Vehiculo;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.dni_Instructor = dni_Instructor;
+	}
 
 	public ClaseConducir(int id_Clase, Date fecha, Time hora, int id_Vehiculo, String dni_Instructor) {
 		super();

@@ -15,6 +15,16 @@ public class Estudiantes extends Persona {
 		this.id_Alumno = id_Alumno;
 		activado = true;
 	}
+	
+	public Estudiantes(String dni, String nombre, String direccion, int id_Alumno, boolean activado, float evaluacion1,
+			float evaluacion2, float evaluacion3) {
+		super(dni, nombre, direccion);
+		this.id_Alumno = id_Alumno;
+		this.activado = activado;
+		this.evaluacion1 = evaluacion1;
+		this.evaluacion2 = evaluacion2;
+		this.evaluacion3 = evaluacion3;
+	}
 
 	public int getId_Alumno() {
 		return id_Alumno;

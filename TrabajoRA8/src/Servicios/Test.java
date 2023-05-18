@@ -2,6 +2,7 @@ package Servicios;
 
 import java.sql.SQLException;
 
+import Modelos.ClaseConducir;
 import Modelos.Instructor;
 import Modelos.Usuario;
 import Visual.InterfazAdmin;
@@ -10,7 +11,7 @@ import Visual.MenuPrincipal;
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		new MenuPrincipal();
+//		new MenuPrincipal();
 		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID
 //		Alumno e=s.getAlumno(Conexion.obtener(), 1);
@@ -46,5 +47,14 @@ public class Test {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		
+		
+		
+		
+//		//Clase conducirService
+//		
+//		ClaseConducirService c=new ClaseConducirService();
+//		ClaseConducir conducir=new ClaseConducir(1,null, null, 0, "");
+//		c.saveNewClaseConducir(Conexion.obtener(), new());
 	}
 }

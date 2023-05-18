@@ -32,6 +32,12 @@ public class Usuario {
 		this.password = password;
 		this.rol = rol;
 	}
+	public Usuario(String nombre, String password, String rol) {
+		super();
+		this.nombre = nombre;
+		this.password = password;
+		this.rol = rol;
+	}
 
 	public int getId() {
 		return id;
