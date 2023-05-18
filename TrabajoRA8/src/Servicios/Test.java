@@ -5,11 +5,13 @@ import java.sql.SQLException;
 import Modelos.Instructor;
 import Modelos.Usuario;
 import Visual.InterfazAdmin;
+import Visual.MenuPrincipal;
 
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		InstructorService s=new InstructorService();
+		new MenuPrincipal();
+		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID
 //		Alumno e=s.getAlumno(Conexion.obtener(), 1);
 //		//Tener toda la lista de usuarios
@@ -18,12 +20,12 @@ public class Test {
 //		
 //		
 		//Crear usuario
-		UsuarioService usu=new UsuarioService();
-		usu.save(Conexion.obtener(),new Usuario("PepeUser2","pass"));
+		//UsuarioService usu=new UsuarioService();
+		//usu.save(Conexion.obtener(),new Usuario("PepeUser2","pass"));
 		
 		//Crear Alumno
-		Instructor instructorA=new Instructor("12345679A","Pepe2","Cadiz",usu.getUsuarioNombre(Conexion.obtener(), "PepeUser2").getId());
-		s.saveNewInstructor(Conexion.obtener(), instructorA);
+		//Instructor instructorA=new Instructor("12345679A","Pepe2","Cadiz",usu.getUsuarioNombre(Conexion.obtener(), "PepeUser2").getId());
+		//s.saveNewInstructor(Conexion.obtener(), instructorA);
 		//new InterfazAdmin();	
 
 		//Update Alumno
