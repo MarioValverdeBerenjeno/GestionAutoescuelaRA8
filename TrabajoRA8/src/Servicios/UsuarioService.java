@@ -86,7 +86,7 @@ public class UsuarioService {
 	public void remove(Connection conexion, Usuario user) throws SQLException{
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
-	      + this.tabla + " WHERE id = ?");
+	      + this.tabla + " WHERE idUsuario = ?");
 	         consulta.setInt(1, user.getId());
 	         consulta.executeUpdate();
 	      }catch(SQLException ex){
@@ -97,7 +97,7 @@ public class UsuarioService {
 	public void removeId(Connection conexion, int idUser) throws SQLException{
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
-	      + this.tabla + " WHERE id = ?");
+	      + this.tabla + " WHERE idUsuario = ?");
 	         consulta.setInt(1, idUser);
 	         consulta.executeUpdate();
 	      }catch(SQLException ex){

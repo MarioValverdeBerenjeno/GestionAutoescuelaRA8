@@ -2,25 +2,24 @@ package Servicios;
 
 import java.sql.SQLException;
 
-import Modelos.ClaseConducir;
-import Modelos.Instructor;
-import Modelos.Usuario;
 import Visual.InterfazAdmin;
-import Visual.InterfazInstructor;
-import Visual.MenuPrincipal;
 
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		new MenuPrincipal();
-		//new InterfazInstructor(null);
+		new InterfazAdmin();
+//		new MenuPrincipal();
+//		new MenuPrincipal();
 		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID
-//		Alumno e=s.getAlumno(Conexion.obtener(), 1);
+//		EstudianteService s=new EstudianteService();
+
+//		Estudiantes e=s.getAlumno(Conexion.obtener(), 1);
 //		//Tener toda la lista de usuarios
 //		s.getAllAlumnos(Conexion.obtener());
 //		
-//		
+		//ACtivar estudiante/desactivar
+//		s.activarEstudiante(Conexion.obtener(), s.getAlumno(Conexion.obtener(), 1));
 //		
 		//Crear usuario
 		//UsuarioService usu=new UsuarioService();

@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -51,9 +52,9 @@ public class InterfazAdmin extends JFrame {
 	// manejadores
 	ManejadorEventos me = new ManejadorEventos();
 	ManejadorAction ma = new ManejadorAction();
-	//Instancias
-	EstudianteService es=new EstudianteService();
-	UsuarioService us=new UsuarioService();
+	// Instancias
+	EstudianteService es = new EstudianteService();
+	UsuarioService us = new UsuarioService();
 	// Comparator
 
 	public InterfazAdmin() {
@@ -147,6 +148,7 @@ public class InterfazAdmin extends JFrame {
 		// boton confirmar
 		darbaja = new JButton("Dar de baja");
 		darbaja.setBounds(140, 421, 140, 21);
+		darbaja.addActionListener(ma);
 		panelBaja.add(darbaja);
 		// Rellenar tabla alumno
 
@@ -210,10 +212,12 @@ public class InterfazAdmin extends JFrame {
 		// boton activar
 		activarEstudiante = new JButton("Activar");
 		activarEstudiante.setBounds(41, 421, 102, 21);
+		activarEstudiante.addActionListener(ma);
 		panelEstudiantes.add(activarEstudiante);
 		// boton desactivar
 		desactivarEstudiante = new JButton("Desactivar");
 		desactivarEstudiante.setBounds(280, 421, 102, 21);
+		desactivarEstudiante.addActionListener(ma);
 		panelEstudiantes.add(desactivarEstudiante);
 		add(panelEstudiantes);
 		panelEstudiantes.setVisible(false);
@@ -321,27 +325,47 @@ public class InterfazAdmin extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o = e.getSource();
+			//botones
 			if (o == volver) {
 				volverOpciones();
-			} else if (o == darbaja) {
-//				tablaAD.get
-//				int[] filas=tablaAD.getSelectedRows();
-//				for(int i:filas) {
-//					es.remove(Conexion.obtener(), i);
-//				}
-			}else if(o==confirmar) {
+			}else if (o == reestablecer) {
+
+			}else {
 				
-			}else if(o==reestablecer) {
-				
-			}else if(o==desactivarEstudiante) {
+			obtenerFilas();
+			int idEstudiante = Integer.parseInt((getTablaBaja().getValueAt(getTablaBaja().getSelectedRow(), 0)).toString()) ;
+			if (o == darbaja) {
+				try {
+					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres dar de baja?", "WARNING",JOptionPane.WARNING_MESSAGE,
+					        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					    // yes option
+						//CUANDO SE ELIMINA UN DATO DE LA TABLA HAY QUE ACTUALIZARLA (OCULTAR Y MOSTRAR)
+						es.removeId(Conexion.obtener(), idEstudiante);
+					} else {
+					    // no option
+					}
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			} else if (o == confirmar) {
+
+			}  else if (o == desactivarEstudiante) {
+
+			}else if(o== activarEstudiante) {
 				
 			}
-		}
+			
+		}}
 	}
-	// getter-setters JTable
 
-	public static JTable getTablaAveria() {
-		return tablaAveria;
+	public void obtenerFilas() {
+		if (getTablaBaja().getSelectedRow() < 0) {
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
+					JOptionPane.INFORMATION_MESSAGE);
+		} else {
+
+		}
 	}
 
 	public void principioManejador(String item) {
@@ -368,6 +392,11 @@ public class InterfazAdmin extends JFrame {
 		// Abrir menu principal
 		new MenuPrincipal();
 	}
+	// getter-setters JTable
+
+	public static JTable getTablaAveria() {
+		return tablaAveria;
+	}
 
 	public void setTablaAveria(JTable tablaJuegos) {
 		InterfazAdmin.tablaAveria = tablaJuegos;
@@ -388,19 +417,4 @@ public class InterfazAdmin extends JFrame {
 	public void setTablaAD(JTable tablaAD) {
 		InterfazAdmin.tablaAD = tablaAD;
 	}
-
-//	public int compare(Estudiantes a,Estudiantes e) {
-//	    Comparator<Estudiantes> comparator = new Comparator<Estudiantes>(); {
-//
-//		return 0;
-//	}
-//	@Override
-//	public int compareTo(Object o) {
-//		Estudiantes e=(Estudiantes) o;
-//		if(e.getId_Alumno()>getId_Alumno()) {
-//			
-//		}
-//		return 0;
-//	}
-
 }

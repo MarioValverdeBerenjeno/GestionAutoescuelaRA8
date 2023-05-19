@@ -19,7 +19,8 @@ public class AveriaService {
 			PreparedStatement consulta;
 			if (parte.getIdParte() == 0) {
 				consulta = conexion.prepareStatement("INSERT INTO " + this.tabla
-						+ "(datos_averia,dni_Instructor_Informante,id_Parte,id_Vehiculo_Averiado) VALUES(?, ?, ?, ?)");
+						+ "(datos_averia,dni_Instructor_Informante,id_Parte,id_Veh+"
+						+ "iculo_Averiado) VALUES(?, ?, ?, ?)");
 				consulta.setString(1, parte.getDatosAveria());
 				consulta.setString(2, parte.getDniInstructor());
 				consulta.setInt(3, parte.getIdParte());
@@ -103,10 +104,10 @@ public class AveriaService {
 		List<ParteAveria> averias = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT id_Parte,idVehiculoAveriado,datosAveria,dniInstructor" + " FROM " + this.tabla);
+					.prepareStatement("SELECT id_Parte,id_Vehiculo_Averiado,datos_Averia,dni_Instructor_Informante" + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				averias.add(new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("idVehiculoAveriado"), resultado.getString("datosAveria"), resultado.getString("dniInstructor")));
+				averias.add(new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("id_Vehiculo_Averiado"), resultado.getString("datos_Averia"), resultado.getString("dni_Instructor")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);

@@ -37,6 +37,8 @@ public class EstudianteService {
 		}
 	}
 	
+	
+	
 	//Crear nuevo alumno
 	public void saveNewAlumno(Connection conexion, Estudiantes estudiante) throws SQLException, ClassNotFoundException {
 		try {
@@ -45,18 +47,56 @@ public class EstudianteService {
 			PreparedStatement consulta;
 
 			consulta = conexion.prepareStatement(
-					"INSERT INTO " + this.tabla + "(dni, nombre, direccion,id_Alumno) VALUES(?, ?, ?, ?)");
+					"INSERT INTO " + this.tabla + "(dni, nombre, direccion,id_Alumno,evaluacion1,evaluacion2,evaluacion3,activado) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 			consulta.setString(1, estudiante.getDni());
 			consulta.setString(2, estudiante.getNombre());
 			consulta.setString(3, estudiante.getDireccion());
 			consulta.setInt(4, estudiante.getId_Alumno());
+			consulta.setFloat(5, estudiante.getEvaluacion1());
+			consulta.setFloat(7, estudiante.getEvaluacion1());
+			consulta.setFloat(7, estudiante.getEvaluacion1());
+			consulta.setBoolean(8, estudiante.isActivado());
 
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
 	}
+	
+	public void activarEstudiante(Connection conexion, Estudiantes estudiante) throws SQLException, ClassNotFoundException {
+		try {
+			
+			PreparedStatement consulta;
+			
+			consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET dni = ?, nombre = ?, direccion = ?, evaluacion1 = ?,evaluacion2 = ?, evaluacion3 = ?, activado = ? WHERE id_Alumno = ?");
 
+			if(estudiante.isActivado()) {
+				consulta.setString(1, estudiante.getDni());
+				consulta.setString(2, estudiante.getNombre());
+				consulta.setString(3, estudiante.getDireccion());
+				consulta.setFloat(4, estudiante.getEvaluacion1());
+				consulta.setFloat(5, estudiante.getEvaluacion1());
+				consulta.setFloat(6, estudiante.getEvaluacion1());
+				consulta.setBoolean(7, false);
+				consulta.setInt(8, estudiante.getId_Alumno());
+			}else {
+				consulta.setString(1, estudiante.getDni());
+				consulta.setString(2, estudiante.getNombre());
+				consulta.setString(3, estudiante.getDireccion());
+				consulta.setFloat(4, estudiante.getEvaluacion1());
+				consulta.setFloat(5, estudiante.getEvaluacion1());
+				consulta.setFloat(6, estudiante.getEvaluacion1());
+				consulta.setBoolean(7, true);
+				consulta.setInt(8, estudiante.getId_Alumno());
+			}
+
+			
+			consulta.executeUpdate();
+			System.out.println("El estudiante estaba "+estudiante.isActivado());
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+	}
 	//Obtener un solo alumno
 	public Estudiantes getAlumno(Connection conexion, int id_Alumno) throws SQLException {
 		Estudiantes estudiante = null;
@@ -99,7 +139,7 @@ public class EstudianteService {
 	public void remove(Connection conexion, Estudiantes alumno) throws SQLException{
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
-	      + this.tabla + " WHERE id = ?");
+	      + this.tabla + " WHERE id_Alumno = ?");
 	         consulta.setInt(1, alumno.getId_Alumno());
 	         consulta.executeUpdate();
 	      }catch(SQLException ex){
@@ -113,11 +153,13 @@ public class EstudianteService {
 	public void removeId(Connection conexion, int id_Alumno) throws SQLException{
 	      try{
 	         PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " 
-	      + this.tabla + " WHERE id = ?");
+	      + this.tabla + " WHERE id_Alumno = ?");
 	         consulta.setInt(1, id_Alumno);
 	         consulta.executeUpdate();
 	      }catch(SQLException ex){
 	         throw new SQLException(ex);
 	      }
+	      UsuarioService userServi=new UsuarioService();
+	      userServi.removeId(conexion, id_Alumno);
 	   }
 }
