@@ -50,7 +50,7 @@ public class ClaseConducirService {
 
 			PreparedStatement consulta;
 
-			consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(id_Clase,fecha,hora,dni_Instructor,id_Vehiculo) VALUES(?, ?, ?, ?, ?)");
+			consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(id, fecha, hora, dni_Instructor, id_Vehiculo) VALUES(?, ?, ?, ?, ?)");
 			consulta.setInt(1, clase_conducir.getId_Clase());
 			consulta.setDate(2, clase_conducir.getFecha());
 			consulta.setTime(3, clase_conducir.getHora());
@@ -69,7 +69,7 @@ public class ClaseConducirService {
 		ClaseConducir claseconducir = null;
 		try {
 			PreparedStatement consulta = conexion.prepareStatement(
-					"SELECT fecha, hora, id_vehiculo, dni_instructor " + " FROM " + this.tabla + " WHERE id_Clase = ?");
+					"SELECT fecha, hora, id_vehiculo, dni_instructor " + " FROM " + this.tabla + " WHERE id = ?");
 			consulta.setInt(1, id_Clase);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
@@ -89,10 +89,10 @@ public class ClaseConducirService {
 		List<ClaseConducir> clases = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion.prepareStatement(
-					"SELECT id_Clase, fecha, hora, id_Vehiculo, dni_Instructor " + " FROM " + this.tabla);
+					"SELECT id, fecha, hora, id_Vehiculo, dni_Instructor " + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				clases.add(new ClaseConducir(resultado.getInt("id_Clase"), resultado.getDate("fecha"),
+				clases.add(new ClaseConducir(resultado.getInt("id"), resultado.getDate("fecha"),
 						resultado.getTime("hora"), resultado.getInt("id_vehiculo"),
 						resultado.getString("dni_instructor")));
 			}
@@ -109,7 +109,7 @@ public class ClaseConducirService {
 
 	public void remove(Connection conexion, ClaseConducir claseconducir) throws SQLException {
 		try {
-			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id_Clase = ?");
+			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id = ?");
 			consulta.setInt(1, claseconducir.getId_Clase());
 			consulta.executeUpdate();
 		} catch (SQLException ex) {

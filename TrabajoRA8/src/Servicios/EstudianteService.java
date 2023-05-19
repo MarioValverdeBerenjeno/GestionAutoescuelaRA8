@@ -10,7 +10,7 @@ import java.util.List;
 import Modelos.Estudiantes;
 
 public class EstudianteService {
-	private final String tabla = "alumno";
+	private final String tabla = "estudiante";
 
 	//Update de Alumnos
 	public void saveUpdate(Connection conexion, Estudiantes estudiante) throws SQLException {

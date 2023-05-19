@@ -3,6 +3,11 @@ package Visual;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -10,6 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -17,6 +23,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
+
+import Modelos.ClaseConducir;
+import Modelos.Estudiantes;
+import Modelos.Usuario;
+import Servicios.ClaseConducirService;
+import Servicios.Conexion;
+import Servicios.EstudianteService;
+import Servicios.UsuarioService;
 
 public class InterfazAlumno extends JFrame {
 	// Principal
@@ -29,8 +43,8 @@ public class InterfazAlumno extends JFrame {
 	// Paneles
 	private static JPanel verClases, evaluaciones, modificarPerfil, solicitarClase, verPerfil;
 	// ModificarPerfil
-	private JTextField fieldNombreUsuario, fieldNombre, fieldDNI, fieldDireccion;
-	private JPasswordField fieldNPassword, fieldRPassword;
+	private static JTextField fieldNombreUsuario, fieldNombre, fieldDNI, fieldDireccion;
+	private static JPasswordField fieldNPassword, fieldRPassword;
 	private JLabel lblTituloModificarPerfil, lblnomUsuario, lblNombre, lblDNI, lblDireccion, lblNPassword, lblRPassword;
 	private JButton btnConfirmarModPer;
 	// SolicitarClase
@@ -41,8 +55,8 @@ public class InterfazAlumno extends JFrame {
 	// VerClases
 	private JLabel lblTituloVerClases;
 	private DefaultTableModel modeloTabla;
-	private Object[][] data = { { null, null } };
-	private String[] cabeceraTabla = { "Clase", "Estado" };
+	private static String[][] data;
+	private String[] cabeceraTabla = { "Clase", "Fecha" , "Hora"};
 	private JScrollPane scrollTablaClases;
 	private JTable tableClasesSolicitadas;
 	// Evaluacion
@@ -55,7 +69,13 @@ public class InterfazAlumno extends JFrame {
 	// Ver Perfil
 	private JLabel lblTituloVerPerfil;
 	private JLabel lblUsuarioP, lblNombreP, lblDniP, lblDireccionP;
-	private JTextField textUsuarioP, textNombreP, textDniP, textDireccionP;
+	private static JTextField textUsuarioP, textNombreP, textDniP, textDireccionP;
+	// Id del estudiante
+	private static int id;
+	// Servicios del estudiante
+	private static EstudianteService es = new EstudianteService();
+	private static ClaseConducirService ccs = new ClaseConducirService();
+	private static UsuarioService us = new UsuarioService();
 
 	public InterfazAlumno(String nombre) {
 		super("Interfaz Alumno");
@@ -63,6 +83,25 @@ public class InterfazAlumno extends JFrame {
 		setSize(600, 500);
 		getContentPane().setLayout(null);
 		setLocationRelativeTo(null);
+
+		// Manejadores
+
+		ManejadorBotones mb = new ManejadorBotones();
+
+		// Sacar el id del estudiante
+
+		try {
+			PreparedStatement consulta = Conexion.obtener().prepareStatement(
+					"SELECT e.id_alumno FROM estudiante e, usuario u WHERE u.idUsuario = e.id_alumno AND u.nombre = ?");
+			consulta.setString(1, nombre);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				id = resultado.getInt("e.id_alumno");
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+
+			e.printStackTrace();
+		}
 
 		// Panel Principal
 
@@ -120,7 +159,7 @@ public class InterfazAlumno extends JFrame {
 		lblDniP.setBounds(10, 164, 90, 29);
 		verPerfil.add(lblDniP);
 
-		lblDireccionP = new JLabel("Direcci\u00F3n");
+		lblDireccionP = new JLabel("Direccion");
 		lblDireccionP.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblDireccionP.setBounds(10, 203, 90, 29);
 		verPerfil.add(lblDireccionP);
@@ -148,6 +187,8 @@ public class InterfazAlumno extends JFrame {
 		textDireccionP.setColumns(10);
 		textDireccionP.setBounds(110, 209, 146, 19);
 		verPerfil.add(textDireccionP);
+
+		rellenarPerfil();
 
 		verPerfil.setVisible(true);
 
@@ -189,6 +230,7 @@ public class InterfazAlumno extends JFrame {
 		lblTituloVerClases.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblTituloVerClases.setBounds(128, 10, 98, 46);
 		verClases.add(lblTituloVerClases);
+		verClases();
 
 		modeloTabla = new DefaultTableModel(data, cabeceraTabla) {
 			@Override
@@ -252,6 +294,7 @@ public class InterfazAlumno extends JFrame {
 
 		fieldNombreUsuario = new JTextField();
 		fieldNombreUsuario.setBounds(108, 71, 163, 19);
+		fieldNombreUsuario.setText(textUsuarioP.getText());
 		modificarPerfil.add(fieldNombreUsuario);
 		fieldNombreUsuario.setColumns(10);
 
@@ -262,6 +305,7 @@ public class InterfazAlumno extends JFrame {
 
 		fieldNombre = new JTextField();
 		fieldNombre.setBounds(108, 111, 163, 19);
+		fieldNombre.setText(textNombreP.getText());
 		modificarPerfil.add(fieldNombre);
 		fieldNombre.setColumns(10);
 
@@ -272,20 +316,22 @@ public class InterfazAlumno extends JFrame {
 
 		fieldDNI = new JTextField();
 		fieldDNI.setBounds(108, 145, 163, 19);
+		fieldDNI.setText(textDniP.getText());
 		modificarPerfil.add(fieldDNI);
 		fieldDNI.setColumns(10);
-
-		fieldDireccion = new JTextField();
-		fieldDireccion.setBounds(108, 182, 163, 19);
-		modificarPerfil.add(fieldDireccion);
-		fieldDireccion.setColumns(10);
 
 		lblDireccion = new JLabel("Direccion");
 		lblDireccion.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblDireccion.setBounds(10, 177, 98, 27);
 		modificarPerfil.add(lblDireccion);
 
-		lblNPassword = new JLabel("Nueva contrase\u00F1a");
+		fieldDireccion = new JTextField();
+		fieldDireccion.setBounds(108, 182, 163, 19);
+		fieldDireccion.setText(textDireccionP.getText());
+		modificarPerfil.add(fieldDireccion);
+		fieldDireccion.setColumns(10);
+
+		lblNPassword = new JLabel("Nueva contrasenya");
 		lblNPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblNPassword.setBounds(10, 251, 112, 27);
 		modificarPerfil.add(lblNPassword);
@@ -294,7 +340,7 @@ public class InterfazAlumno extends JFrame {
 		fieldNPassword.setBounds(10, 288, 196, 19);
 		modificarPerfil.add(fieldNPassword);
 
-		lblRPassword = new JLabel("Repetir contrase\u00F1a");
+		lblRPassword = new JLabel("Repetir contrasenya");
 		lblRPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblRPassword.setBounds(10, 317, 112, 27);
 		modificarPerfil.add(lblRPassword);
@@ -306,6 +352,7 @@ public class InterfazAlumno extends JFrame {
 		btnConfirmarModPer = new JButton("Confirmar");
 		btnConfirmarModPer.setBounds(108, 416, 112, 37);
 		modificarPerfil.add(btnConfirmarModPer);
+		btnConfirmarModPer.addActionListener(mb);
 
 		modificarPerfil.setVisible(false);
 
@@ -330,10 +377,11 @@ public class InterfazAlumno extends JFrame {
 			if (s.equals("Modificar perfil")) {
 				modificarPerfil.setVisible(true);
 			}
-			if (s.equals("Solicitar clase")) {
+			if (s.equals("Solicitar clase")) {	
 				solicitarClase.setVisible(true);
 			}
 			if (s.equals("Ver clases solicitadas")) {
+				verClases();
 				verClases.setVisible(true);
 			}
 			if (s.equals("Evaluaciones")) {
@@ -343,11 +391,110 @@ public class InterfazAlumno extends JFrame {
 				verPerfil.setVisible(true);
 			}
 		}
+		
+		
 
 	}
 
-	/*public static void main(String[] args) {
-		InterfazAlumno ia = new InterfazAlumno();
-		ia.setVisible(true);
-	}*/
+	private class ManejadorBotones implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Object o = e.getSource();
+			if (o.equals(btnConfirmarModPer)) {
+				modificarPerfil();
+			} 
+
+		}
+
+		
+
+		private static void modificarPerfil() {
+
+			if (fieldNPassword.getPassword().length != 0) {
+				if (String.valueOf(fieldNPassword.getPassword()).equals(String.valueOf(fieldRPassword.getPassword()))) {
+					try {
+						us.save(Conexion.obtener(), new Usuario(id, fieldNombreUsuario.getText(),
+								String.valueOf(fieldNPassword.getPassword())));
+						es.saveUpdate(Conexion.obtener(), new Estudiantes(fieldDNI.getText(), fieldNombre.getText(),
+								fieldDireccion.getText(), id));
+						rellenarPerfil();
+					} catch (ClassNotFoundException | SQLException e1) {
+						e1.printStackTrace();
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Ambas contraseñas no coinciden", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseña", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private static void rellenarPerfil() {
+
+		try {
+			textUsuarioP.setText(us.getUsuario(Conexion.obtener(), id).getNombre());
+			textNombreP.setText(es.getAlumno(Conexion.obtener(), id).getNombre());
+			textDniP.setText(es.getAlumno(Conexion.obtener(), id).getDni());
+			textDireccionP.setText(es.getAlumno(Conexion.obtener(), id).getDireccion());
+		} catch (ClassNotFoundException | SQLException e) {
+
+			e.printStackTrace();
+
+		}
+	}
+	
+	private static void verClases() {
+		List<Integer> listaIdClases = new ArrayList<>();
+		List<ClaseConducir> listaClases = new ArrayList<>();
+		try {
+			listaClases = ccs.getAllClases(Conexion.obtener());
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		PreparedStatement consulta;
+		try {
+			consulta = Conexion.obtener().prepareStatement(
+					"SELECT a.id_clase FROM asistencia a, estudiante e WHERE a.dni_alumno = e.dni AND e.id_alumno = ?");
+			consulta.setInt(1, id);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				listaIdClases.add(resultado.getInt("a.id_clase"));
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < listaClases.size(); i++) {
+			int cont = 0;
+			for (int j = 0; j < listaIdClases.size(); j++) {
+				if (listaClases.get(i).getId_Clase() == listaIdClases.get(j)) {
+					cont++;
+				}
+			}
+			if (cont == 0) {
+				listaClases.remove(i);
+			}
+		}
+
+		data = new String[listaIdClases.size()][3];
+
+		for (int i = 0; i < listaIdClases.size(); i++) {
+			for (int j = 0; j < 3; j++) {
+				if (j == 0)
+					data[i][j] = String.valueOf(listaClases.get(i).getId_Clase());
+				else if (j == 1)
+					data[i][j] = String.valueOf(listaClases.get(i).getFecha());
+				else if (j == 2)
+					data[i][j] = String.valueOf(listaClases.get(i).getHora());
+			}
+		}
+
+	}
+
 }
