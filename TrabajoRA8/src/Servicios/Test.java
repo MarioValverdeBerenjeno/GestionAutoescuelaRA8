@@ -13,7 +13,7 @@ public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		new MenuPrincipal();
-//		new MenuPrincipal();
+		//new InterfazInstructor(null);
 		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID
 //		Alumno e=s.getAlumno(Conexion.obtener(), 1);

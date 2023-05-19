@@ -218,9 +218,7 @@ public class MenuPrincipal extends JFrame {
 								while (resultado.next()) {
 									id_estudiante = resultado.getInt("idUsuario");
 								}
-								System.out.println("ksvd");
 								if (estudianteService.getAlumno(Conexion.obtener(), id_estudiante).isActivado()) {
-
 									InterfazAlumno ia = new InterfazAlumno(textoNombreUsuarioIS.getText());
 									ia.setVisible(true);
 									MenuPrincipal.this.dispose();
@@ -241,7 +239,6 @@ public class MenuPrincipal extends JFrame {
 				} catch (ClassNotFoundException | SQLException e1) {
 					e1.printStackTrace();
 				}
-				MenuPrincipal.this.dispose();
 			}
 		}
 	}
