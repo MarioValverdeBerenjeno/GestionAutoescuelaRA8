@@ -6,12 +6,13 @@ import Modelos.ClaseConducir;
 import Modelos.Instructor;
 import Modelos.Usuario;
 import Visual.InterfazAdmin;
+import Visual.InterfazInstructor;
 import Visual.MenuPrincipal;
 
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		new MenuPrincipal();
+		new InterfazInstructor(null);
 //		new MenuPrincipal();
 		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID
