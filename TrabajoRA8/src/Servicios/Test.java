@@ -11,6 +11,7 @@ import Visual.MenuPrincipal;
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		new MenuPrincipal();
 //		new MenuPrincipal();
 		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID

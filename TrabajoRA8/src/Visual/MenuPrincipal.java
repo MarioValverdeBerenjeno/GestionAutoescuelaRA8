@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.ButtonGroup;
@@ -36,9 +38,10 @@ public class MenuPrincipal extends JFrame {
 	private JRadioButton rbRegistrar, rbIniciarS;
 	private JButton btnRegistrar, btnIS;
 	private UsuarioService usuarioService = new UsuarioService();
-	private EstudianteService estudianteService;
+	private EstudianteService estudianteService = new EstudianteService();
 	private Usuario u;
 	private Estudiantes estudiante;
+	private int id_estudiante;
 
 	public MenuPrincipal() {
 		super("Iniciar sesion");
@@ -169,23 +172,23 @@ public class MenuPrincipal extends JFrame {
 				u = new Usuario(textoNombreUsuarioRU.getText(), textoContrasenyaRU.getText());
 				try {
 					if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioRU.getText()) == null) {
-						try {
-							estudiante = new Estudiantes(textoDNIRU.getText(), textoNombreRU.getText(),
-									textoDireccionRU.getText(), usuarioService
-											.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioRU.getText()).getId());
-						} catch (ClassNotFoundException | SQLException e2) {
-							e2.printStackTrace();
-						}
-						try {
+						if (textoContrasenyaRU.getText().equals(textoRepetirCRU.getText())) {
 							usuarioService.save(Conexion.obtener(), u);
+							estudiante = new Estudiantes(textoDNIRU.getText(), textoNombreRU.getText(),
+									textoDireccionRU.getText(),
+									usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioRU.getText())
+											.getId());
 							estudianteService.saveNewAlumno(Conexion.obtener(), estudiante);
-						} catch (ClassNotFoundException | SQLException e1) {
-							e1.printStackTrace();
+							InterfazAlumno ia = new InterfazAlumno(textoNombreUsuarioRU.getText());
+							ia.setVisible(true);
+							MenuPrincipal.this.dispose();
+						} else {
+							JOptionPane.showMessageDialog(null, "Las contrasenyas no coinciden", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
-						new InterfazAlumno();
-						MenuPrincipal.this.dispose();
-					}else 
-						JOptionPane.showMessageDialog(null, "Ya existe ese nombre de usuario", "Error", JOptionPane.ERROR_MESSAGE);
+					} else
+						JOptionPane.showMessageDialog(null, "Ya existe ese nombre de usuario", "Error",
+								JOptionPane.ERROR_MESSAGE);
 				} catch (HeadlessException | ClassNotFoundException | SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -194,7 +197,7 @@ public class MenuPrincipal extends JFrame {
 				try {
 					if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()) != null) {
 						if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText())
-								.getPassword() == textoContrasenyaIS.getText()) {
+								.getPassword().equals(textoContrasenyaIS.getText())) {
 							if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText())
 									.getRol().equalsIgnoreCase("admin")) {
 								new InterfazAdmin();
@@ -202,17 +205,30 @@ public class MenuPrincipal extends JFrame {
 							} else if (usuarioService
 									.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol()
 									.equalsIgnoreCase("instructor")) {
-								new InterfazInstructor();
+								InterfazInstructor ii = new InterfazInstructor(textoNombreUsuarioIS.getText());
+								ii.setVisible(true);
 								MenuPrincipal.this.dispose();
 							} else if (usuarioService
 									.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol()
-									.equalsIgnoreCase("estudiante")) {
-								/*
-								 * if() { new InterfazAlumno(); MenuPrincipal.this.dispose(); } else {
-								 * JOptionPane.showMessageDialog(null,
-								 * "Su cuenta no se encuentra activada en estos momentos", "Informacion",
-								 * JOptionPane.INFORMATION_MESSAGE); }
-								 */
+									.equalsIgnoreCase("alumno")) {
+								PreparedStatement consulta = Conexion.obtener()
+										.prepareStatement("SELECT idUsuario FROM usuario WHERE nombre = ?");
+								consulta.setString(1, textoNombreUsuarioIS.getText());
+								ResultSet resultado = consulta.executeQuery();
+								while (resultado.next()) {
+									id_estudiante = resultado.getInt("idUsuario");
+								}
+								System.out.println("ksvd");
+								if (estudianteService.getAlumno(Conexion.obtener(), id_estudiante).isActivado()) {
+
+									InterfazAlumno ia = new InterfazAlumno(textoNombreUsuarioIS.getText());
+									ia.setVisible(true);
+									MenuPrincipal.this.dispose();
+								} else {
+									JOptionPane.showMessageDialog(null,
+											"Su cuenta no se encuentra activada en estos momentos", "Informacion",
+											JOptionPane.INFORMATION_MESSAGE);
+								}
 							}
 						} else {
 							JOptionPane.showMessageDialog(null, "Contrasenya incorrecta", "Error",

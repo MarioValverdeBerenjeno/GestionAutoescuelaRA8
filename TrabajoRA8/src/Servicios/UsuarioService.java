@@ -79,7 +79,7 @@ public class UsuarioService {
 	      }catch(SQLException ex){
 	         throw new SQLException(ex);
 	      }
-	      System.out.println(user.getId());
+	      //System.out.println(user.getId());
 	      return user;
 	   }
 	//elimina pasandole un usuario como parametro

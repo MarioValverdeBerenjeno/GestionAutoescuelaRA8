@@ -57,7 +57,7 @@ public class InterfazAlumno extends JFrame {
 	private JLabel lblUsuarioP, lblNombreP, lblDniP, lblDireccionP;
 	private JTextField textUsuarioP, textNombreP, textDniP, textDireccionP;
 
-	public InterfazAlumno() {
+	public InterfazAlumno(String nombre) {
 		super("Interfaz Alumno");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(600, 500);
@@ -346,8 +346,8 @@ public class InterfazAlumno extends JFrame {
 
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		InterfazAlumno ia = new InterfazAlumno();
 		ia.setVisible(true);
-	}
+	}*/
 }
