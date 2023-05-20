@@ -3,6 +3,7 @@ package Visual;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,10 +29,14 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 import Modelos.ClaseConducir;
+import Modelos.Estudiantes;
 import Modelos.Instructor;
+import Modelos.ParteAveria;
 import Modelos.Usuario;
+import Servicios.AveriaService;
 import Servicios.ClaseConducirService;
 import Servicios.Conexion;
+import Servicios.EstudianteService;
 import Servicios.InstructorService;
 import Servicios.UsuarioService;
 
@@ -44,35 +49,37 @@ Instructores (Dar parte de averias de un vehiculo)*/
 
 public class InterfazInstructor extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JComboBox<String> cbOpciones;
+	private JComboBox<String> cbOpciones, cbEstudiantes;
 	private JList<String> jlClases;
 	private JScrollPane scrListaClases, scrTablaClase, scrTextoAveria, scrTablaEvaluaciones;
 	private Icon imgPerfil;
 	private JPanel panelOpciones, panelVerPerfil, panelModPerfil, panelVerClases, panelAceptarClases, panelParteAveria,
-			panelEvaluaciones;
+			panelVerEvaluaciones, panelEvaluar;
 	private JLabel lbImg, lbTexto, lbBienvenido, lbTextoDNIPerfil, lbTextoDireccionPerfil, lbTextoContrasenya,
 			lbTextoNombre, lbTextoNombrePerfil, lbTextoDireccion, lbTextoDNIPA, lbTextoInfoPA, lbTextoIDVehiculo,
 			lbTextoNombreUsuario, lbTextoNombreUsuarioPerfil, lbTextoCambiarDNI, lbTextoRepetirContrasenya,
-			lbModificarPerfil, lbVerPerfil;
+			lbModificarPerfil, lbVerPerfil, lbNota;
 	private JTextField textoNombrePerfil, textoDNIPerfil, textoDireccion, textoCambiarNombre, textoCambiarNombreUsuario,
-			textoCambiarDireccion, textoDNIPA, textoIDVehiculo, textoNombreUsuarioPerfil, textoCambiarDNI;
+			textoCambiarDireccion, textoDNIPA, textoIDVehiculo, textoNombreUsuarioPerfil, textoCambiarDNI, textoNota;
 	private JPasswordField textoCambiarContrasenya, textoRepetirContrasenya;
 	private JTextArea textoInfoPA;
-	private JButton btnConfirmar, btnAceptar, btnContrasenyaVisible;
+	private JButton btnConfirmar, btnAceptar, btnContrasenyaVisible, btnEnviar, btnConfirmarNota;
 	private DefaultTableModel modeloTablaClases, modeloTablaEvaluaciones;
 	private JTable tablaClases, tablaEvaluaciones;
 	private Object[][] dataTablaClases, dataTablaEvaluaciones;
 	private String[] cabeceraTablaClases = { "Clase", "Dia", "Hora" },
 			solicitudesClases = { "opcion1", "opcion2", "opcion3" }, listaOpciones = { "Ver perfil", "Modificar Perfil",
-					"Ver clases", "Aceptar Clases", "Partes de averia", "Ver evaluaciones" },
-			cabeceraTablaEvaluaciones = { "Alumno", "1º Eva", "2º Eva", "3º Eva" };
-	private List<String> listaSolicitudesClases = new ArrayList<>();
+					"Ver clases", "Aceptar Clases", "Partes de averia", "Ver evaluaciones", "Evaluar" },
+			cabeceraTablaEvaluaciones, listaEstudiantesNotas = {"Paco"};
+	private List<String> listaSolicitudesClases = new ArrayList<>(), listaEstudiantesProfesor = new ArrayList<>();
 	private int id_instructor;
-	private String dniInstructor;
+	private String dniInstructor, dniEstudiante, nombreEstudiante;
 	private boolean esVisible = true;
 	private InstructorService instructorService = new InstructorService();
 	private UsuarioService usuarioService = new UsuarioService();
 	private ClaseConducirService claseConducirService = new ClaseConducirService();
+	private AveriaService averiaService = new AveriaService();
+	private EstudianteService estudianteService = new EstudianteService();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public InterfazInstructor(String nombre) {
@@ -84,36 +91,29 @@ public class InterfazInstructor extends JFrame {
 		getContentPane();
 		setLocationRelativeTo(null);
 
-		try {
-			PreparedStatement consulta = Conexion.obtener().prepareStatement(
-					"SELECT i.id_Instructor FROM instructor i, usuario u WHERE u.nombre = ? AND i.id_instructor = u.idUsuario");
-			consulta.setString(1, nombre);
-			ResultSet resultado = consulta.executeQuery();
-			while (resultado.next()) {
-				id_instructor = resultado.getInt("i.id_Instructor");
-			}
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-		try {
-			PreparedStatement consulta = Conexion.obtener().prepareStatement(
-					"SELECT i.dni FROM instructor i, usuario u WHERE u.nombre = ? AND i.id_instructor = u.idUsuario");
-			consulta.setString(1, nombre);
-			ResultSet resultado = consulta.executeQuery();
-			while (resultado.next()) {
-				dniInstructor = resultado.getString("i.dni");
-			}
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+		obtenerIDInstructor(nombre);
+		obtenerDNIInstructor(nombre);
+		//obtenerNombreEstudiante();
+		//obtenerDNIEstudiante();
 
 		for (String s : solicitudesClases) {
 			listaSolicitudesClases.add(s);
 		}
 
+		cabeceraTablaEvaluaciones = new String[dimensionTablaEvaluacionesFilas()];
+		for (int i = 0; i < dimensionTablaClases(); i++) {
+			if (i == 0) {
+				cabeceraTablaEvaluaciones[i] = "Alumno";
+			} else {
+				cabeceraTablaEvaluaciones[i] = Integer.toString(i);
+			}
+		}
 		// Inicializacion de la tabla de las clases que tiene el instructor
 		dataTablaClases = new Object[dimensionTablaClases()][3];
 		verClases();
+		dataTablaEvaluaciones = new Object[dimensionTablaClases()][dimensionTablaEvaluacionesFilas()];
+		verEvaluaciones();
+
 
 		modeloTablaClases = new DefaultTableModel(dataTablaClases, cabeceraTablaClases) {
 			@Override
@@ -146,6 +146,10 @@ public class InterfazInstructor extends JFrame {
 		btnAceptar.setBounds(150, 350, 100, 45);
 		btnContrasenyaVisible = new JButton();
 		btnContrasenyaVisible.setBounds(350, 300, 30, 30);
+		btnEnviar = new JButton("Enviar");
+		btnEnviar.setBounds(50, 350, 60, 20);
+		btnConfirmarNota = new JButton("Confirmar");
+		btnConfirmarNota.setBounds(150,400,100,25);
 
 		// JTextFields
 		textoNombrePerfil = new JTextField();
@@ -168,6 +172,8 @@ public class InterfazInstructor extends JFrame {
 		textoNombreUsuarioPerfil = new JTextField();
 		textoNombreUsuarioPerfil.setEditable(false);
 		textoNombreUsuarioPerfil.setBounds(190, 50, 100, 20);
+		textoNota = new JTextField();
+		textoNota.setBounds(350,100,50,20);
 
 		// JPasswordField
 		textoCambiarContrasenya = new JPasswordField();
@@ -200,14 +206,19 @@ public class InterfazInstructor extends JFrame {
 		panelParteAveria = new JPanel();
 		panelParteAveria.setBounds(150, 0, 435, 460);
 		panelParteAveria.setVisible(false);
-		panelEvaluaciones = new JPanel();
-		panelEvaluaciones.setBounds(150, 0, 435, 460);
-		panelEvaluaciones.setVisible(false);
+		panelVerEvaluaciones = new JPanel();
+		panelVerEvaluaciones.setBounds(150, 0, 435, 460);
+		panelVerEvaluaciones.setVisible(false);
+		panelEvaluar = new JPanel();
+		panelEvaluar.setBounds(150, 0, 435, 460);
+		panelEvaluar.setVisible(false);
 
 		// JComboBox
 		cbOpciones = new JComboBox(listaOpciones);
 		cbOpciones.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		cbOpciones.setBounds(0, 205, 150, 50);
+		cbEstudiantes = new JComboBox(listaEstudiantesNotas);
+		cbEstudiantes.setBounds(20, 100, 150, 50);
 
 		// JList
 		jlClases = new JList();
@@ -264,6 +275,8 @@ public class InterfazInstructor extends JFrame {
 		lbVerPerfil.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lbVerPerfil.setHorizontalAlignment(SwingConstants.CENTER);
 		lbVerPerfil.setBounds(150, 10, 150, 25);
+		lbNota = new JLabel("Nota:");
+		lbNota.setBounds(250,100,100,20);
 
 		rellenarPerfil();
 		rellenarCambiarPerfil();
@@ -332,11 +345,19 @@ public class InterfazInstructor extends JFrame {
 		panelParteAveria.add(lbTextoIDVehiculo);
 		panelParteAveria.add(lbTextoInfoPA);
 		panelParteAveria.add(lbTextoDNIPA);
+		panelParteAveria.add(btnEnviar);
 
-		getContentPane().add(panelEvaluaciones);
-		panelEvaluaciones.setLayout(null);
-		panelEvaluaciones.add(scrTablaEvaluaciones);
-
+		getContentPane().add(panelVerEvaluaciones);
+		panelVerEvaluaciones.setLayout(null);
+		panelVerEvaluaciones.add(scrTablaEvaluaciones);
+		
+		getContentPane().add(panelEvaluar);
+		panelEvaluar.setLayout(null);
+		panelEvaluar.add(btnConfirmarNota);
+		panelEvaluar.add(textoNota);
+		panelEvaluar.add(cbEstudiantes);
+		panelEvaluar.add(lbNota);
+		
 		lbTextoNombre = new JLabel("Nombre: ");
 		lbTextoNombre.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lbTextoNombre.setHorizontalAlignment(SwingConstants.CENTER);
@@ -380,6 +401,8 @@ public class InterfazInstructor extends JFrame {
 		btnAceptar.addActionListener(mBtn);
 		btnConfirmar.addActionListener(mBtn);
 		btnContrasenyaVisible.addActionListener(mBtn);
+		btnEnviar.addActionListener(mBtn);
+		btnConfirmarNota.addActionListener(mBtn);
 
 		setVisible(true);
 	}
@@ -399,8 +422,9 @@ public class InterfazInstructor extends JFrame {
 			panelAceptarClases.setVisible(false);
 			panelModPerfil.setVisible(false);
 			panelVerClases.setVisible(false);
-			panelEvaluaciones.setVisible(false);
+			panelVerEvaluaciones.setVisible(false);
 			panelParteAveria.setVisible(false);
+			panelEvaluar.setVisible(false);
 
 			if (opcion.equalsIgnoreCase("modificar perfil"))
 				panelModPerfil.setVisible(true);
@@ -418,7 +442,11 @@ public class InterfazInstructor extends JFrame {
 				panelParteAveria.setVisible(true);
 
 			if (opcion.equalsIgnoreCase("ver evaluaciones"))
-				panelEvaluaciones.setVisible(true);
+				panelVerEvaluaciones.setVisible(true);
+			
+			if (opcion.equalsIgnoreCase("evaluar")) {
+				panelEvaluar.setVisible(true);
+			}
 		}
 	}
 
@@ -441,14 +469,31 @@ public class InterfazInstructor extends JFrame {
 				modificarPerfil();
 			} else if (e.getSource().equals(btnContrasenyaVisible)) {
 				verContrasenya();
+			} else if (e.getSource().equals(btnEnviar)) {
+				try {
+					if (averiaService.getAveria(Conexion.obtener(),
+							obtenerIDParte(Integer.parseInt(textoIDVehiculo.getText()))) == null) {
+						averiaService.saveNewAveria(Conexion.obtener(),
+								new ParteAveria(Integer.parseInt(textoIDVehiculo.getText()), textoInfoPA.getText(),
+										textoDNIPA.getText()));
+						JOptionPane.showMessageDialog(null, "Enviado correctamente", "Informacion",
+								JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(null, "El vehiculo ya tiene un parte", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (ClassNotFoundException | SQLException e1) {
+					e1.printStackTrace();
+				}
+			} else if (e.getSource().equals(btnConfirmarNota)) {
+				
 			}
 		}
 	}
-
+	// Este método es el que hace visible el texto del jPasswordField
 	private void verContrasenya() {
 		if (esVisible) {
-			textoCambiarContrasenya.setEchoChar((char) 0); // este método es el que hace visible el texto del
-															// jPasswordField
+			textoCambiarContrasenya.setEchoChar((char) 0); 
 			esVisible = false;
 		} else {
 			textoCambiarContrasenya.setEchoChar('*');
@@ -469,6 +514,42 @@ public class InterfazInstructor extends JFrame {
 			e1.printStackTrace();
 		}
 		return listaClasesProfesor.size();
+	}
+
+	private int dimensionTablaEvaluacionesFilas() {
+		List<Estudiantes> listaAlumnos = new ArrayList<>();
+		try {
+			for (int i = 0; i < estudianteService.getAllAlumnos(Conexion.obtener()).size(); i++) {
+				if (estudianteService.getAllAlumnos(Conexion.obtener()).get(i).getDni().equals(obtenerDNIEstudiante())) {
+					listaAlumnos.add(estudianteService.getAllAlumnos(Conexion.obtener()).get(i));
+				}
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return listaAlumnos.size();
+	}
+
+	private void verEvaluaciones() {
+		// Datos para la tabla de las evaluaciones del profesor
+		try {
+			dataTablaEvaluaciones = new Object[claseConducirService.getAllClases(Conexion.obtener())
+					.size()][dimensionTablaEvaluacionesFilas()];
+			for (int i = 0; i < dataTablaEvaluaciones.length; i++) {
+				if (claseConducirService.getAllClases(Conexion.obtener()).get(i).getDni_Instructor()
+						.equals(dniInstructor)) {
+					for (int j = 0; j < dimensionTablaEvaluacionesFilas(); j++) {
+						if (i == 0) {
+							dataTablaEvaluaciones[i][j] = nombreEstudiante;
+						} else if (i > 0) {
+							dataTablaEvaluaciones[i][j] = claseConducirService.getAllClases(Conexion.obtener()).get(j).getEvaluacion();
+						}
+					}
+				}
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void verClases() {
@@ -542,5 +623,82 @@ public class InterfazInstructor extends JFrame {
 			JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseña", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	private int obtenerIDParte(int idVehiculo) {
+		PreparedStatement consulta;
+		try {
+			consulta = Conexion.obtener()
+					.prepareStatement("SELECT id_parte FROM parteaveria WHERE id_vehiculo_averiado = ?");
+			consulta.setInt(1, idVehiculo);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				idVehiculo = resultado.getInt("id_parte");
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return idVehiculo;
+	}
+
+	private int obtenerIDInstructor(String nombre) {
+		try {
+			PreparedStatement consulta = Conexion.obtener().prepareStatement(
+					"SELECT i.id_Instructor FROM instructor i, usuario u WHERE u.nombre = ? AND i.id_instructor = u.idUsuario");
+			consulta.setString(1, nombre);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				id_instructor = resultado.getInt("i.id_Instructor");
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return id_instructor;
+	}
+
+	private String obtenerDNIInstructor(String nombre) {
+		try {
+			PreparedStatement consulta = Conexion.obtener().prepareStatement(
+					"SELECT i.dni FROM instructor i, usuario u WHERE u.nombre = ? AND i.id_instructor = u.idUsuario");
+			consulta.setString(1, nombre);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				dniInstructor = resultado.getString("i.dni");
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return dniInstructor;
+	}
+
+	private String obtenerNombreEstudiante() {
+		PreparedStatement consulta;
+		try {
+			consulta = Conexion.obtener().prepareStatement("SELECT nombre FROM estudiante WHERE dni = ?");
+			consulta.setString(1, obtenerDNIEstudiante());
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				nombreEstudiante = resultado.getString("nombre");
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return nombreEstudiante;
+	}
+
+	private String obtenerDNIEstudiante() {
+		PreparedStatement consulta;
+		try {
+			consulta = Conexion.obtener().prepareStatement(
+					"SELECT dni_alumno FROM asistencia WHERE id_clase = (SELECT id FROM claseconducir WHERE dni_instructor = ?)");
+			consulta.setString(1, dniInstructor);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				dniEstudiante = resultado.getString("dni_alumno");
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return dniEstudiante;
 	}
 }
