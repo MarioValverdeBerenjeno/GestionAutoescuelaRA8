@@ -52,9 +52,6 @@ public class EstudianteService {
 			consulta.setString(2, estudiante.getNombre());
 			consulta.setString(3, estudiante.getDireccion());
 			consulta.setInt(4, estudiante.getId_Alumno());
-			consulta.setFloat(5, estudiante.getEvaluacion1());
-			consulta.setFloat(7, estudiante.getEvaluacion1());
-			consulta.setFloat(7, estudiante.getEvaluacion1());
 			consulta.setBoolean(8, estudiante.isActivado());
 
 			consulta.executeUpdate();
@@ -68,26 +65,20 @@ public class EstudianteService {
 			
 			PreparedStatement consulta;
 			
-			consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET dni = ?, nombre = ?, direccion = ?, evaluacion1 = ?,evaluacion2 = ?, evaluacion3 = ?, activado = ? WHERE id_Alumno = ?");
+			consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET dni = ?, nombre = ?, direccion = ?, activado = ? WHERE id_Alumno = ?");
 
 			if(estudiante.isActivado()) {
 				consulta.setString(1, estudiante.getDni());
 				consulta.setString(2, estudiante.getNombre());
 				consulta.setString(3, estudiante.getDireccion());
-				consulta.setFloat(4, estudiante.getEvaluacion1());
-				consulta.setFloat(5, estudiante.getEvaluacion1());
-				consulta.setFloat(6, estudiante.getEvaluacion1());
-				consulta.setBoolean(7, false);
-				consulta.setInt(8, estudiante.getId_Alumno());
+				consulta.setBoolean(4, false);
+				consulta.setInt(5, estudiante.getId_Alumno());
 			}else {
 				consulta.setString(1, estudiante.getDni());
 				consulta.setString(2, estudiante.getNombre());
 				consulta.setString(3, estudiante.getDireccion());
-				consulta.setFloat(4, estudiante.getEvaluacion1());
-				consulta.setFloat(5, estudiante.getEvaluacion1());
-				consulta.setFloat(6, estudiante.getEvaluacion1());
-				consulta.setBoolean(7, true);
-				consulta.setInt(8, estudiante.getId_Alumno());
+				consulta.setBoolean(4, true);
+				consulta.setInt(5, estudiante.getId_Alumno());
 			}
 
 			
