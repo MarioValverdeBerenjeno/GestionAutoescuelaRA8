@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class InterfazAlumno extends JFrame {
 	// SolicitarClase
 	private JLabel lblTituloSolicitarClase;
 	private static JList listaClasesJList;
-	static List<ClaseConducir> listaClases = new ArrayList<>();
+	private List<ClaseConducir> listaClases = new ArrayList<>();
 	private JButton btnSolicitarClase;
 	private JScrollPane scrollListaClases;
 	// VerClases
@@ -65,8 +66,8 @@ public class InterfazAlumno extends JFrame {
 	// Evaluacion
 	private JLabel lblTituloEvaluaciones;
 	private DefaultTableModel modeloTablaEval;
-	private Object[][] dataE = { { null } };
-	private String[] cabeceraTablaE = { "Evaluacion" };
+	private static Object[][] dataE ;
+	private String[] cabeceraTablaE = { "Clase", "Evaluacion" };
 	private JScrollPane scrollTablaEvaluaciones;
 	private JTable tableEvaluaciones;
 	// Ver Perfil
@@ -309,6 +310,7 @@ public class InterfazAlumno extends JFrame {
 		lblTituloEvaluaciones.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblTituloEvaluaciones.setBounds(128, 10, 98, 46);
 		evaluaciones.add(lblTituloEvaluaciones);
+		verEvaluaciones();
 
 		modeloTablaEval = new DefaultTableModel(dataE, cabeceraTablaE) {
 			@Override
@@ -317,7 +319,7 @@ public class InterfazAlumno extends JFrame {
 			}
 		};
 
-		tableClasesSolicitadas = new JTable(modeloTablaEval);
+		tableEvaluaciones = new JTable(modeloTablaEval);
 
 		scrollTablaEvaluaciones = new JScrollPane(tableEvaluaciones);
 		scrollTablaEvaluaciones.setBounds(10, 66, 306, 384);
@@ -413,6 +415,7 @@ public class InterfazAlumno extends JFrame {
 				verClases.setVisible(true);
 			}
 			if (s.equals("Evaluaciones")) {
+				verEvaluaciones();
 				evaluaciones.setVisible(true);
 			}
 			if (s.equals("Ver perfil")) {
@@ -562,21 +565,82 @@ public class InterfazAlumno extends JFrame {
 		listaClasesJList = new JList(listaClases.toArray());
 
 	}
+	
+	private static void verEvaluaciones() {
+		List<Integer> listaIdClases = new ArrayList<>();
+		List<ClaseConducir> listaEvaluaciones = new ArrayList<>();
+		try {
+			listaEvaluaciones = ccs.getAllClases(Conexion.obtener());
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
 
+		PreparedStatement consulta;
+		try {
+			consulta = Conexion.obtener().prepareStatement(
+					"SELECT a.id_clase FROM asistencia a, estudiante e, claseconducir c WHERE a.dni_alumno = e.dni AND a.id_clase = c.id AND e.id_alumno = ?");
+			consulta.setInt(1, id);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				listaIdClases.add(resultado.getInt("a.id_clase"));
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < listaEvaluaciones.size(); i++) {
+			int cont = 0;
+			for (int j = 0; j < listaIdClases.size(); j++) {
+				if (listaEvaluaciones.get(i).getId_Clase() == listaIdClases.get(j)) {
+					cont++;
+				}
+			}
+			if (cont == 0) {
+				listaEvaluaciones.remove(i);
+			}
+		}
+
+		dataE = new String[listaIdClases.size()][2];
+
+		for (int i = 0; i < listaIdClases.size(); i++) {
+			for (int j = 0; j < 2; j++) {
+				if (j == 0)
+					dataE[i][j] = String.valueOf(listaEvaluaciones.get(i).getId_Clase());
+				else if (j == 1)
+					dataE[i][j] = String.valueOf(listaEvaluaciones.get(i).getEvaluacion());
+			}
+		}
+	}
+
+	// Sin terminar
+	
 	private static void solicitarClases() {
 		PreparedStatement consultaInsertar;
 		PreparedStatement consultaComprobar;
+		List<Integer> noValidas = new ArrayList<>();
 		List<ClaseConducir> clasesSolicitadas = listaClasesJList.getSelectedValuesList();
 		for (ClaseConducir cc : clasesSolicitadas) {
+
 			try {
-				consultaInsertar = Conexion.obtener().prepareStatement(
-						"INSERT INTO solicitud (dni_estudiante, dni_instructor_clase, id_clase_conducir) VALUES (?, ?, ?)");
-				consultaInsertar.setString(1, es.getAlumno(Conexion.obtener(), id).getDni());
-				consultaInsertar.setString(2, cc.getDni_Instructor());
-				consultaInsertar.setInt(3, cc.getId_Clase());
-				consultaInsertar.executeUpdate();
-				listaClases.remove(cc);
-				listaClasesJList = new JList(listaClases.toArray());
+				/*consultaComprobar = Conexion.obtener()
+						.prepareStatement("SELECT id_clase_conducir FROM solicitud WHERE dni_estudiante = ?");
+				consultaComprobar.setString(1, es.getAlumno(Conexion.obtener(), id).getDni());
+				ResultSet resultado = consultaComprobar.executeQuery();
+				while (resultado.next()) {
+					noValidas.add(resultado.getInt("id_clase_conducir"));
+				}
+				for (Integer i : noValidas) {
+					if (i == cc.getId_Clase()) {
+						JOptionPane.showMessageDialog(null, "No puedes introducir 2 veces la misma tabla");
+					} else {*/
+						consultaInsertar = Conexion.obtener().prepareStatement(
+								"INSERT INTO solicitud (dni_estudiante, dni_instructor_clase, id_clase_conducir) VALUES (?, ?, ?)");
+						consultaInsertar.setString(1, es.getAlumno(Conexion.obtener(), id).getDni());
+						consultaInsertar.setString(2, cc.getDni_Instructor());
+						consultaInsertar.setInt(3, cc.getId_Clase());
+						consultaInsertar.executeUpdate();
+					//}
+				// }
 			} catch (ClassNotFoundException | SQLException e) {
 
 				e.printStackTrace();

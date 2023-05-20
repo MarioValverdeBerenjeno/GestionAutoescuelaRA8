@@ -31,6 +31,17 @@ public class ClaseConducir {
 		this.dni_Instructor = dni_Instructor;
 	}
 
+	public ClaseConducir(int id_Clase, int id_Vehiculo, Date fecha, Time hora, String dni_Instructor,
+			float evaluacion) {
+		super();
+		this.id_Clase = id_Clase;
+		this.id_Vehiculo = id_Vehiculo;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.dni_Instructor = dni_Instructor;
+		this.evaluacion = evaluacion;
+	}
+
 	public int getId_Clase() {
 		return id_Clase;
 	}
@@ -82,7 +93,7 @@ public class ClaseConducir {
 	@Override
 	public String toString() {
 		return "ClaseConducir [id_Clase=" + id_Clase + ", id_Vehiculo=" + id_Vehiculo + ", fecha=" + fecha + ", hora="
-				+ hora + ", dni_Instructor=" + dni_Instructor + "]";
+				+ hora + ", dni_Instructor=" + dni_Instructor + ", evaluacion=" + evaluacion + "]";
 	}
 
 }
