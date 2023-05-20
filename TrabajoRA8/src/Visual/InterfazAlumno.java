@@ -21,7 +21,11 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import Modelos.ClaseConducir;
@@ -46,17 +50,19 @@ public class InterfazAlumno extends JFrame {
 	private static JTextField fieldNombreUsuario, fieldNombre, fieldDNI, fieldDireccion;
 	private static JPasswordField fieldNPassword, fieldRPassword;
 	private JLabel lblTituloModificarPerfil, lblnomUsuario, lblNombre, lblDNI, lblDireccion, lblNPassword, lblRPassword;
-	private JButton btnConfirmarModPer;
+	private JButton btnConfirmarModPer, btnVerContrasenya;
+	private boolean ocultar = true;
+	private char i;
 	// SolicitarClase
 	private JLabel lblTituloSolicitarClase;
-	private JList listaClases;
+	private static JList listaClasesJList;
 	private JButton btnSolicitarClase;
 	private JScrollPane scrollListaClases;
 	// VerClases
 	private JLabel lblTituloVerClases;
 	private DefaultTableModel modeloTabla;
 	private static String[][] data;
-	private String[] cabeceraTabla = { "Clase", "Fecha" , "Hora"};
+	private String[] cabeceraTabla = { "Clase", "Fecha", "Hora" };
 	private JScrollPane scrollTablaClases;
 	private JTable tableClasesSolicitadas;
 	// Evaluacion
@@ -118,6 +124,7 @@ public class InterfazAlumno extends JFrame {
 		btnVolver = new JButton("Volver");
 		btnVolver.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnVolver.setBounds(10, 421, 124, 32);
+		btnVolver.addActionListener(mb);
 		principal.add(btnVolver);
 
 		ManejadorComboBox mcb = new ManejadorComboBox();
@@ -192,6 +199,110 @@ public class InterfazAlumno extends JFrame {
 
 		verPerfil.setVisible(true);
 
+		// Panel Modificar perfil
+
+		modificarPerfil = new JPanel();
+		modificarPerfil.setBounds(260, 0, 326, 463);
+		getContentPane().add(modificarPerfil);
+		modificarPerfil.setLayout(null);
+
+		lblTituloModificarPerfil = new JLabel("Modificar Perfil");
+		lblTituloModificarPerfil.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblTituloModificarPerfil.setBounds(108, 10, 98, 46);
+		modificarPerfil.add(lblTituloModificarPerfil);
+
+		lblnomUsuario = new JLabel("Nombre usuario");
+		lblnomUsuario.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblnomUsuario.setBounds(10, 66, 98, 27);
+		modificarPerfil.add(lblnomUsuario);
+
+		fieldNombreUsuario = new JTextField();
+		fieldNombreUsuario.setBounds(108, 71, 163, 19);
+		fieldNombreUsuario.setText(textUsuarioP.getText());
+		modificarPerfil.add(fieldNombreUsuario);
+		fieldNombreUsuario.setColumns(10);
+
+		lblNombre = new JLabel("Nombre");
+		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNombre.setBounds(10, 103, 98, 27);
+		modificarPerfil.add(lblNombre);
+
+		fieldNombre = new JTextField();
+		fieldNombre.setBounds(108, 111, 163, 19);
+		fieldNombre.setText(textNombreP.getText());
+		modificarPerfil.add(fieldNombre);
+		fieldNombre.setColumns(10);
+
+		lblDNI = new JLabel("DNI");
+		lblDNI.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblDNI.setBounds(10, 140, 98, 27);
+		modificarPerfil.add(lblDNI);
+
+		fieldDNI = new JTextField();
+		fieldDNI.setBounds(108, 145, 163, 19);
+		fieldDNI.setText(textDniP.getText());
+		modificarPerfil.add(fieldDNI);
+		fieldDNI.setColumns(10);
+
+		lblDireccion = new JLabel("Direccion");
+		lblDireccion.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblDireccion.setBounds(10, 177, 98, 27);
+		modificarPerfil.add(lblDireccion);
+
+		fieldDireccion = new JTextField();
+		fieldDireccion.setBounds(108, 182, 163, 19);
+		fieldDireccion.setText(textDireccionP.getText());
+		modificarPerfil.add(fieldDireccion);
+		fieldDireccion.setColumns(10);
+
+		lblNPassword = new JLabel("Nueva contrasenya");
+		lblNPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNPassword.setBounds(10, 251, 112, 27);
+		modificarPerfil.add(lblNPassword);
+
+		fieldNPassword = new JPasswordField();
+		fieldNPassword.setBounds(10, 288, 196, 19);
+		i = fieldNPassword.getEchoChar();
+		modificarPerfil.add(fieldNPassword);
+
+		lblRPassword = new JLabel("Repetir contrasenya");
+		lblRPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblRPassword.setBounds(10, 317, 112, 27);
+		modificarPerfil.add(lblRPassword);
+
+		fieldRPassword = new JPasswordField();
+		fieldRPassword.setBounds(10, 354, 196, 19);
+		modificarPerfil.add(fieldRPassword);
+
+		btnConfirmarModPer = new JButton("Confirmar");
+		btnConfirmarModPer.setBounds(108, 416, 112, 37);
+		btnConfirmarModPer.addActionListener(mb);
+		modificarPerfil.add(btnConfirmarModPer);
+
+		btnVerContrasenya = new JButton("");
+		btnVerContrasenya.setBounds(216, 287, 28, 21);
+		btnVerContrasenya.addActionListener(new ActionListener() {
+		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(ocultar) {
+					fieldNPassword.setEchoChar((char)0);
+					ocultar = false;
+				}
+				else {
+					fieldNPassword.setEchoChar(i);
+					ocultar = true;
+				}
+				
+			}
+			
+		});
+		modificarPerfil.add(btnVerContrasenya);
+		
+
+		modificarPerfil.setVisible(false);
+
 		// Panel Evaluaciones
 
 		evaluaciones = new JPanel();
@@ -265,96 +376,18 @@ public class InterfazAlumno extends JFrame {
 		scrollListaClases.setBounds(46, 65, 233, 307);
 		solicitarClase.add(scrollListaClases);
 
-		listaClases = new JList();
-		scrollListaClases.setViewportView(listaClases);
+		//listaClasesJList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+		setListaClases();
+		scrollListaClases.setViewportView(listaClasesJList);
 
 		btnSolicitarClase = new JButton("Solicitar");
 		btnSolicitarClase.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnSolicitarClase.setBounds(107, 395, 109, 46);
+		btnSolicitarClase.addActionListener(mb);
 		solicitarClase.add(btnSolicitarClase);
 
 		solicitarClase.setVisible(false);
-
-		// Panel Modificar perfil
-
-		modificarPerfil = new JPanel();
-		modificarPerfil.setBounds(260, 0, 326, 463);
-		getContentPane().add(modificarPerfil);
-		modificarPerfil.setLayout(null);
-
-		lblTituloModificarPerfil = new JLabel("Modificar Perfil");
-		lblTituloModificarPerfil.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblTituloModificarPerfil.setBounds(108, 10, 98, 46);
-		modificarPerfil.add(lblTituloModificarPerfil);
-
-		lblnomUsuario = new JLabel("Nombre usuario");
-		lblnomUsuario.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblnomUsuario.setBounds(10, 66, 98, 27);
-		modificarPerfil.add(lblnomUsuario);
-
-		fieldNombreUsuario = new JTextField();
-		fieldNombreUsuario.setBounds(108, 71, 163, 19);
-		fieldNombreUsuario.setText(textUsuarioP.getText());
-		modificarPerfil.add(fieldNombreUsuario);
-		fieldNombreUsuario.setColumns(10);
-
-		lblNombre = new JLabel("Nombre");
-		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblNombre.setBounds(10, 103, 98, 27);
-		modificarPerfil.add(lblNombre);
-
-		fieldNombre = new JTextField();
-		fieldNombre.setBounds(108, 111, 163, 19);
-		fieldNombre.setText(textNombreP.getText());
-		modificarPerfil.add(fieldNombre);
-		fieldNombre.setColumns(10);
-
-		lblDNI = new JLabel("DNI");
-		lblDNI.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblDNI.setBounds(10, 140, 98, 27);
-		modificarPerfil.add(lblDNI);
-
-		fieldDNI = new JTextField();
-		fieldDNI.setBounds(108, 145, 163, 19);
-		fieldDNI.setText(textDniP.getText());
-		modificarPerfil.add(fieldDNI);
-		fieldDNI.setColumns(10);
-
-		lblDireccion = new JLabel("Direccion");
-		lblDireccion.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblDireccion.setBounds(10, 177, 98, 27);
-		modificarPerfil.add(lblDireccion);
-
-		fieldDireccion = new JTextField();
-		fieldDireccion.setBounds(108, 182, 163, 19);
-		fieldDireccion.setText(textDireccionP.getText());
-		modificarPerfil.add(fieldDireccion);
-		fieldDireccion.setColumns(10);
-
-		lblNPassword = new JLabel("Nueva contrasenya");
-		lblNPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblNPassword.setBounds(10, 251, 112, 27);
-		modificarPerfil.add(lblNPassword);
-
-		fieldNPassword = new JPasswordField();
-		fieldNPassword.setBounds(10, 288, 196, 19);
-		modificarPerfil.add(fieldNPassword);
-
-		lblRPassword = new JLabel("Repetir contrasenya");
-		lblRPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblRPassword.setBounds(10, 317, 112, 27);
-		modificarPerfil.add(lblRPassword);
-
-		fieldRPassword = new JPasswordField();
-		fieldRPassword.setBounds(10, 354, 196, 19);
-		modificarPerfil.add(fieldRPassword);
-
-		btnConfirmarModPer = new JButton("Confirmar");
-		btnConfirmarModPer.setBounds(108, 416, 112, 37);
-		modificarPerfil.add(btnConfirmarModPer);
-		btnConfirmarModPer.addActionListener(mb);
-
-		modificarPerfil.setVisible(false);
 
 	}
 
@@ -377,7 +410,7 @@ public class InterfazAlumno extends JFrame {
 			if (s.equals("Modificar perfil")) {
 				modificarPerfil.setVisible(true);
 			}
-			if (s.equals("Solicitar clase")) {	
+			if (s.equals("Solicitar clase")) {
 				solicitarClase.setVisible(true);
 			}
 			if (s.equals("Ver clases solicitadas")) {
@@ -391,8 +424,6 @@ public class InterfazAlumno extends JFrame {
 				verPerfil.setVisible(true);
 			}
 		}
-		
-		
 
 	}
 
@@ -403,13 +434,16 @@ public class InterfazAlumno extends JFrame {
 			Object o = e.getSource();
 			if (o.equals(btnConfirmarModPer)) {
 				modificarPerfil();
+			} else if (o.equals(btnSolicitarClase)) {
+				solicitarClases();
+			} else if (o.equals(btnVolver)) {
+				dispose();
+				new MenuPrincipal();
 			} 
 
 		}
 
-		
-
-		private static void modificarPerfil() {
+		private void modificarPerfil() {
 
 			if (fieldNPassword.getPassword().length != 0) {
 				if (String.valueOf(fieldNPassword.getPassword()).equals(String.valueOf(fieldRPassword.getPassword()))) {
@@ -446,14 +480,13 @@ public class InterfazAlumno extends JFrame {
 
 		}
 	}
-	
+
 	private static void verClases() {
 		List<Integer> listaIdClases = new ArrayList<>();
 		List<ClaseConducir> listaClases = new ArrayList<>();
 		try {
 			listaClases = ccs.getAllClases(Conexion.obtener());
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -497,4 +530,48 @@ public class InterfazAlumno extends JFrame {
 
 	}
 
+	private static void setListaClases() {
+		List<Integer> listaIdClases = new ArrayList<>();
+		List<ClaseConducir> listaClases = new ArrayList<>();
+		try {
+			listaClases = ccs.getAllClases(Conexion.obtener());
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+
+		PreparedStatement consulta;
+		try {
+			consulta = Conexion.obtener().prepareStatement(
+					"SELECT a.id_clase FROM asistencia a, estudiante e WHERE a.dni_alumno = e.dni AND e.id_alumno = ?");
+			consulta.setInt(1, id);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				listaIdClases.add(resultado.getInt("a.id_clase"));
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < listaClases.size(); i++) {
+			int cont = 0;
+			for (int j = 0; j < listaIdClases.size(); j++) {
+				if (listaClases.get(i).getId_Clase() == listaIdClases.get(j)) {
+					cont++;
+				}
+			}
+			if (cont == 1) {
+				listaClases.remove(i);
+			}
+		}
+
+		listaClasesJList = new JList(listaClases.toArray());
+
+	}
+
+	private static void solicitarClases() {
+		List<ClaseConducir> clasesSolicitadas = listaClasesJList.getSelectedValuesList();
+		for (ClaseConducir c : clasesSolicitadas) {
+			System.out.println(c);
+		}
+	}
 }

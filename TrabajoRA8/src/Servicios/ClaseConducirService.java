@@ -50,11 +50,11 @@ public class ClaseConducirService {
 
 			PreparedStatement consulta;
 
-<<<<<<< Updated upstream
+
 			consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(id, fecha, hora, dni_Instructor, id_Vehiculo) VALUES(?, ?, ?, ?, ?)");
-=======
+
 			consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(id,fecha,hora,dni_Instructor,id_Vehiculo) VALUES(?, ?, ?, ?, ?)");
->>>>>>> Stashed changes
+
 			consulta.setInt(1, clase_conducir.getId_Clase());
 			consulta.setDate(2, clase_conducir.getFecha());
 			consulta.setTime(3, clase_conducir.getHora());

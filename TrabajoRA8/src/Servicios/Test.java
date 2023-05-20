@@ -3,13 +3,12 @@ package Servicios;
 import java.sql.SQLException;
 
 import Visual.InterfazAdmin;
+import Visual.MenuPrincipal;
 
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		new InterfazAdmin();
-//		new MenuPrincipal();
-//		new MenuPrincipal();
+		new MenuPrincipal();
 		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID
 //		EstudianteService s=new EstudianteService();
