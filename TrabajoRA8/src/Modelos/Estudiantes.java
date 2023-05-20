@@ -15,8 +15,7 @@ public class Estudiantes extends Persona {
 		activado = true;
 	}
 	
-	public Estudiantes(String dni, String nombre, String direccion, int id_Alumno, boolean activado, float evaluacion1,
-			float evaluacion2, float evaluacion3) {
+	public Estudiantes(String dni, String nombre, String direccion, int id_Alumno, boolean activado) {
 		super(dni, nombre, direccion);
 		this.id_Alumno = id_Alumno;
 		this.activado = activado;

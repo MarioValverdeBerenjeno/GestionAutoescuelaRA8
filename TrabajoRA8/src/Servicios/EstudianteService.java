@@ -47,12 +47,12 @@ public class EstudianteService {
 			PreparedStatement consulta;
 
 			consulta = conexion.prepareStatement(
-					"INSERT INTO " + this.tabla + "(dni, nombre, direccion,id_Alumno,evaluacion1,evaluacion2,evaluacion3,activado) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+					"INSERT INTO " + this.tabla + "(dni, nombre, direccion,id_Alumno,activado) VALUES(?, ?, ?, ?, ?)");
 			consulta.setString(1, estudiante.getDni());
 			consulta.setString(2, estudiante.getNombre());
 			consulta.setString(3, estudiante.getDireccion());
 			consulta.setInt(4, estudiante.getId_Alumno());
-			consulta.setBoolean(8, estudiante.isActivado());
+			consulta.setBoolean(5, estudiante.isActivado());
 
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
@@ -93,12 +93,12 @@ public class EstudianteService {
 		Estudiantes estudiante = null;
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT dni,nombre,direccion,activado,evaluacion1,evaluacion2,evaluacion3 " + " FROM " + this.tabla + " WHERE id_Alumno = ?");
+					.prepareStatement("SELECT dni,nombre,direccion,activado" + " FROM " + this.tabla + " WHERE id_Alumno = ?");
 			consulta.setInt(1, id_Alumno);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				estudiante = new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
-						resultado.getString("direccion"), id_Alumno,resultado.getBoolean("activado"), resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3"));
+						resultado.getString("direccion"), id_Alumno,resultado.getBoolean("activado"));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
@@ -112,11 +112,11 @@ public class EstudianteService {
 		List<Estudiantes> alumnos = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT dni,nombre,direccion,id_Alumno,evaluacion1,evaluacion2,evaluacion3,activado" + " FROM " + this.tabla);
+					.prepareStatement("SELECT dni,nombre,direccion,id_Alumno,activado" + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				alumnos.add(new Estudiantes(resultado.getString("dni"), resultado.getString("nombre"),
-						resultado.getString("direccion"), resultado.getInt("id_Alumno"),resultado.getBoolean("activado"), resultado.getFloat("evaluacion1"),  resultado.getFloat("evaluacion2"),  resultado.getFloat("evaluacion3")));
+						resultado.getString("direccion"), resultado.getInt("id_Alumno"),resultado.getBoolean("activado")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
