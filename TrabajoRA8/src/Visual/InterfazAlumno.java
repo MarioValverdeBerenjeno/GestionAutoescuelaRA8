@@ -21,11 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import Modelos.ClaseConducir;
@@ -56,6 +52,7 @@ public class InterfazAlumno extends JFrame {
 	// SolicitarClase
 	private JLabel lblTituloSolicitarClase;
 	private static JList listaClasesJList;
+	static List<ClaseConducir> listaClases = new ArrayList<>();
 	private JButton btnSolicitarClase;
 	private JScrollPane scrollListaClases;
 	// VerClases
@@ -282,24 +279,22 @@ public class InterfazAlumno extends JFrame {
 		btnVerContrasenya = new JButton("");
 		btnVerContrasenya.setBounds(216, 287, 28, 21);
 		btnVerContrasenya.addActionListener(new ActionListener() {
-		
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				if(ocultar) {
-					fieldNPassword.setEchoChar((char)0);
+
+				if (ocultar) {
+					fieldNPassword.setEchoChar((char) 0);
 					ocultar = false;
-				}
-				else {
+				} else {
 					fieldNPassword.setEchoChar(i);
 					ocultar = true;
 				}
-				
+
 			}
-			
+
 		});
 		modificarPerfil.add(btnVerContrasenya);
-		
 
 		modificarPerfil.setVisible(false);
 
@@ -376,7 +371,7 @@ public class InterfazAlumno extends JFrame {
 		scrollListaClases.setBounds(46, 65, 233, 307);
 		solicitarClase.add(scrollListaClases);
 
-		//listaClasesJList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		// listaClasesJList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		setListaClases();
 		scrollListaClases.setViewportView(listaClasesJList);
@@ -439,7 +434,7 @@ public class InterfazAlumno extends JFrame {
 			} else if (o.equals(btnVolver)) {
 				dispose();
 				new MenuPrincipal();
-			} 
+			}
 
 		}
 
@@ -569,9 +564,23 @@ public class InterfazAlumno extends JFrame {
 	}
 
 	private static void solicitarClases() {
+		PreparedStatement consultaInsertar;
+		PreparedStatement consultaComprobar;
 		List<ClaseConducir> clasesSolicitadas = listaClasesJList.getSelectedValuesList();
-		for (ClaseConducir c : clasesSolicitadas) {
-			System.out.println(c);
+		for (ClaseConducir cc : clasesSolicitadas) {
+			try {
+				consultaInsertar = Conexion.obtener().prepareStatement(
+						"INSERT INTO solicitud (dni_estudiante, dni_instructor_clase, id_clase_conducir) VALUES (?, ?, ?)");
+				consultaInsertar.setString(1, es.getAlumno(Conexion.obtener(), id).getDni());
+				consultaInsertar.setString(2, cc.getDni_Instructor());
+				consultaInsertar.setInt(3, cc.getId_Clase());
+				consultaInsertar.executeUpdate();
+				listaClases.remove(cc);
+				listaClasesJList = new JList(listaClases.toArray());
+			} catch (ClassNotFoundException | SQLException e) {
+
+				e.printStackTrace();
+			}
 		}
 	}
 }
