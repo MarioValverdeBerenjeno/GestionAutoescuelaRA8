@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import Modelos.Estudiantes;
 import Modelos.Usuario;
@@ -34,6 +36,7 @@ public class UsuarioService {
 	         throw new SQLException(ex);
 	      }
 	   }
+	
 	
 	public void saveInstructor(Connection conexion, Usuario user) throws SQLException{
 
@@ -104,4 +107,23 @@ public class UsuarioService {
 	         throw new SQLException(ex);
 	      }
 	   }
+	//Conseguir todos los usuarios
+	public List<Usuario> getAllUsuarios(Connection conexion) throws SQLException {
+		List<Usuario> usuarios = new ArrayList<>();
+		try {
+			PreparedStatement consulta = conexion
+					.prepareStatement("SELECT idUsuario,nombre,contrasenya,rol" + " FROM " + this.tabla);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				usuarios.add(new Usuario(resultado.getInt("idUsuario"),resultado.getString("nombre"),
+						resultado.getString("contrasenya"),resultado.getString("rol")));
+			}
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+		for (Usuario a : usuarios) {
+			System.out.println(a.getNombre() + " " + a.getId());
+		}
+		return usuarios;
+	}
 }

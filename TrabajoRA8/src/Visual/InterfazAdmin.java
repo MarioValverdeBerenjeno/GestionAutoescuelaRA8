@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -17,17 +18,21 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import Modelos.Estudiantes;
 import Modelos.ParteAveria;
+import Modelos.Usuario;
 import Servicios.AveriaService;
 import Servicios.Conexion;
 import Servicios.EstudianteService;
+import Servicios.InstructorService;
 import Servicios.UsuarioService;
 
 @SuppressWarnings("serial")
@@ -35,11 +40,10 @@ public class InterfazAdmin extends JFrame {
 	private JLabel labelFoto, labelSaludo, labelHacer, labelClave, labelNuevaClave, lblEligeAlEstudiante;
 	@SuppressWarnings("rawtypes")
 	private JComboBox comboOpciones;
-	private JComboBox<Estudiantes> comboClaveEstudiantes;
+	private JComboBox<Usuario> comboClaveEstudiantes;
 	private JPanel panelOpciones, panelEstudiantes, panelClave, panelBaja, panelAverias;
 	private JButton activarEstudiante, desactivarEstudiante, volver, darbaja, confirmar, reestablecer;
-	private JTextField reestablecerclave, reestablecernueva;
-	DefaultComboBoxModel<Estudiantes> modeloClave = new DefaultComboBoxModel<>();
+	private JPasswordField reestablecerclave, reestablecernueva;
 	// tabla
 	DefaultTableModel comboAveria, comboBajaEstudiante, comboADEstudiante;
 	private static JTable tablaAveria, tablaBaja, tablaAD;
@@ -48,13 +52,17 @@ public class InterfazAdmin extends JFrame {
 	private String[] opcionesAdministrador = { "Selecciona...", "Averias", "Gestionar estudiantes",
 			"Reestablecer clave", "Dar de baja" }, columnas;
 	private List<Estudiantes> ListaAlumnos;
+	private List<Usuario> ListUsuario, ListaUsuarios, ListUsu;
 	private List<ParteAveria> ListaAverias;
+//	private Collection<Usuario> ListaUsuarios,ListUsu;
+	DefaultComboBoxModel<Usuario> modeloClave = new DefaultComboBoxModel<>();
 	// manejadores
 	ManejadorEventos me = new ManejadorEventos();
 	ManejadorAction ma = new ManejadorAction();
 	// Instancias
 	EstudianteService es = new EstudianteService();
 	UsuarioService us = new UsuarioService();
+	InstructorService is = new InstructorService();
 	// Comparator
 
 	public InterfazAdmin() {
@@ -131,7 +139,7 @@ public class InterfazAdmin extends JFrame {
 		panelBaja.setBounds(153, 0, 433, 463);
 		// JTABLE
 		// Crear el JTable
-		columnas = new String[] { "ID_Alumno", "DNI", "Nombre", "Direccion", };
+		columnas = new String[] { "ID", "Nombre", "Role", };
 		comboBajaEstudiante = new DefaultTableModel(columnas, 0);
 		setTablaBaja(new JTable(comboBajaEstudiante));
 		getTablaBaja().setPreferredScrollableViewportSize(new Dimension(250, 100));
@@ -153,11 +161,13 @@ public class InterfazAdmin extends JFrame {
 		// Rellenar tabla alumno
 
 		try {
-			EstudianteService AlumnoServi = new EstudianteService();
-			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
-			for (Estudiantes a : ListaAlumnos) {
-				String[] data = { String.valueOf(a.getId_Alumno()), a.getDni(), a.getNombre(), a.getDireccion() };
-				comboBajaEstudiante.addRow(data);
+
+			ListUsuario = us.getAllUsuarios(Conexion.obtener());
+			for (Usuario a : ListUsuario) {
+				if (!a.getRol().equalsIgnoreCase("ADMIN")) {
+					String[] data = { String.valueOf(a.getId()), a.getNombre(), a.getRol() };
+					comboBajaEstudiante.addRow(data);
+				}
 			}
 		} catch (java.lang.NullPointerException e) {
 
@@ -178,7 +188,7 @@ public class InterfazAdmin extends JFrame {
 		panelEstudiantes.setBounds(153, 0, 433, 463);
 		// JTABLE
 		// Crear el JTable
-		columnas = new String[] { "DNI", "Nombre", "Direccion", "ID_Alumno" };
+		columnas = new String[] { "ID", "DNI", "Nombre", "Direccion", "Activado" };
 		comboADEstudiante = new DefaultTableModel(columnas, 0);
 		setTablaAD(new JTable(comboADEstudiante));
 		getTablaAD().setPreferredScrollableViewportSize(new Dimension(250, 100));
@@ -197,7 +207,13 @@ public class InterfazAdmin extends JFrame {
 			EstudianteService AlumnoServi = new EstudianteService();
 			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
 			for (Estudiantes a : ListaAlumnos) {
-				String[] data = { String.valueOf(a.getId_Alumno()), a.getDni(), a.getNombre(), a.getDireccion() };
+				String Activado;
+				if (a.isActivado())
+					Activado = "SI";
+				else
+					Activado = "NO";
+				String[] data = { String.valueOf(a.getId_Alumno()), a.getDni(), a.getNombre(), a.getDireccion(),
+						Activado };
 				comboADEstudiante.addRow(data);
 			}
 		} catch (java.lang.NullPointerException e) {
@@ -266,9 +282,15 @@ public class InterfazAdmin extends JFrame {
 		lblEligeAlEstudiante.setBounds(59, 94, 110, 13);
 		panelClave.add(lblEligeAlEstudiante);
 		// añadir estudiantes a combo box
-		EstudianteService AlumnoServi = new EstudianteService();
+		UsuarioService usuServi = new UsuarioService();
 		try {
-			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
+			ListaUsuarios = usuServi.getAllUsuarios(Conexion.obtener());
+			ListUsu = new ArrayList<>();
+			for (Usuario usu : ListaUsuarios) {
+				if (!usu.getRol().equalsIgnoreCase("ADMIN")) {
+					ListUsu.add(usu);
+				}
+			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -279,8 +301,8 @@ public class InterfazAdmin extends JFrame {
 		// seleccionar estudiante ??
 		modeloClave = new DefaultComboBoxModel<>();
 //
-		modeloClave.addAll(ListaAlumnos);
-		comboClaveEstudiantes = new JComboBox<Estudiantes>(modeloClave);
+		modeloClave.addAll(ListUsu);
+		comboClaveEstudiantes = new JComboBox<Usuario>(modeloClave);
 		comboClaveEstudiantes.setBounds(195, 90, 200, 21);
 		panelClave.add(comboClaveEstudiantes);
 		// etiqueta
@@ -288,7 +310,7 @@ public class InterfazAdmin extends JFrame {
 		labelClave.setBounds(59, 41, 145, 13);
 		panelClave.add(labelClave);
 		// textfield clave
-		reestablecerclave = new JTextField(16);
+		reestablecerclave = new JPasswordField(16);
 		reestablecerclave.setBounds(220, 38, 153, 19);
 		panelClave.add(reestablecerclave);
 		// etiqueta
@@ -296,7 +318,7 @@ public class InterfazAdmin extends JFrame {
 		labelNuevaClave.setBounds(59, 64, 150, 13);
 		panelClave.add(labelNuevaClave);
 		// textfield nueva clave
-		reestablecernueva = new JTextField(16);
+		reestablecernueva = new JPasswordField(16);
 		reestablecernueva.setBounds(220, 61, 153, 19);
 		panelClave.add(reestablecernueva);
 		add(panelClave);
@@ -325,46 +347,106 @@ public class InterfazAdmin extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o = e.getSource();
-			//botones
+			// botones
 			if (o == volver) {
 				volverOpciones();
-			}else if (o == reestablecer) {
-
-			}else {
-				
-			obtenerFilas();
-			int idEstudiante = Integer.parseInt((getTablaBaja().getValueAt(getTablaBaja().getSelectedRow(), 0)).toString()) ;
-			if (o == darbaja) {
+			} else if (o == reestablecer) {
 				try {
-					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres dar de baja?", "WARNING",JOptionPane.WARNING_MESSAGE,
-					        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-					    // yes option
-						//CUANDO SE ELIMINA UN DATO DE LA TABLA HAY QUE ACTUALIZARLA (OCULTAR Y MOSTRAR)
-						es.removeId(Conexion.obtener(), idEstudiante);
-					} else {
-					    // no option
-					}
+					Usuario selectedUser = (Usuario) comboClaveEstudiantes.getSelectedItem();
+					int id = selectedUser.getId();
+					System.out.println(id);
+
+					// Comprobar contraseña iguales
+					if (reestablecernueva.getText().equals(reestablecerclave.getText())) {
+						Usuario modiUsuario = us.getUsuario(Conexion.obtener(), id);
+						modiUsuario.setPassword(reestablecernueva.getText());
+						us.save(Conexion.obtener(), modiUsuario);
+						System.out.println("IGUALES");
+					} else
+						JOptionPane.showMessageDialog(null, "La contraseña no coincide", "ERROR PASSWORD",
+								JOptionPane.ERROR_MESSAGE);
 				} catch (ClassNotFoundException | SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			} else if (o == confirmar) {
-
-			}  else if (o == desactivarEstudiante) {
-
-			}else if(o== activarEstudiante) {
-				
 			}
-			
-		}}
+
+			// Boton dar de baja
+			try {
+				if (o == darbaja && obtenerFilasBaja()) {
+
+//				int idUsuario = Integer.parseInt((getTablaBaja().getValueAt(getTablaBaja().getSelectedRow(), 0)).toString()) ;
+//					String Role = (getTablaBaja().getValueAt(getTablaBaja().getSelectedRow(), 0)).toString();
+
+					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres dar de baja?", "WARNING",
+							JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						// si option
+
+						int[] selectedRows = getTablaBaja().getSelectedRows();
+
+						for (int row : selectedRows) {
+							// Recorre las columnas de la fila actual
+							int todasId = Integer.parseInt(getTablaBaja().getValueAt(row, 0).toString());
+							String rol = getTablaBaja().getValueAt(row, 2).toString();
+//							System.out.println("Valor de la celda (" + row + ", " + 0 + "): " + todasId);
+							if (rol.equalsIgnoreCase("ALUMNO")) {
+								es.removeId(Conexion.obtener(), todasId);
+							} else if (rol.equalsIgnoreCase("INSTRUCTOR")) {
+//									is.removeId(Conexion.obtener(),cellValue);
+							}
+							us.removeId(Conexion.obtener(), todasId);
+//							 getTablaBaja().getModel()).fireTableDataChanged();
+						}
+
+					}
+				}
+
+				// Boton CONFIRMAR
+				if (o == confirmar) {
+
+				}
+
+				// BOTONES ACTIVAR DESACTIVAR
+
+				if (o == desactivarEstudiante && obtenerFilasAD()) {
+					int idUsuario = Integer
+							.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
+					obtenerFilasAD();
+
+					es.desactivarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
+
+				} else if (o == activarEstudiante && obtenerFilasAD()) {
+					int idUsuario = Integer
+							.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
+
+					es.activarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
+
+				}
+
+			} catch (ClassNotFoundException | SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		}
 	}
 
-	public void obtenerFilas() {
+	public boolean obtenerFilasBaja() {
 		if (getTablaBaja().getSelectedRow() < 0) {
 			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
 					JOptionPane.INFORMATION_MESSAGE);
+			return false;
 		} else {
+			return true;
+		}
+	}
 
+	public boolean obtenerFilasAD() {
+		if (getTablaAD().getSelectedRow() < 0) {
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
+					JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		} else {
+			return true;
 		}
 	}
 

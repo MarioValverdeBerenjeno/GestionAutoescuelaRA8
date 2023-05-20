@@ -67,17 +67,33 @@ public class EstudianteService {
 			
 			consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET dni = ?, nombre = ?, direccion = ?, activado = ? WHERE id_Alumno = ?");
 
+			if(!estudiante.isActivado()) {
+				consulta.setString(1, estudiante.getDni());
+				consulta.setString(2, estudiante.getNombre());
+				consulta.setString(3, estudiante.getDireccion());
+				consulta.setBoolean(4, true);
+				consulta.setInt(5, estudiante.getId_Alumno());
+			}
+
+			
+			consulta.executeUpdate();
+			System.out.println("El estudiante estaba "+estudiante.isActivado());
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+	}
+	public void desactivarEstudiante(Connection conexion, Estudiantes estudiante) throws SQLException, ClassNotFoundException {
+		try {
+			
+			PreparedStatement consulta;
+			
+			consulta = conexion.prepareStatement("UPDATE " + this.tabla + " SET dni = ?, nombre = ?, direccion = ?, activado = ? WHERE id_Alumno = ?");
+
 			if(estudiante.isActivado()) {
 				consulta.setString(1, estudiante.getDni());
 				consulta.setString(2, estudiante.getNombre());
 				consulta.setString(3, estudiante.getDireccion());
 				consulta.setBoolean(4, false);
-				consulta.setInt(5, estudiante.getId_Alumno());
-			}else {
-				consulta.setString(1, estudiante.getDni());
-				consulta.setString(2, estudiante.getNombre());
-				consulta.setString(3, estudiante.getDireccion());
-				consulta.setBoolean(4, true);
 				consulta.setInt(5, estudiante.getId_Alumno());
 			}
 
