@@ -77,7 +77,25 @@ public class AveriaService {
 		System.out.println(parte);
 		return parte;
 	}
+	public ParteAveria getAveriaDNI_Instructor(Connection conexion, String dni_instructor) throws SQLException {
+		ParteAveria parte = null;
+		try {
+			PreparedStatement consulta = conexion
+					.prepareStatement("SELECT id_Parte,datos_averia,id_Vehiculo_Averiado " + " FROM "
+							+ this.tabla + " WHERE dni_Instructor_Informante = ?");
+			consulta.setString(1, dni_instructor);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				parte = new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("id_Vehiculo_Averiado"),
+						resultado.getString("datos_averia"), dni_instructor);
+			}
 
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+		System.out.println(parte);
+		return parte;
+	}
 	// devuelve el usuario a traves de pasarle como parametro el nombre de usuario
 //	public Usuario getAveriaNombre(Connection conexion, String nombre) throws SQLException {
 //		Usuario user = null;
@@ -107,7 +125,7 @@ public class AveriaService {
 					.prepareStatement("SELECT id_Parte,id_Vehiculo_Averiado,datos_Averia,dni_Instructor_Informante" + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				averias.add(new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("id_Vehiculo_Averiado"), resultado.getString("datos_Averia"), resultado.getString("dni_Instructor")));
+				averias.add(new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("id_Vehiculo_Averiado"), resultado.getString("datos_Averia"), resultado.getString("dni_Instructor_Informante")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);

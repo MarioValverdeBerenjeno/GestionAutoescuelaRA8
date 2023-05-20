@@ -21,8 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -63,6 +61,8 @@ public class InterfazAdmin extends JFrame {
 	EstudianteService es = new EstudianteService();
 	UsuarioService us = new UsuarioService();
 	InstructorService is = new InstructorService();
+	AveriaService avs = new AveriaService();
+
 	// Comparator
 
 	public InterfazAdmin() {
@@ -109,8 +109,8 @@ public class InterfazAdmin extends JFrame {
 		scrollAverias.setBounds(10, 10, 413, 401);
 		panelAverias.add(scrollAverias);
 		try {
-			AveriaService av = new AveriaService();
-			ListaAverias = av.getAllAverias(Conexion.obtener());
+
+			ListaAverias = avs.getAllAverias(Conexion.obtener());
 			for (ParteAveria a : ListaAverias) {
 				String[] data = { String.valueOf(a.getIdParte()), String.valueOf(a.getIdVehiculoAveriado()),
 						a.getDatosAveria(), a.getDniInstructor() };
@@ -122,12 +122,12 @@ public class InterfazAdmin extends JFrame {
 
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// boton arreglar
 		confirmar = new JButton("Confirmar arreglo");
 		confirmar.setBounds(140, 421, 140, 21);
+		confirmar.addActionListener(ma);
 		panelAverias.add(confirmar);
 		add(panelAverias);
 		panelAverias.setVisible(false);
@@ -175,7 +175,6 @@ public class InterfazAdmin extends JFrame {
 
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		add(panelBaja);
@@ -204,8 +203,7 @@ public class InterfazAdmin extends JFrame {
 		panelEstudiantes.add(scrollActDes);
 		// Rellenar tabla alumno
 		try {
-			EstudianteService AlumnoServi = new EstudianteService();
-			ListaAlumnos = AlumnoServi.getAllAlumnos(Conexion.obtener());
+			ListaAlumnos = es.getAllAlumnos(Conexion.obtener());
 			for (Estudiantes a : ListaAlumnos) {
 				String Activado;
 				if (a.isActivado())
@@ -222,7 +220,6 @@ public class InterfazAdmin extends JFrame {
 
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// boton activar
@@ -272,7 +269,6 @@ public class InterfazAdmin extends JFrame {
 		panelOpciones.setVisible(true);
 	}
 
-	@SuppressWarnings("rawtypes")
 	private void creaClave() {
 		panelClave = new JPanel();
 		panelClave.setLayout(null);
@@ -292,10 +288,8 @@ public class InterfazAdmin extends JFrame {
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// seleccionar estudiante ??
@@ -303,7 +297,8 @@ public class InterfazAdmin extends JFrame {
 //
 		modeloClave.addAll(ListUsu);
 		comboClaveEstudiantes = new JComboBox<Usuario>(modeloClave);
-		comboClaveEstudiantes.setBounds(195, 90, 200, 21);
+		comboClaveEstudiantes.setMaximumRowCount(10);
+		comboClaveEstudiantes.setBounds(190, 90, 220, 21);
 		panelClave.add(comboClaveEstudiantes);
 		// etiqueta
 		labelClave = new JLabel("Introduce la nueva clave:");
@@ -344,6 +339,7 @@ public class InterfazAdmin extends JFrame {
 	// confirmar,reestablecer;
 	// Botones
 	private class ManejadorAction implements ActionListener {
+		@SuppressWarnings("deprecation")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o = e.getSource();
@@ -386,44 +382,72 @@ public class InterfazAdmin extends JFrame {
 						for (int row : selectedRows) {
 							// Recorre las columnas de la fila actual
 							int todasId = Integer.parseInt(getTablaBaja().getValueAt(row, 0).toString());
+							
 							String rol = getTablaBaja().getValueAt(row, 2).toString();
 //							System.out.println("Valor de la celda (" + row + ", " + 0 + "): " + todasId);
 							if (rol.equalsIgnoreCase("ALUMNO")) {
 								es.removeId(Conexion.obtener(), todasId);
+								us.removeId(Conexion.obtener(), todasId);
+								JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente","BAJA",JOptionPane.INFORMATION_MESSAGE);
 							} else if (rol.equalsIgnoreCase("INSTRUCTOR")) {
-//									is.removeId(Conexion.obtener(),cellValue);
+								//COmrpobar que no exista en una averia y si es asi pues no poder borrar al instructor
+								if(avs.getAveriaDNI_Instructor(Conexion.obtener(), is.getInstructor(Conexion.obtener(), todasId).getDni())==null) {
+									is.removeId(Conexion.obtener(),todasId);
+									us.removeId(Conexion.obtener(), todasId);
+									JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente","BAJA",JOptionPane.INFORMATION_MESSAGE);
+								}else
+									JOptionPane.showMessageDialog(null, "No se puede dar de baja correctamente"
+											+ "ya que el instructor esta relacionado con uno o varios partes"
+											+ "de averia.","ERROR",JOptionPane.INFORMATION_MESSAGE);
+
+									
 							}
-							us.removeId(Conexion.obtener(), todasId);
+							
 //							 getTablaBaja().getModel()).fireTableDataChanged();
 						}
-
+						refrescar();
 					}
 				}
 
 				// Boton CONFIRMAR
-				if (o == confirmar) {
-
+				if (o == confirmar && obtenerFilasAveria()) {
+					int idAveria = Integer
+							.parseInt((getTablaAveria().getValueAt(getTablaAveria().getSelectedRow(), 0)).toString());
+					obtenerFilasAD();
+					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres CONFIRMAR el arrelgo?", "WARNING",
+							JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						// si option
+						avs.removeId(Conexion.obtener(), idAveria);
+						//refrescar
+						JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente","BAJA",JOptionPane.INFORMATION_MESSAGE);
+						refrescar();
+					}
 				}
 
 				// BOTONES ACTIVAR DESACTIVAR
-
+				try {
 				if (o == desactivarEstudiante && obtenerFilasAD()) {
 					int idUsuario = Integer
 							.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
 					obtenerFilasAD();
 
 					es.desactivarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
-
+					JOptionPane.showMessageDialog(null, "Usuarios desactivados","DESACTIVAR",JOptionPane.INFORMATION_MESSAGE);
+					refrescar();
 				} else if (o == activarEstudiante && obtenerFilasAD()) {
 					int idUsuario = Integer
 							.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
 
 					es.activarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
-
+					JOptionPane.showMessageDialog(null, "Usuarios activados","ACTIVAR",JOptionPane.INFORMATION_MESSAGE);
+					refrescar();
+					
+				}
+				}catch(SQLException x) {
+					JOptionPane.showMessageDialog(null, "No es posible realizar esa accion","Error",JOptionPane.ERROR_MESSAGE);
 				}
 
 			} catch (ClassNotFoundException | SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
@@ -440,8 +464,23 @@ public class InterfazAdmin extends JFrame {
 		}
 	}
 
+	public void refrescar() {
+		InterfazAdmin.this.dispose();
+		new InterfazAdmin();		
+	}
+
 	public boolean obtenerFilasAD() {
 		if (getTablaAD().getSelectedRow() < 0) {
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
+					JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public boolean obtenerFilasAveria() {
+		if (getTablaAveria().getSelectedRow() < 0) {
 			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
 					JOptionPane.INFORMATION_MESSAGE);
 			return false;

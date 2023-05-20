@@ -41,18 +41,19 @@ public class InstructorService {
 
 	// Crear nuevo instructor
 
-	public void saveNewInstructor(Connection conexion, Instructor instructor) throws SQLException, ClassNotFoundException {
+	public void saveNewInstructor(Connection conexion, Instructor instructor)
+			throws SQLException, ClassNotFoundException {
 		try {
 			UsuarioService usu = new UsuarioService();
 
 			PreparedStatement consulta;
 
-			consulta = conexion.prepareStatement(
-					"INSERT INTO " + this.tabla + "(dni, nombre, direccion) VALUES(?, ?, ?, ?)");
+			consulta = conexion
+					.prepareStatement("INSERT INTO " + this.tabla + "(dni, nombre, direccion) VALUES(?, ?, ?, ?)");
 			consulta.setString(1, instructor.getDni());
 			consulta.setString(2, instructor.getNombre());
 			consulta.setString(3, instructor.getDireccion());
-			//El id se crea solo
+			// El id se crea solo
 //			consulta.setInt(4, instructor.getId_Instructor());
 
 			consulta.executeUpdate();
@@ -106,7 +107,8 @@ public class InstructorService {
 
 	public void remove(Connection conexion, Instructor instructor) throws SQLException {
 		try {
-			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id_Instructor = ?");
+			PreparedStatement consulta = conexion
+					.prepareStatement("DELETE FROM " + this.tabla + " WHERE id_Instructor = ?");
 			consulta.setInt(1, instructor.getId_Instructor());
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
@@ -114,6 +116,19 @@ public class InstructorService {
 		}
 		UsuarioService userServi = new UsuarioService();
 		userServi.removeId(conexion, instructor.getId_Instructor());
+	}
+
+	public void removeId(Connection conexion, int id) throws SQLException {
+		try {
+			PreparedStatement consulta = conexion
+					.prepareStatement("DELETE FROM " + this.tabla + " WHERE id_Instructor = ?");
+			consulta.setInt(1, id);
+			consulta.executeUpdate();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+		UsuarioService userServi = new UsuarioService();
+		userServi.removeId(conexion, id);
 	}
 
 }
