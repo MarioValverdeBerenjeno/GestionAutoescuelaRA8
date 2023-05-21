@@ -374,7 +374,7 @@ public class InterfazAlumno extends JFrame {
 		scrollListaClases.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollListaClases.setBounds(46, 65, 233, 307);
 		solicitarClase.add(scrollListaClases);
-		
+
 		btnSolicitarClase = new JButton("Solicitar");
 		btnSolicitarClase.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnSolicitarClase.setBounds(107, 395, 109, 46);
@@ -447,23 +447,36 @@ public class InterfazAlumno extends JFrame {
 
 		private void modificarPerfil() {
 
-			if (fieldNPassword.getPassword().length != 0) {
-				if (String.valueOf(fieldNPassword.getPassword()).equals(String.valueOf(fieldRPassword.getPassword()))) {
-					try {
-						us.save(Conexion.obtener(), new Usuario(id, fieldNombreUsuario.getText(),
-								String.valueOf(fieldNPassword.getPassword())));
-						es.saveUpdate(Conexion.obtener(), new Estudiantes(fieldDNI.getText(), fieldNombre.getText(),
-								fieldDireccion.getText(), id));
-						rellenarPerfil();
-					} catch (ClassNotFoundException | SQLException e1) {
-						e1.printStackTrace();
+			if (!fieldNombreUsuario.getText().equals("") && !fieldNombre.getText().equals("")
+					&& !fieldDNI.getText().equals("") && !fieldDireccion.getText().equals("")) {
+				if (fieldDNI.getText().matches("[0-9]{8}[A-Z]")) {
+					if (fieldNPassword.getPassword().length != 0) {
+						if (String.valueOf(fieldNPassword.getPassword())
+								.equals(String.valueOf(fieldRPassword.getPassword()))) {
+							try {
+								us.save(Conexion.obtener(), new Usuario(id, fieldNombreUsuario.getText(),
+										String.valueOf(fieldNPassword.getPassword())));
+								es.saveUpdate(Conexion.obtener(), new Estudiantes(fieldDNI.getText(),
+										fieldNombre.getText(), fieldDireccion.getText(), id));
+								JOptionPane.showMessageDialog(null, "Se ha modificado el perfil correctamente");
+								rellenarPerfil();
+							} catch (ClassNotFoundException | SQLException e1) {
+								e1.printStackTrace();
+							}
+						} else {
+							JOptionPane.showMessageDialog(null, "Ambas contraseñas no coinciden", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseña", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Ambas contraseñas no coinciden", "Error",
+					JOptionPane.showMessageDialog(null, "DNI introducido no valido", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
-			} else {
-				JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseña", "Error",
+			}else {
+				JOptionPane.showMessageDialog(null, "No pueden haber campos sin rellenar", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -580,18 +593,18 @@ public class InterfazAlumno extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		for(int i = 0; i < listaClases.size(); i++) {
-			for(int j = 0; j < noValidas.size(); j++) {
-				if(listaClases.get(i).getId_Clase() == noValidas.get(j)) {
+
+		for (int i = 0; i < listaClases.size(); i++) {
+			for (int j = 0; j < noValidas.size(); j++) {
+				if (listaClases.get(i).getId_Clase() == noValidas.get(j)) {
 					listaClases.remove(i);
 				}
 			}
-		}	
+		}
 
 		listaClasesJList = new JList(listaClases.toArray());
-		
-		if(listaClases.size() == 0) {
+
+		if (listaClases.size() == 0) {
 			btnSolicitarClase.setEnabled(false);
 		}
 
@@ -601,10 +614,11 @@ public class InterfazAlumno extends JFrame {
 		List<Integer> listaIdClases = new ArrayList<>();
 		List<Evaluacion> listaEvaluaciones = new ArrayList<>();
 		try {
-			PreparedStatement consultaNotas = Conexion.obtener().prepareStatement("SELECT id_clase, evaluacion FROM asistencia WHERE dni_alumno = ?");
+			PreparedStatement consultaNotas = Conexion.obtener()
+					.prepareStatement("SELECT id_clase, evaluacion FROM asistencia WHERE dni_alumno = ?");
 			consultaNotas.setString(1, es.getAlumno(Conexion.obtener(), id).getDni());
 			ResultSet resultado = consultaNotas.executeQuery();
-			while(resultado.next()) {
+			while (resultado.next()) {
 				listaEvaluaciones.add(new Evaluacion(resultado.getInt("id_clase"), resultado.getFloat("evaluacion")));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -661,14 +675,13 @@ public class InterfazAlumno extends JFrame {
 				consultaInsertar.setInt(3, cc.getId_Clase());
 				consultaInsertar.executeUpdate();
 				JOptionPane.showMessageDialog(null, "Clase/s solicitadas satisfactoriamente");
-				
-				
+
 			} catch (ClassNotFoundException | SQLException e) {
 
 				e.printStackTrace();
 			}
 			setListaClases();
 		}
-		
+
 	}
 }
