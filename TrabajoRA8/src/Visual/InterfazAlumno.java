@@ -1,13 +1,13 @@
 package Visual;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -295,10 +295,12 @@ public class InterfazAlumno extends JFrame {
 					fieldNPassword.setEchoChar(i);
 					ocultar = true;
 				}
-
 			}
-
 		});
+		ImageIcon icon = new ImageIcon(pruebas.class.getResource("/Visual/imagenes/ojopassword.png"));
+		Image image = icon.getImage().getScaledInstance(24, 21, Image.SCALE_SMOOTH);
+		btnVerContrasenya.setIcon(new ImageIcon(image));
+		
 		modificarPerfil.add(btnVerContrasenya);
 
 		modificarPerfil.setVisible(false);
