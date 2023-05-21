@@ -37,6 +37,7 @@ public class CrudUsuarios extends JFrame {
 
 	public CrudUsuarios() {
 		super("Administrar usuarios");
+		setTitle("CRUD USUARIO");
 		setBounds(100, 100, 600, 500);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
