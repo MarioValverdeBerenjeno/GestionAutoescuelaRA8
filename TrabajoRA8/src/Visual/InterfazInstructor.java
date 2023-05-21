@@ -76,7 +76,8 @@ public class InterfazInstructor extends JFrame {
 					"Ver evaluaciones", "Evaluar" },
 			cabeceraTablaEvaluaciones = { "Estudiante", "Notas" }, arraySolicitudesClases;
 	private List<String> dnisEstudiantes = new ArrayList<>(), ids_clases = new ArrayList<>(),
-			ids_clases_alumno = new ArrayList<>();
+			ids_clases_alumno = new ArrayList<>(), listaAlumnosEvaluados = new ArrayList<>();
+	private List<Float> listaEvaluacionesAlumnos = new ArrayList<>();
 	private List<Estudiantes> listaEstudiantes = new ArrayList<>(), listaEstudiantesProfesor = new ArrayList<>();
 	private List<Evaluacion> listaEvaluaciones = new ArrayList<>();
 	private static List<Evaluacion> solicitudesClases = new ArrayList<>();
@@ -102,12 +103,20 @@ public class InterfazInstructor extends JFrame {
 		obtenerIDInstructor(nombre);
 		obtenerDNIInstructor(nombre);
 		obtenerSolicitudes();
-		/*
-		 * for (Evaluacion e : solicitudesClases) { arraySolicitudesClases[] = e; }
-		 */
+		obtenerEvaluaciones();
 
 		nombreInstructor = nombre;
 
+		dataTablaEvaluaciones = new Object[listaAlumnosEvaluados.size()][listaEvaluacionesAlumnos.size()];
+		/*for (int i = 0; i < listaAlumnosEvaluados.size(); i++) {
+			for (int j = 0; j < listaEvaluacionesAlumnos.size(); j++) {
+				if (j == 0) {
+					dataTablaEvaluaciones[i][j] = listaAlumnosEvaluados.get(i);
+				} else if (j > 0) {
+					dataTablaEvaluaciones[i][j] = listaEvaluacionesAlumnos.get(j);
+				}
+			}
+		}*/
 		modeloTablaEvaluaciones = new DefaultTableModel(dataTablaEvaluaciones, cabeceraTablaEvaluaciones) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -115,14 +124,20 @@ public class InterfazInstructor extends JFrame {
 			}
 		};
 
+		for (int i = 0; i < listaAlumnosEvaluados.size(); i++) {
+			String valor1 = listaAlumnosEvaluados.get(i);
+			Float valor2 = listaEvaluacionesAlumnos.get(i);
+			modeloTablaEvaluaciones.addRow(new Object[] {valor1, valor2});
+		}
+
 		try {
 			listaEstudiantes = estudianteService.getAllAlumnos(Conexion.obtener());
 			for (Estudiantes estudiante : listaEstudiantes) {
 				if (estudiante.getDni().equals(obtenerDNIEstudianteSolicitud(nombre).get(cont++))) {
 					listaEstudiantesProfesor.add(estudiante);
 					for (Evaluacion evaluacion : listaEvaluaciones) {
-						String[] datos = { estudiante.getNombre(), String.valueOf(evaluacion.getEvaluacion()) };
-						modeloTablaEvaluaciones.addRow(datos);
+						/*String[] datos = { estudiante.getNombre(), String.valueOf(evaluacion.getEvaluacion()) };
+						modeloTablaEvaluaciones.addRow(datos);*/
 					}
 				}
 				obtenerIdClase(estudiante.getDni());
@@ -134,8 +149,6 @@ public class InterfazInstructor extends JFrame {
 		modeloCBEstudiante = new DefaultComboBoxModel<>();
 		modeloCBEstudiante.addAll(listaEstudiantesProfesor);
 		modeloCBIdClases = new DefaultComboBoxModel<>();
-
-		dataTablaEvaluaciones = new Object[dimensionTablaClases()][listaEvaluaciones.size()];
 
 		// Inicializacion de la tabla de las clases que tiene el instructor
 		dataTablaClases = new Object[dimensionTablaClases()][3];
@@ -530,7 +543,7 @@ public class InterfazInstructor extends JFrame {
 				String nota = textoNota.getText();
 				if (nota.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Campo nota vacio", "Error", JOptionPane.ERROR_MESSAGE);
-				} else {
+				} else if(!nota.isEmpty()){
 					evaluar(Integer.parseInt((String) cbIdClases.getSelectedItem()));
 					JOptionPane.showMessageDialog(null, "Se ha anyadido correctamente la nota", "Informacion",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -681,8 +694,7 @@ public class InterfazInstructor extends JFrame {
 					e1.printStackTrace();
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseña", "Error",
@@ -796,15 +808,21 @@ public class InterfazInstructor extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
-	/*private void obtenerEvaluaciones(String id_clase) {
+
+	private void obtenerEvaluaciones() {
 		PreparedStatement consulta;
 		try {
-			consulta = Conexion.obtener().prepareStatement("SELECT dni_alumno, evaluacion FROM asistencia WHERE id_clase = ?");
-			consulta.setInt(1, obtenerIdClase(id_clase));
+			consulta = Conexion.obtener().prepareStatement(
+					"SELECT dni_alumno, evaluacion FROM asistencia WHERE id_clase = ANY (SELECT id FROM claseConducir WHERE dni_instructor = ?)");
+			consulta.setString(1, dniInstructor);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				listaAlumnosEvaluados.add(resultado.getString("dni_alumno"));
+				listaEvaluacionesAlumnos.add(resultado.getFloat("evaluacion"));
+			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 }
