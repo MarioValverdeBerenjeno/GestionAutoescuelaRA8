@@ -475,7 +475,7 @@ public class InterfazAlumno extends JFrame {
 					JOptionPane.showMessageDialog(null, "DNI introducido no valido", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
-			}else {
+			} else {
 				JOptionPane.showMessageDialog(null, "No pueden haber campos sin rellenar", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}

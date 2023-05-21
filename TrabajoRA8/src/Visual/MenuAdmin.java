@@ -60,7 +60,8 @@ public class MenuAdmin extends JFrame {
 			}else if(o==btnCrudUsuarios){
 				
 			}else if(o==btnCrudInstructores) {
-				
+				new CrudInstructor();
+				dispose();
 			}else if(o==btnInterfaz) {
 				new InterfazAdmin();
 				dispose();
