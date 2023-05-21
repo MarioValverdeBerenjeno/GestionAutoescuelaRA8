@@ -77,7 +77,7 @@ public class VehiculoService {
 		return vehiculo;
 	}
 
-	// Obtener todos los alumnos
+	// Obtener todos los vehiculos
 
 	public List<Vehiculo> getAllVehiculos(Connection conexion) throws SQLException {
 		List<Vehiculo> vehiculos = new ArrayList<>();
@@ -98,12 +98,21 @@ public class VehiculoService {
 		return vehiculos;
 	}
 
-	// Eliminar instructor
+	// Eliminar vehiculo
 
 	public void remove(Connection conexion, Vehiculo vehiculo) throws SQLException {
 		try {
 			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id = ?");
 			consulta.setInt(1, vehiculo.getId_Vehiculo());
+			consulta.executeUpdate();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+	}
+	public void removeId(Connection conexion, int id) throws SQLException {
+		try {
+			PreparedStatement consulta = conexion.prepareStatement("DELETE FROM " + this.tabla + " WHERE id = ?");
+			consulta.setInt(1, id);
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
 			throw new SQLException(ex);

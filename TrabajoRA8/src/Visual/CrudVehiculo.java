@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -67,24 +68,30 @@ public class CrudVehiculo extends JFrame {
 		btnModImg.setBounds(446, 232, 130, 21);
 		btnModImg.addActionListener(ma);
 		getContentPane().add(btnModImg);
-		// Jtable
+		// JTable
 		// Crear el JTable
 		columnas = new String[] { "ID_VEHICULO", "MODELO", "TIPO", "IMAGEN VEHICULO" };
 		modelVehiculos = new DefaultTableModel(columnas, 0);
 		setTablevehiculo(new JTable(modelVehiculos));
 		getTablevehiculo().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablevehiculo().getTableHeader().setReorderingAllowed(false);
-		//actualizar imagen
-		getTablevehiculo().getSelectionModel().addListSelectionListener(mi);
+		getTablevehiculo().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 		// Crear el ordenador de filas
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelVehiculos);
-		tablevehiculo.setRowSorter(sorter);
-		// Ordenar por la columna "ID" de forma ascendente
-		sorter.sort();
+		for (int i = 0; i < modelVehiculos.getColumnCount(); i++) {
+		    sorter.setSortable(i, false); // Deshabilitar la ordenación de columnas
+		}
+		getTablevehiculo().setRowSorter(sorter);
+
+		//actualizar imagen
+		getTablevehiculo().getSelectionModel().addListSelectionListener(mi);
+
 		// scrollpanel
 		scrollvehiculo = new JScrollPane(getTablevehiculo());
 		scrollvehiculo.setBounds(10, 10, 413, 401);
 		add(scrollvehiculo);
+
 		try {
 			ListaVehiculos = vs.getAllVehiculos(Conexion.obtener());
 			for (Vehiculo a : ListaVehiculos) {
@@ -115,9 +122,21 @@ public class CrudVehiculo extends JFrame {
 				if (o == btnModificar) {
 					new InsModVehiculo();
 				} else if (o == btnBorrar) {
-
+					int idVehiculo = Integer
+							.parseInt((getTablevehiculo().getValueAt(getTablevehiculo().getSelectedRow(), 0)).toString());
+					try {
+					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres BORRAR el vehiculo?", "WARNING",
+							JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						// si option
+						vs.removeId(Conexion.obtener(), idVehiculo);
+						//refrescar
+						JOptionPane.showMessageDialog(null, "Vehiculos borrados correctamente ","Borrados",JOptionPane.INFORMATION_MESSAGE);
+						refrescar();
+					}}catch(Exception z) {
+						JOptionPane.showMessageDialog(null, "No es posible realizar esa accion","Error",JOptionPane.ERROR_MESSAGE);
+					}
 				} else if (o == btnModImg) {
-
+					
 				}
 			}
 		}
@@ -154,4 +173,8 @@ public class CrudVehiculo extends JFrame {
 	public void setTablevehiculo(JTable tablevehiculo) {
 		this.tablevehiculo = tablevehiculo;
 	}
-}
+
+	public void refrescar() {
+		dispose();
+		new CrudVehiculo();
+	}}
