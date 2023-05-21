@@ -22,7 +22,6 @@ public class ModInstructor extends JFrame {
 	private InstructorService is = new InstructorService();
 	private JButton btnAceptar, btnCancelar;
 	private static int id_instructor;
-	private Instructor instructor;
 	private ManejadorBotones mb = new ManejadorBotones();
 
 	public ModInstructor(int id) {
@@ -68,17 +67,6 @@ public class ModInstructor extends JFrame {
 		lblDireccion.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblDireccion.setBounds(10, 96, 73, 13);
 		getContentPane().add(lblDireccion);
-		
-		try {
-			instructor = is.getInstructor(Conexion.obtener(), id_instructor);
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		txtNombre.setText(instructor.getNombre());
-		txtDni.setText(instructor.getDni());
-		txtDireccion.setText(instructor.getDireccion());
 
 		btnAceptar = new JButton("Aceptar");
 		btnAceptar.setBounds(10, 149, 119, 35);

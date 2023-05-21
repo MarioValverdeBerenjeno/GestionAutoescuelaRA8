@@ -510,11 +510,11 @@ public class InterfazAlumno extends JFrame {
 		PreparedStatement consulta;
 		try {
 			consulta = Conexion.obtener().prepareStatement(
-					"SELECT a.id_clase FROM asistencia a, estudiante e WHERE a.dni_alumno = e.dni AND e.id_alumno = ?");
-			consulta.setInt(1, id);
+					"SELECT s.id_clase_conducir FROM solicitud s, estudiante e WHERE e.dni = s.dni_estudiante AND e.dni = ?");
+			consulta.setString(1, es.getAlumno(Conexion.obtener(), id).getDni());
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				listaIdClases.add(resultado.getInt("a.id_clase"));
+				listaIdClases.add(resultado.getInt("s.id_clase_conducir"));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

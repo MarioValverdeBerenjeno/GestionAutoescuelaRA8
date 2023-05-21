@@ -108,15 +108,12 @@ public class InterfazInstructor extends JFrame {
 		nombreInstructor = nombre;
 
 		dataTablaEvaluaciones = new Object[listaAlumnosEvaluados.size()][listaEvaluacionesAlumnos.size()];
-		/*for (int i = 0; i < listaAlumnosEvaluados.size(); i++) {
-			for (int j = 0; j < listaEvaluacionesAlumnos.size(); j++) {
-				if (j == 0) {
-					dataTablaEvaluaciones[i][j] = listaAlumnosEvaluados.get(i);
-				} else if (j > 0) {
-					dataTablaEvaluaciones[i][j] = listaEvaluacionesAlumnos.get(j);
-				}
-			}
-		}*/
+		/*
+		 * for (int i = 0; i < listaAlumnosEvaluados.size(); i++) { for (int j = 0; j <
+		 * listaEvaluacionesAlumnos.size(); j++) { if (j == 0) {
+		 * dataTablaEvaluaciones[i][j] = listaAlumnosEvaluados.get(i); } else if (j > 0)
+		 * { dataTablaEvaluaciones[i][j] = listaEvaluacionesAlumnos.get(j); } } }
+		 */
 		modeloTablaEvaluaciones = new DefaultTableModel(dataTablaEvaluaciones, cabeceraTablaEvaluaciones) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -127,7 +124,7 @@ public class InterfazInstructor extends JFrame {
 		for (int i = 0; i < listaAlumnosEvaluados.size(); i++) {
 			String valor1 = listaAlumnosEvaluados.get(i);
 			Float valor2 = listaEvaluacionesAlumnos.get(i);
-			modeloTablaEvaluaciones.addRow(new Object[] {valor1, valor2});
+			modeloTablaEvaluaciones.addRow(new Object[] { valor1, valor2 });
 		}
 
 		try {
@@ -136,8 +133,11 @@ public class InterfazInstructor extends JFrame {
 				if (estudiante.getDni().equals(obtenerDNIEstudianteSolicitud(nombre).get(cont++))) {
 					listaEstudiantesProfesor.add(estudiante);
 					for (Evaluacion evaluacion : listaEvaluaciones) {
-						/*String[] datos = { estudiante.getNombre(), String.valueOf(evaluacion.getEvaluacion()) };
-						modeloTablaEvaluaciones.addRow(datos);*/
+						/*
+						 * String[] datos = { estudiante.getNombre(),
+						 * String.valueOf(evaluacion.getEvaluacion()) };
+						 * modeloTablaEvaluaciones.addRow(datos);
+						 */
 					}
 				}
 				obtenerIdClase(estudiante.getDni());
@@ -146,6 +146,7 @@ public class InterfazInstructor extends JFrame {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
+
 		modeloCBEstudiante = new DefaultComboBoxModel<>();
 		modeloCBEstudiante.addAll(listaEstudiantesProfesor);
 		modeloCBIdClases = new DefaultComboBoxModel<>();
@@ -543,7 +544,7 @@ public class InterfazInstructor extends JFrame {
 				String nota = textoNota.getText();
 				if (nota.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Campo nota vacio", "Error", JOptionPane.ERROR_MESSAGE);
-				} else if(!nota.isEmpty()){
+				} else if (!nota.isEmpty()) {
 					evaluar(Integer.parseInt((String) cbIdClases.getSelectedItem()));
 					JOptionPane.showMessageDialog(null, "Se ha anyadido correctamente la nota", "Informacion",
 							JOptionPane.INFORMATION_MESSAGE);
