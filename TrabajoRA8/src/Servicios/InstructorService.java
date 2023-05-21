@@ -49,12 +49,12 @@ public class InstructorService {
 			PreparedStatement consulta;
 
 			consulta = conexion
-					.prepareStatement("INSERT INTO " + this.tabla + "(dni, nombre, direccion) VALUES(?, ?, ?, ?)");
+					.prepareStatement("INSERT INTO " + this.tabla + "(dni, nombre, direccion, id_instructor) VALUES(?, ?, ?, ?)");
 			consulta.setString(1, instructor.getDni());
 			consulta.setString(2, instructor.getNombre());
 			consulta.setString(3, instructor.getDireccion());
-			// El id se crea solo
-//			consulta.setInt(4, instructor.getId_Instructor());
+			// El id se crea solo, a no ser que lo cree el admin mediante el CRUD
+			consulta.setInt(4, instructor.getId_Instructor());
 
 			consulta.executeUpdate();
 		} catch (SQLException ex) {

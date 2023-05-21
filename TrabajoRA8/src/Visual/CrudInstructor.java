@@ -84,8 +84,7 @@ public class CrudInstructor extends JFrame {
 		try {
 			ListaInstructores = is.getAllInstructores(Conexion.obtener());
 			for (Instructor a : ListaInstructores) {
-				String[] data = { a.getDni(), a.getNombre(), a.getDireccion(),
-						String.valueOf(a.getId_Instructor()) };
+				String[] data = { a.getDni(), a.getNombre(), a.getDireccion(), String.valueOf(a.getId_Instructor()) };
 				modelInstructor.addRow(data);
 			}
 		} catch (java.lang.NullPointerException e) {
@@ -106,9 +105,13 @@ public class CrudInstructor extends JFrame {
 			Object o = e.getSource();
 
 			if (o.equals(btnInsertar)) {
-
+				new InsInstructor();
+				dispose();
 			} else if (o.equals(btnModificar)) {
-
+				int id = Integer.parseInt(
+						(getTableInstructor().getValueAt(getTableInstructor().getSelectedRow(), 3)).toString());
+				new ModInstructor(id);
+				dispose();
 			} else if (o.equals(btnBorrar)) {
 				int id_instructor = Integer.parseInt(
 						(getTableInstructor().getValueAt(getTableInstructor().getSelectedRow(), 3)).toString());

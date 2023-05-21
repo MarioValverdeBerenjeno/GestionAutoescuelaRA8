@@ -1,6 +1,7 @@
 package Visual;
 
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
@@ -85,6 +86,7 @@ public class InterfazAlumno extends JFrame {
 
 	public InterfazAlumno(String nombre) {
 		super("Interfaz Alumno");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(pruebas.class.getResource("/Visual/imagenes/estudiante.jpg")));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(600, 500);
 		getContentPane().setLayout(null);

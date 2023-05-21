@@ -3,6 +3,8 @@ package Modelos;
 public abstract class Persona {
 	private String dni, nombre, direccion;
 	
+	
+	
 	public Persona(String dni, String nombre, String direccion) {
 		super();
 		this.dni = dni;

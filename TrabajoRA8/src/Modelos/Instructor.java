@@ -3,7 +3,6 @@ package Modelos;
 public class Instructor extends Persona{
 	private int id_Instructor;
 	
-	
 	public Instructor(String dni, String nombre, String direccion, int id_Instructor) {
 		super(dni, nombre, direccion);
 		this.id_Instructor = id_Instructor;
