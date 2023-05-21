@@ -181,7 +181,8 @@ public class MenuPrincipal extends JFrame {
 				u = new Usuario(textoNombreUsuarioRU.getText(), String.valueOf(textoContrasenyaRU.getPassword()));
 				try {
 					if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioRU.getText()) == null) {
-						if (textoContrasenyaRU.getPassword().equals(textoRepetirCRU.getPassword())) {
+						if (String.valueOf(textoContrasenyaRU.getPassword())
+								.equals(String.valueOf(textoRepetirCRU.getPassword()))) {
 							usuarioService.save(Conexion.obtener(), u);
 							estudiante = new Estudiantes(textoDNIRU.getText(), textoNombreRU.getText(),
 									textoDireccionRU.getText(),
