@@ -2,6 +2,7 @@ package Visual;
 
 import java.awt.Font;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -11,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,6 +45,8 @@ public class MenuPrincipal extends JFrame {
 	private Estudiantes estudiante;
 	private int id_estudiante;
 	private boolean esVisibleIS = true, esVisibleRU = true;
+	private char i;
+	private ImageIcon imgOjo = new ImageIcon(pruebas.class.getResource("/Visual/imagenes/ojopassword.png"));
 
 	public MenuPrincipal() {
 		super("Iniciar sesion");
@@ -58,6 +62,7 @@ public class MenuPrincipal extends JFrame {
 		textoRepetirCRU.setBounds(200, 75, 100, 20);
 		textoContrasenyaRU = new JPasswordField();
 		textoContrasenyaRU.setBounds(200, 50, 100, 20);
+		i = textoContrasenyaIS.getEchoChar();
 
 		// JTextField
 		textoNombreUsuarioIS = new JTextField();
@@ -169,6 +174,10 @@ public class MenuPrincipal extends JFrame {
 		btnRegistrar.addActionListener(mBtn);
 		btnContrasenyaVisibleIS.addActionListener(mBtn);
 		btnContrasenyaVisibleRU.addActionListener(mBtn);
+		
+		Image image = imgOjo.getImage().getScaledInstance(24, 21, Image.SCALE_SMOOTH);
+		btnContrasenyaVisibleIS.setIcon(new ImageIcon(image));
+		btnContrasenyaVisibleRU.setIcon(new ImageIcon(image));
 
 		setVisible(true);
 	}
@@ -262,7 +271,7 @@ public class MenuPrincipal extends JFrame {
 			textoContrasenyaIS.setEchoChar((char) 0);
 			esVisibleIS = false;
 		} else {
-			textoContrasenyaIS.setEchoChar('*');
+			textoContrasenyaIS.setEchoChar(i);
 			esVisibleIS = true;
 		}
 	}
