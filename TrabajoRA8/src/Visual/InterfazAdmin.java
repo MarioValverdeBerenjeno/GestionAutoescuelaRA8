@@ -117,12 +117,15 @@ public class InterfazAdmin extends JFrame {
 				comboAveria.addRow(data);
 			}
 		} catch (java.lang.NullPointerException e) {
-
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		} catch (SQLException e) {
 
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		}
 		// boton arreglar
 		confirmar = new JButton("Confirmar arreglo");
@@ -170,12 +173,15 @@ public class InterfazAdmin extends JFrame {
 				}
 			}
 		} catch (java.lang.NullPointerException e) {
-
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		} catch (SQLException e) {
 
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		}
 		add(panelBaja);
 		panelBaja.setVisible(false);
@@ -215,12 +221,15 @@ public class InterfazAdmin extends JFrame {
 				comboADEstudiante.addRow(data);
 			}
 		} catch (java.lang.NullPointerException e) {
-
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		} catch (SQLException e) {
 
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		}
 		// boton activar
 		activarEstudiante = new JButton("Activar");
@@ -288,9 +297,11 @@ public class InterfazAdmin extends JFrame {
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		} catch (SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+					JOptionPane.ERROR_MESSAGE);		
 		}
 		// seleccionar estudiante ??
 		modeloClave = new DefaultComboBoxModel<>();
@@ -353,17 +364,18 @@ public class InterfazAdmin extends JFrame {
 					System.out.println(id);
 
 					// Comprobar contraseña iguales
-					if (reestablecernueva.getText().equals(reestablecerclave.getText())) {
+					if ((reestablecernueva.getText().equals(reestablecerclave.getText()) && reestablecerclave.getText().equals(" "))) {
 						Usuario modiUsuario = us.getUsuario(Conexion.obtener(), id);
 						modiUsuario.setPassword(reestablecernueva.getText());
 						us.save(Conexion.obtener(), modiUsuario);
-						System.out.println("IGUALES");
+						JOptionPane.showMessageDialog(null, "Contraseña actualizada correctamente", "Error",
+								JOptionPane.DEFAULT_OPTION);
 					} else
-						JOptionPane.showMessageDialog(null, "La contraseña no coincide", "ERROR PASSWORD",
+						JOptionPane.showMessageDialog(null, "La contraseña no coincide o esta vacia", "ERROR PASSWORD",
 								JOptionPane.ERROR_MESSAGE);
 				} catch (ClassNotFoundException | SQLException e1) {
-					e1.printStackTrace();
-				}
+					JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+							JOptionPane.ERROR_MESSAGE);				}
 			}
 
 			// Boton dar de baja
@@ -413,13 +425,12 @@ public class InterfazAdmin extends JFrame {
 				if (o == confirmar && obtenerFilasAveria()) {
 					int idAveria = Integer
 							.parseInt((getTablaAveria().getValueAt(getTablaAveria().getSelectedRow(), 0)).toString());
-					obtenerFilasAD();
 					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres CONFIRMAR el arrelgo?", "WARNING",
 							JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						// si option
 						avs.removeId(Conexion.obtener(), idAveria);
 						//refrescar
-						JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente","BAJA",JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Averia arregladada","ARREGLO",JOptionPane.INFORMATION_MESSAGE);
 						refrescar();
 					}
 				}
@@ -448,12 +459,19 @@ public class InterfazAdmin extends JFrame {
 				}
 
 			} catch (ClassNotFoundException | SQLException e1) {
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
+						JOptionPane.ERROR_MESSAGE);		
 			}
 
 		}
 	}
 
+	
+
+	public void refrescar() {
+		InterfazAdmin.this.dispose();
+		new InterfazAdmin();		
+	}
 	public boolean obtenerFilasBaja() {
 		if (getTablaBaja().getSelectedRow() < 0) {
 			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
@@ -462,11 +480,6 @@ public class InterfazAdmin extends JFrame {
 		} else {
 			return true;
 		}
-	}
-
-	public void refrescar() {
-		InterfazAdmin.this.dispose();
-		new InterfazAdmin();		
 	}
 
 	public boolean obtenerFilasAD() {

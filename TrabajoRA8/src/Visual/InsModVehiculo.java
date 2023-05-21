@@ -78,7 +78,7 @@ public class InsModVehiculo extends JFrame {
 		btnSeleccionar.addActionListener(insIma);
 		getContentPane().add(btnSeleccionar);
 		// boton confirmar
-		JButton btnConfirmar = new JButton("Confirmar");
+		btnConfirmar = new JButton("Confirmar");
 		btnConfirmar.setBounds(53, 140, 96, 21);
 		btnConfirmar.addActionListener(ma);
 		getContentPane().add(btnConfirmar);
@@ -126,8 +126,9 @@ public class InsModVehiculo extends JFrame {
 			Object o = e.getSource();
 //				if (getRepetido() == true && comprobarDatos() == true) {
 			if (o == btnVolver) {
-				new CrudVehiculo();
 				dispose();
+				new CrudVehiculo();
+				
 			} else if (o == btnConfirmar) {
 				try {
 					String modelo = textFieldModelo.getText();
@@ -145,15 +146,15 @@ public class InsModVehiculo extends JFrame {
 							"Informacion", JOptionPane.INFORMATION_MESSAGE);
 
 					if (sourcer != null)
-
 						Files.copy(sourcer, destination);
-					refrescar();
+					
 //				}
 
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				refrescar();
 			}
 		}
 	}
@@ -174,7 +175,6 @@ public class InsModVehiculo extends JFrame {
 				sourcer = fileChooser.getSelectedFile().getAbsoluteFile().toPath();
 				destination = imagenes.toPath();
 				JOptionPane.showMessageDialog(null, "Imagen añadida", "INFO", JOptionPane.INFORMATION_MESSAGE);
-				new CrudVehiculo();
 			}
 
 		}
