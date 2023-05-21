@@ -25,7 +25,7 @@ import Servicios.Conexion;
 import Servicios.VehiculoService;
 
 public class CrudVehiculo extends JFrame {
-	private JButton btnBorrar, btnModificar, btnInsertar, btnModImg;
+	private JButton btnBorrar, btnModificar, btnInsertar, btnModImg,btnVolver;
 	private JLabel lblImagen;
 	private String[] columnas;
 	private JTable tablevehiculo;
@@ -68,6 +68,11 @@ public class CrudVehiculo extends JFrame {
 		btnModImg.setBounds(446, 232, 130, 21);
 		btnModImg.addActionListener(ma);
 		getContentPane().add(btnModImg);
+		//volver
+		btnVolver = new JButton("Volver");
+		btnVolver.setBounds(149, 432, 126, 21);
+		btnVolver.addActionListener(ma);
+		getContentPane().add(btnVolver);
 		// JTable
 		// Crear el JTable
 		columnas = new String[] { "ID_VEHICULO", "MODELO", "TIPO", "IMAGEN VEHICULO" };
@@ -118,7 +123,12 @@ public class CrudVehiculo extends JFrame {
 			if(o==btnInsertar){
 				new InsModVehiculo();
 				dispose();
-			}else if (obtenerFilas()) {
+
+			}else if(o==btnVolver) {
+				new MenuAdmin();
+				dispose();
+			}
+			else if (obtenerFilas()) {
 				if (o == btnModificar) {
 					new InsModVehiculo();
 				} else if (o == btnBorrar) {
