@@ -30,13 +30,12 @@ public class ClaseConducirService {
 
 //	         }else{
 			consulta = conexion.prepareStatement("UPDATE " + this.tabla
-					+ " SET fecha = ?,hora = ?, id_vehiculo = ?, dni_instructor = ?, evaluacion WHERE id_Clase = ?");
+					+ " SET fecha = ?,hora = ?, id_vehiculo = ?, dni_instructor = ? WHERE id_Clase = ?");
 			consulta.setDate(1, claseconducir.getFecha());
 			consulta.setTime(2, claseconducir.getHora());
 			consulta.setInt(3, claseconducir.getId_Vehiculo());
 			consulta.setString(4, claseconducir.getDni_Instructor());
 			consulta.setInt(5, claseconducir.getId_Clase());
-			consulta.setFloat(6, claseconducir.getEvaluacion());
 //	         }
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
@@ -76,14 +75,13 @@ public class ClaseConducirService {
 		ClaseConducir claseconducir = null;
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT fecha, hora, id_vehiculo, dni_instructor, evaluacion " + " FROM "
+					.prepareStatement("SELECT fecha, hora, id_vehiculo, dni_instructor" + " FROM "
 							+ this.tabla + " WHERE id = ?");
 			consulta.setInt(1, id_Clase);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				claseconducir = new ClaseConducir(id_Clase, resultado.getInt("id_vehiculo"), resultado.getDate("fecha"),
-						resultado.getTime("hora"), resultado.getString("dni_instructor"),
-						resultado.getFloat("evaluacion"));
+				claseconducir = new ClaseConducir(id_Clase, resultado.getDate("fecha"),
+						resultado.getTime("hora"), resultado.getInt("id_vehiculo"), resultado.getString("dni_instructor"));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
@@ -98,13 +96,12 @@ public class ClaseConducirService {
 		List<ClaseConducir> clases = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT id, fecha, hora, id_Vehiculo, dni_Instructor, evaluacion " + " FROM " + this.tabla);
+					.prepareStatement("SELECT id, fecha, hora, id_Vehiculo, dni_Instructor " + " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				clases.add(
-						new ClaseConducir(resultado.getInt("id"), resultado.getInt("id_vehiculo"), resultado.getDate("fecha"),
-								resultado.getTime("hora"), resultado.getString("dni_instructor"),
-								resultado.getFloat("evaluacion")));
+						new ClaseConducir(resultado.getInt("id"), resultado.getDate("fecha"),
+								resultado.getTime("hora"), resultado.getInt("id_vehiculo"), resultado.getString("dni_instructor")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
