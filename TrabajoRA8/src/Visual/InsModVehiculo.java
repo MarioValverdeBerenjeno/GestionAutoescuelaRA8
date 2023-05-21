@@ -163,7 +163,8 @@ public class InsModVehiculo extends JFrame {
 				File imagenes = new File("imagen/vehiculos/" + textFieldModelo.getText().replace(" ", "") + extension);
 				sourcer = fileChooser.getSelectedFile().getAbsoluteFile().toPath();
 				destination = imagenes.toPath();
-				JOptionPane.showMessageDialog(null, "Imagen añadida", "", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Imagen añadida", "INFO", JOptionPane.INFORMATION_MESSAGE);
+				new CrudVehiculo();
 			}
 
 		}

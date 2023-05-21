@@ -209,7 +209,7 @@ public class MenuPrincipal extends JFrame {
 								.getPassword().equals(String.valueOf(textoContrasenyaIS.getPassword()))) {
 							if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText())
 									.getRol().equalsIgnoreCase("admin")) {
-								new InterfazAdmin();
+								new MenuAdmin();
 								MenuPrincipal.this.dispose();
 							} else if (usuarioService
 									.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()).getRol()

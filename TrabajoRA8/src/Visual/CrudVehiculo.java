@@ -110,6 +110,7 @@ public class CrudVehiculo extends JFrame {
 			Object o = e.getSource();
 			if(o==btnInsertar){
 				new InsModVehiculo();
+				dispose();
 			}else if (obtenerFilas()) {
 				if (o == btnModificar) {
 					new InsModVehiculo();

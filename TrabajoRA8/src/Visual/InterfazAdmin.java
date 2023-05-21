@@ -511,7 +511,7 @@ public class InterfazAdmin extends JFrame {
 		// Cerrar interfaz admin
 		InterfazAdmin.this.dispose();
 		// Abrir menu principal
-		new MenuPrincipal();
+		new MenuAdmin();
 	}
 	// getter-setters JTable
 
