@@ -30,18 +30,19 @@ import Servicios.UsuarioService;
 public class MenuPrincipal extends JFrame {
 	private static final long serialVersionUID = 1L;
 	public static String nombreUsuario;
-	private JTextField textoNombreUsuarioIS, textoContrasenyaIS, textoNombreUsuarioRU, textoContrasenyaRU,
-			textoRepetirCRU, textoNombreRU, textoDNIRU, textoDireccionRU;
+	private JTextField textoNombreUsuarioIS, textoNombreUsuarioRU, textoNombreRU, textoDNIRU, textoDireccionRU;
+	private JPasswordField textoContrasenyaIS, textoContrasenyaRU, textoRepetirCRU;
 	private JLabel lbTextoNombreUsuarioIS, lbTextoContrasenyaIS, lbTextoNombreUsuarioRU, lbTextoContrasenyaRU,
 			lbTextoRepetirCRU, lbTextoNombreRU, lbTextoDNIRU, lbTextoDireccionRU;
 	private JPanel panelOpcion, panelIS, panelRU;
 	private JRadioButton rbRegistrar, rbIniciarS;
-	private JButton btnRegistrar, btnIS;
+	private JButton btnRegistrar, btnIS, btnContrasenyaVisibleIS, btnContrasenyaVisibleRU;
 	private UsuarioService usuarioService = new UsuarioService();
 	private EstudianteService estudianteService = new EstudianteService();
 	private Usuario u;
 	private Estudiantes estudiante;
 	private int id_estudiante;
+	private boolean esVisibleIS = true, esVisibleRU = true;
 
 	public MenuPrincipal() {
 		super("Iniciar sesion");
@@ -53,12 +54,14 @@ public class MenuPrincipal extends JFrame {
 		// JPasword
 		textoContrasenyaIS = new JPasswordField();
 		textoContrasenyaIS.setBounds(150, 100, 100, 20);
+		textoRepetirCRU = new JPasswordField();
+		textoRepetirCRU.setBounds(200, 75, 100, 20);
+		textoContrasenyaRU = new JPasswordField();
+		textoContrasenyaRU.setBounds(200, 50, 100, 20);
 
 		// JTextField
 		textoNombreUsuarioIS = new JTextField();
 		textoNombreUsuarioIS.setBounds(150, 75, 100, 20);
-		textoRepetirCRU = new JTextField();
-		textoRepetirCRU.setBounds(200, 75, 100, 20);
 		textoNombreUsuarioRU = new JTextField();
 		textoNombreUsuarioRU.setBounds(200, 25, 100, 20);
 		textoDireccionRU = new JTextField();
@@ -67,8 +70,6 @@ public class MenuPrincipal extends JFrame {
 		textoDNIRU.setBounds(200, 125, 100, 20);
 		textoNombreRU = new JTextField();
 		textoNombreRU.setBounds(200, 0, 100, 20);
-		textoContrasenyaRU = new JTextField();
-		textoContrasenyaRU.setBounds(200, 50, 100, 20);
 
 		// JLabel
 		lbTextoNombreUsuarioIS = new JLabel("Nombre de usuario: ");
@@ -108,6 +109,10 @@ public class MenuPrincipal extends JFrame {
 		btnRegistrar.setBounds(150, 150, 115, 30);
 		btnIS = new JButton("Iniciar sesion");
 		btnIS.setBounds(310, 140, 115, 30);
+		btnContrasenyaVisibleIS = new JButton();
+		btnContrasenyaVisibleIS.setBounds(300, 100, 25, 25);
+		btnContrasenyaVisibleRU = new JButton();
+		btnContrasenyaVisibleRU.setBounds(310, 50, 25, 25);
 
 		// JRadioButton
 		rbIniciarS = new JRadioButton("Iniciar sesion", true);
@@ -126,6 +131,7 @@ public class MenuPrincipal extends JFrame {
 		panelIS.add(lbTextoContrasenyaIS);
 		panelIS.add(lbTextoNombreUsuarioIS);
 		panelIS.add(btnIS);
+		panelIS.add(btnContrasenyaVisibleIS);
 		panelIS.setBounds(0, 30, 440, 190);
 		panelOpcion = new JPanel();
 		panelOpcion.setLayout(null);
@@ -148,6 +154,7 @@ public class MenuPrincipal extends JFrame {
 		panelRU.add(textoNombreUsuarioRU);
 		panelRU.add(textoRepetirCRU);
 		panelRU.add(btnRegistrar);
+		panelRU.add(btnContrasenyaVisibleRU);
 		panelRU.setVisible(false);
 
 		getContentPane().add(panelOpcion);
@@ -160,6 +167,8 @@ public class MenuPrincipal extends JFrame {
 		ManejadorBtn mBtn = new ManejadorBtn();
 		btnIS.addActionListener(mBtn);
 		btnRegistrar.addActionListener(mBtn);
+		btnContrasenyaVisibleIS.addActionListener(mBtn);
+		btnContrasenyaVisibleRU.addActionListener(mBtn);
 
 		setVisible(true);
 	}
@@ -169,10 +178,10 @@ public class MenuPrincipal extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(btnRegistrar)) {
-				u = new Usuario(textoNombreUsuarioRU.getText(), textoContrasenyaRU.getText());
+				u = new Usuario(textoNombreUsuarioRU.getText(), String.valueOf(textoContrasenyaRU.getPassword()));
 				try {
 					if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioRU.getText()) == null) {
-						if (textoContrasenyaRU.getText().equals(textoRepetirCRU.getText())) {
+						if (textoContrasenyaRU.getPassword().equals(textoRepetirCRU.getPassword())) {
 							usuarioService.save(Conexion.obtener(), u);
 							estudiante = new Estudiantes(textoDNIRU.getText(), textoNombreRU.getText(),
 									textoDireccionRU.getText(),
@@ -197,7 +206,7 @@ public class MenuPrincipal extends JFrame {
 				try {
 					if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText()) != null) {
 						if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText())
-								.getPassword().equals(textoContrasenyaIS.getText())) {
+								.getPassword().equals(String.valueOf(textoContrasenyaIS.getPassword()))) {
 							if (usuarioService.getUsuarioNombre(Conexion.obtener(), textoNombreUsuarioIS.getText())
 									.getRol().equalsIgnoreCase("admin")) {
 								new InterfazAdmin();
@@ -239,7 +248,33 @@ public class MenuPrincipal extends JFrame {
 				} catch (ClassNotFoundException | SQLException e1) {
 					e1.printStackTrace();
 				}
+			} else if (e.getSource().equals(btnContrasenyaVisibleIS)) {
+				verContrasenyaIS();
+			} else if (e.getSource().equals(btnContrasenyaVisibleRU)) {
+				verContrasenyaRU();
 			}
+		}
+	}
+
+	private void verContrasenyaIS() {
+		if (esVisibleIS) {
+			textoContrasenyaIS.setEchoChar((char) 0);
+			esVisibleIS = false;
+		} else {
+			textoContrasenyaIS.setEchoChar('*');
+			esVisibleIS = true;
+		}
+	}
+
+	private void verContrasenyaRU() {
+		if (esVisibleRU) {
+			textoContrasenyaRU.setEchoChar((char) 0);
+			textoRepetirCRU.setEchoChar((char) 0);
+			esVisibleRU = false;
+		} else {
+			textoContrasenyaRU.setEchoChar('*');
+			textoRepetirCRU.setEchoChar('*');
+			esVisibleRU = true;
 		}
 	}
 
