@@ -17,12 +17,16 @@ import javax.swing.table.TableRowSorter;
 
 import Modelos.Usuario;
 import Servicios.Conexion;
+import Servicios.EstudianteService;
+import Servicios.InstructorService;
 import Servicios.UsuarioService;
 
 public class CrudUsuarios extends JFrame {
 	// Instancias
 	ManejadorA ma = new ManejadorA();
-	UsuarioService us=new UsuarioService();
+	UsuarioService us = new UsuarioService();
+	InstructorService is = new InstructorService();
+	EstudianteService es = new EstudianteService();
 	//
 	private JButton btnBorrar, btnModificar, btnInsertar, btnVolver;
 	private String[] columnas;
@@ -61,7 +65,7 @@ public class CrudUsuarios extends JFrame {
 		getContentPane().add(btnVolver);
 		// JTable
 		// Crear el JTable
-		columnas = new String[] { "IDUSUARIO, ","ROL", "NOMBRE", "CONTRASENYA" };
+		columnas = new String[] { "IDUSUARIO, ", "ROL", "NOMBRE", "CONTRASENYA" };
 		modelUsuarios = new DefaultTableModel(columnas, 0);
 		setTableusuarios(new JTable(modelUsuarios));
 		getTableusuarios().setPreferredScrollableViewportSize(new Dimension(250, 100));
@@ -71,7 +75,7 @@ public class CrudUsuarios extends JFrame {
 		// Crear el ordenador de filas
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelUsuarios);
 		for (int i = 0; i < modelUsuarios.getColumnCount(); i++) {
-		    sorter.setSortable(i, false); // Deshabilitar la ordenación de columnas
+			sorter.setSortable(i, false); // Deshabilitar la ordenación de columnas
 		}
 		getTableusuarios().setRowSorter(sorter);
 
@@ -83,8 +87,8 @@ public class CrudUsuarios extends JFrame {
 		try {
 			ListaUsuarios = us.getAllUsuarios(Conexion.obtener());
 			for (Usuario a : ListaUsuarios) {
-				//"IDUSUARIO, ","ROL", "NOMBRE", "CONTRASENYA"
-				String[] data = { String.valueOf(a.getId()),a.getRol(),a.getNombre(),a.getPassword()};
+				// "IDUSUARIO, ","ROL", "NOMBRE", "CONTRASENYA"
+				String[] data = { String.valueOf(a.getId()), a.getRol(), a.getNombre(), a.getPassword() };
 				modelUsuarios.addRow(data);
 			}
 		} catch (java.lang.NullPointerException e) {
@@ -95,8 +99,7 @@ public class CrudUsuarios extends JFrame {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		setVisible(true);
 	}
 
@@ -107,6 +110,7 @@ public class CrudUsuarios extends JFrame {
 	public void setTableusuarios(JTable tableusuarios) {
 		this.tableusuarios = tableusuarios;
 	}
+
 	private class ManejadorA implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -128,6 +132,11 @@ public class CrudUsuarios extends JFrame {
 						if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres BORRAR el usuario?", "WARNING",
 								JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 							// si option
+							if (us.getUsuario(Conexion.obtener(), idUser).getRol().equalsIgnoreCase("INSTRUCTOR")) {
+								is.removeId(Conexion.obtener(), idUser);
+							} else if (us.getUsuario(Conexion.obtener(), idUser).getRol().equalsIgnoreCase("ALUMNO")) {
+								es.removeId(Conexion.obtener(), idUser);
+							}
 							us.removeId(Conexion.obtener(), idUser);
 							// refrescar
 							JOptionPane.showMessageDialog(null, "Usuario borrado correctamente ", "Borrado",
@@ -146,8 +155,7 @@ public class CrudUsuarios extends JFrame {
 
 	public boolean obtenerFilas() {
 		if (getTableusuarios().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;
@@ -156,6 +164,6 @@ public class CrudUsuarios extends JFrame {
 
 	public void refrescar() {
 		dispose();
-		new CrudUsuarios();		
+		new CrudUsuarios();
 	}
 }

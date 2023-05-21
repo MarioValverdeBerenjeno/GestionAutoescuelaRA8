@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Modelos.Estudiantes;
 import Modelos.Usuario;
 
 public class UsuarioService {
@@ -38,7 +37,7 @@ public class UsuarioService {
 	   }
 	
 	
-	public void saveInstructor(Connection conexion, Usuario user) throws SQLException{
+	public void saveUsuario(Connection conexion, Usuario user) throws SQLException{
 
 		PreparedStatement consulta;		
 		consulta = conexion.prepareStatement("INSERT INTO " + this.tabla + "(nombre, contrasenya, rol) VALUES(?, ?, ?)");
