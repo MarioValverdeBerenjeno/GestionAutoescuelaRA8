@@ -21,6 +21,12 @@ public class Evaluacion {
 		this.id_clase = id_clase;
 		this.evaluacion = evaluacion;
 	}
+	
+	public Evaluacion(int id_clase, String dni_estudiante) {
+		super();
+		this.id_clase = id_clase;
+		this.dni_estudiante = dni_estudiante;
+	}
 
 	public String getDni_estudiante() {
 		return dni_estudiante;
