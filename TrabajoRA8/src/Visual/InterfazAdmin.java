@@ -456,8 +456,8 @@ public class InterfazAdmin extends JFrame {
 
 	public boolean obtenerFilasBaja() {
 		if (getTablaBaja().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;
@@ -471,8 +471,8 @@ public class InterfazAdmin extends JFrame {
 
 	public boolean obtenerFilasAD() {
 		if (getTablaAD().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;
@@ -481,8 +481,8 @@ public class InterfazAdmin extends JFrame {
 
 	public boolean obtenerFilasAveria() {
 		if (getTablaAveria().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;
