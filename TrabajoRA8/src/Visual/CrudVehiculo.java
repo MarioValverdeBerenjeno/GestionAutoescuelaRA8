@@ -130,6 +130,7 @@ public class CrudVehiculo extends JFrame {
 			}
 			else if (obtenerFilas()) {
 				if (o == btnModificar) {
+					// FALTA
 					new InsModVehiculo();
 				} else if (o == btnBorrar) {
 					int idVehiculo = Integer
@@ -146,7 +147,7 @@ public class CrudVehiculo extends JFrame {
 						JOptionPane.showMessageDialog(null, "No es posible realizar esa accion","Error",JOptionPane.ERROR_MESSAGE);
 					}
 				} else if (o == btnModImg) {
-					
+					//FALTA
 				}
 			}
 		}
