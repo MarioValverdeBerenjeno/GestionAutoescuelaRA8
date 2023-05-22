@@ -51,6 +51,7 @@ public class InsModVehiculo extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		getContentPane().setLayout(null);
+		
 		// Field modelo
 		textFieldModelo = new JTextField(45);
 		textFieldModelo.setBounds(140, 26, 133, 19);

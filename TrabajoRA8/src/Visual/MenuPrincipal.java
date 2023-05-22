@@ -3,6 +3,7 @@ package Visual;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -54,6 +55,9 @@ public class MenuPrincipal extends JFrame {
 		setSize(450, 250);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
+		// icono
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(InterfazAdmin.class.getResource("/Visual/imagenes/logo.png")));
 
 		// JPasword
 		textoContrasenyaIS = new JPasswordField();
@@ -113,17 +117,17 @@ public class MenuPrincipal extends JFrame {
 		btnRegistrar = new JButton("Confirmar");
 		btnRegistrar.setBounds(150, 150, 115, 30);
 		btnIS = new JButton("Iniciar sesion");
-		btnIS.setBounds(310, 140, 115, 30);
+		btnIS.setBounds(100, 140, 115, 30);
 		btnContrasenyaVisibleIS = new JButton();
-		btnContrasenyaVisibleIS.setBounds(300, 100, 25, 25);
+		btnContrasenyaVisibleIS.setBounds(260, 100, 25, 25);
 		btnContrasenyaVisibleRU = new JButton();
 		btnContrasenyaVisibleRU.setBounds(310, 50, 25, 25);
 
 		// JRadioButton
 		rbIniciarS = new JRadioButton("Iniciar sesion", true);
-		rbIniciarS.setBounds(165, 5, 105, 23);
+		rbIniciarS.setBounds(60, 5, 105, 23);
 		rbRegistrar = new JRadioButton("Registrar nueva cuenta", false);
-		rbRegistrar.setBounds(270, 5, 160, 23);
+		rbRegistrar.setBounds(160, 5, 165, 23);
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(rbIniciarS);
 		bg.add(rbRegistrar);
@@ -174,7 +178,7 @@ public class MenuPrincipal extends JFrame {
 		btnRegistrar.addActionListener(mBtn);
 		btnContrasenyaVisibleIS.addActionListener(mBtn);
 		btnContrasenyaVisibleRU.addActionListener(mBtn);
-		
+
 		Image image = imgOjo.getImage().getScaledInstance(24, 21, Image.SCALE_SMOOTH);
 		btnContrasenyaVisibleIS.setIcon(new ImageIcon(image));
 		btnContrasenyaVisibleRU.setIcon(new ImageIcon(image));

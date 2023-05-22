@@ -2,6 +2,7 @@ package Visual;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -43,6 +44,9 @@ public class CrudVehiculo extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
+		// icono
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(InterfazAdmin.class.getResource("/Visual/imagenes/logo.png")));
 
 		// Mostrar imagen
 		lblImagen = new JLabel("");

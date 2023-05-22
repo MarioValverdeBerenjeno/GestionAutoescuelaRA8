@@ -605,7 +605,7 @@ public class InterfazInstructor extends JFrame {
 		obtenerSolicitudes();
 	}
 
-	// Este método es el que hace visible el texto del jPasswordField
+	// Este mï¿½todo es el que hace visible el texto del jPasswordField
 	private void verContrasenya() {
 		if (esVisible) {
 			textoCambiarContrasenya.setEchoChar((char) 0);
@@ -700,10 +700,10 @@ public class InterfazInstructor extends JFrame {
 					e1.printStackTrace();
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Las contraseï¿½as no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseña", "Error",
+			JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseï¿½a", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}

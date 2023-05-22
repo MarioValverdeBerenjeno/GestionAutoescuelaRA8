@@ -96,6 +96,7 @@ public class InterfazAlumno extends JFrame {
 		setSize(600, 500);
 		getContentPane().setLayout(null);
 		setLocationRelativeTo(null);
+		
 
 		// Manejadores
 

@@ -111,7 +111,7 @@ public class InsInstructor extends JFrame {
 				if (txtDni.getText().matches("[0-9]{8}[A-Z]")) {
 					try {
 						is.saveNewInstructor(Conexion.obtener(), new Instructor(txtDni.getText(), txtNombre.getText(), 
-								txtDireccion.getText(), Integer.parseInt(txtId.getText())));
+								txtDireccion.getText(),Integer.parseInt(txtId.getText())));
 					} catch (ClassNotFoundException | SQLException e) {
 						JOptionPane.showMessageDialog(null, "Error al crear el instructor", "Error", JOptionPane.ERROR_MESSAGE);
 					}

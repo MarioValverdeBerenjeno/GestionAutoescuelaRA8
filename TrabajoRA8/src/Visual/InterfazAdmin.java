@@ -70,7 +70,7 @@ public class InterfazAdmin extends JFrame {
 		getContentPane().setLayout(null);
 		// icono
 		setIconImage(
-				Toolkit.getDefaultToolkit().getImage(InterfazAdmin.class.getResource("/Visual/imagenes/admin.jpg")));
+				Toolkit.getDefaultToolkit().getImage(InterfazAdmin.class.getResource("/Visual/imagenes/logo.png")));
 		// panel opciones
 		creaOpciones();
 		// panel activar/desactivar estudiantes

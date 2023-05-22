@@ -2,8 +2,6 @@ package Servicios;
 
 import java.sql.SQLException;
 
-import Visual.InterfazAdmin;
-import Visual.MenuAdmin;
 import Visual.MenuPrincipal;
 
 public class Test {
@@ -11,8 +9,8 @@ public class Test {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		
 
-		new MenuAdmin();
-//		new MenuPrincipal();
+//		new MenuAdmin();
+		new MenuPrincipal();
 		//InstructorService s=new InstructorService();
 //		//Buscar alumno ID
 //		EstudianteService s=new EstudianteService();
@@ -45,10 +43,8 @@ public class Test {
 //		try {
 //			c.obtener();
 //		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 		
