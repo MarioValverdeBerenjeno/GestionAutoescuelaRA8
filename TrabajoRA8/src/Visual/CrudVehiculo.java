@@ -143,7 +143,8 @@ public class CrudVehiculo extends JFrame {
 							refrescar();
 						}
 					} catch (Exception z) {
-						JOptionPane.showMessageDialog(null, "No es posible realizar esa accion", "Error",
+						
+						JOptionPane.showMessageDialog(null, "No se puede borrar un vehiculo averiado o pertenece a una clase de autoescuela", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}

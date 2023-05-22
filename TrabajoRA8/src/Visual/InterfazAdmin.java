@@ -351,8 +351,8 @@ public class InterfazAdmin extends JFrame {
 					Usuario selectedUser = (Usuario) comboClaveEstudiantes.getSelectedItem();
 					int id = selectedUser.getId();
 					// Comprobar contraseña iguales
-					if ((reestablecernueva.getText().equals(reestablecerclave.getText())
-							&& reestablecerclave.getText().equals(" "))) {
+					if ((reestablecernueva.getText().equals(reestablecerclave.getText()))
+							&& !reestablecerclave.getText().equalsIgnoreCase(" ")) {
 						Usuario modiUsuario = us.getUsuario(Conexion.obtener(), id);
 						modiUsuario.setPassword(reestablecernueva.getText());
 						us.save(Conexion.obtener(), modiUsuario);
@@ -425,19 +425,26 @@ public class InterfazAdmin extends JFrame {
 				// BOTONES ACTIVAR DESACTIVAR
 				try {
 					if (o == desactivarEstudiante && obtenerFilasAD()) {
-						int idUsuario = Integer
-								.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
-						obtenerFilasAD();
+						int[] selectedRows = getTablaAD().getSelectedRows();
 
-						es.desactivarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
+						for (int row : selectedRows) {
+							// Recorre las columnas de la fila actual
+							int todasId = Integer.parseInt(getTablaAD().getValueAt(row, 0).toString());
+
+
+							es.desactivarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), todasId));
+						}
 						JOptionPane.showMessageDialog(null, "Usuarios desactivados", "DESACTIVAR",
 								JOptionPane.INFORMATION_MESSAGE);
 						refrescar();
 					} else if (o == activarEstudiante && obtenerFilasAD()) {
-						int idUsuario = Integer
-								.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
+						int[] selectedRows = getTablaAD().getSelectedRows();
 
-						es.activarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
+						for (int row : selectedRows) {
+							// Recorre las columnas de la fila actual
+							int todasId = Integer.parseInt(getTablaAD().getValueAt(row, 0).toString());
+						es.activarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), todasId));
+						}
 						JOptionPane.showMessageDialog(null, "Usuarios activados", "ACTIVAR",
 								JOptionPane.INFORMATION_MESSAGE);
 						refrescar();
