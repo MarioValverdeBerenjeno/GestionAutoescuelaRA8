@@ -1,6 +1,7 @@
 package Visual;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
@@ -54,7 +55,9 @@ public class InterfazInstructor extends JFrame {
 	private JComboBox<Estudiantes> cbEstudiantes;
 	private static JList<Evaluacion> jlClases;
 	private JScrollPane scrListaClases, scrTablaClase, scrTextoAveria, scrTablaEvaluaciones;
+	@SuppressWarnings("unused")
 	private Icon imgPerfil, imgRecargar;
+	private ImageIcon imgOjo = new ImageIcon(pruebas.class.getResource("/Visual/imagenes/ojopassword.png"));
 	private JPanel panelOpciones, panelVerPerfil, panelModPerfil, panelVerClases, panelAceptarClases, panelParteAveria,
 			panelVerEvaluaciones, panelEvaluar;
 	private JLabel lbImg, lbTexto, lbBienvenido, lbTextoDNIPerfil, lbTextoDireccionPerfil, lbTextoContrasenya,
@@ -65,7 +68,8 @@ public class InterfazInstructor extends JFrame {
 			textoCambiarDireccion, textoDNIPA, textoIDVehiculo, textoNombreUsuarioPerfil, textoCambiarDNI, textoNota;
 	private JPasswordField textoCambiarContrasenya, textoRepetirContrasenya;
 	private JTextArea textoInfoPA;
-	private JButton btnConfirmar, btnAceptar, btnContrasenyaVisible, btnEnviar, btnConfirmarNota, btnRecargarPag;
+	private JButton btnConfirmar, btnAceptar, btnContrasenyaVisible, btnEnviar, btnConfirmarNota, btnRecargarPag,
+			btnVolver;
 	private DefaultTableModel modeloTablaClases, modeloTablaEvaluaciones;
 	private DefaultComboBoxModel<String> modeloCBIdClases;
 	private DefaultComboBoxModel<Estudiantes> modeloCBEstudiante;
@@ -78,11 +82,11 @@ public class InterfazInstructor extends JFrame {
 			ids_clases_alumno = new ArrayList<>(), listaAlumnosEvaluados = new ArrayList<>();
 	private List<Float> listaEvaluacionesAlumnos = new ArrayList<>();
 	private List<Estudiantes> listaEstudiantes = new ArrayList<>(), listaEstudiantesProfesor = new ArrayList<>();
-	// private List<Evaluacion> listaEvaluaciones = new ArrayList<>();
 	private static List<Evaluacion> solicitudesClases = new ArrayList<>();
 	private int id_instructor, cont = 0;
 	private String dniInstructor, nombreInstructor;
 	private boolean esVisible = true;
+	private char i;
 	private InstructorService instructorService = new InstructorService();
 	private UsuarioService usuarioService = new UsuarioService();
 	private ClaseConducirService claseConducirService = new ClaseConducirService();
@@ -114,7 +118,7 @@ public class InterfazInstructor extends JFrame {
 		};
 
 		rellenarTablaEvaluaciones();
-		// obtenerEstudiantesInstructor();
+		obtenerEstudiantesInstructor();
 
 		modeloCBEstudiante = new DefaultComboBoxModel<>();
 		modeloCBEstudiante.addAll(listaEstudiantesProfesor);
@@ -155,6 +159,8 @@ public class InterfazInstructor extends JFrame {
 		btnRecargarPag = new JButton();
 		btnRecargarPag.setIcon(new ImageIcon(InterfazInstructor.class.getResource("/Visual/imagenes/recargar.PNG")));
 		btnRecargarPag.setBounds(300, 350, 50, 45);
+		btnVolver = new JButton("Volver");
+		btnVolver.setBounds(30, 420, 90, 30);
 
 		// JTextFields
 		textoNombrePerfil = new JTextField();
@@ -185,6 +191,7 @@ public class InterfazInstructor extends JFrame {
 		textoCambiarContrasenya.setBounds(190, 150, 100, 20);
 		textoRepetirContrasenya = new JPasswordField();
 		textoRepetirContrasenya.setBounds(240, 175, 100, 20);
+		i = textoCambiarContrasenya.getEchoChar();
 
 		// JTextArea
 		textoInfoPA = new JTextArea();
@@ -224,7 +231,6 @@ public class InterfazInstructor extends JFrame {
 		cbOpciones.setBounds(0, 205, 150, 50);
 		cbEstudiantes = new JComboBox<Estudiantes>(modeloCBEstudiante);
 		cbEstudiantes.setBounds(20, 100, 125, 50);
-		// cbEstudiantes.setSelectedIndex(0);
 		cbIdClases = new JComboBox(modeloCBIdClases);
 		cbIdClases.setBounds(145, 100, 125, 50);
 
@@ -326,6 +332,7 @@ public class InterfazInstructor extends JFrame {
 		panelOpciones.setLayout(null);
 		panelOpciones.add(lbImg);
 		panelOpciones.add(cbOpciones);
+		panelOpciones.add(btnVolver);
 
 		getContentPane().add(panelVerClases);
 		panelVerClases.setLayout(null);
@@ -426,6 +433,10 @@ public class InterfazInstructor extends JFrame {
 		btnEnviar.addActionListener(mBtn);
 		btnConfirmarNota.addActionListener(mBtn);
 		btnRecargarPag.addActionListener(mBtn);
+		btnVolver.addActionListener(mBtn);
+
+		Image image = imgOjo.getImage().getScaledInstance(24, 21, Image.SCALE_SMOOTH);
+		btnContrasenyaVisible.setIcon(new ImageIcon(image));
 
 		setVisible(true);
 	}
@@ -464,8 +475,9 @@ public class InterfazInstructor extends JFrame {
 			panelParteAveria.setVisible(false);
 			panelEvaluar.setVisible(false);
 
-			if (opcion.equalsIgnoreCase("modificar perfil"))
+			if (opcion.equalsIgnoreCase("modificar perfil")) {
 				panelModPerfil.setVisible(true);
+			}
 
 			if (opcion.equalsIgnoreCase("ver perfil"))
 				panelVerPerfil.setVisible(true);
@@ -478,7 +490,8 @@ public class InterfazInstructor extends JFrame {
 				if (!listaEstudiantes.isEmpty()) {
 					obtenerEstudiantesInstructor();
 				} else
-					JOptionPane.showMessageDialog(null, "No hay solicitudes disponibles", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "No hay solicitudes disponibles", "Informacion",
+							JOptionPane.INFORMATION_MESSAGE);
 			}
 
 			if (opcion.equalsIgnoreCase("Partes de averia"))
@@ -526,9 +539,7 @@ public class InterfazInstructor extends JFrame {
 					e1.printStackTrace();
 				}
 
-			} else if (e.getSource().equals(btnConfirmarNota))
-
-			{
+			} else if (e.getSource().equals(btnConfirmarNota)) {
 				String nota = textoNota.getText();
 				if (nota.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Campo nota vacio", "Error", JOptionPane.ERROR_MESSAGE);
@@ -540,6 +551,9 @@ public class InterfazInstructor extends JFrame {
 			} else if (e.getSource().equals(btnRecargarPag)) {
 				InterfazInstructor.this.dispose();
 				new InterfazInstructor(nombreInstructor);
+			} else if (e.getSource().equals(btnVolver)) {
+				InterfazInstructor.this.dispose();
+				new MenuPrincipal();
 			}
 		}
 
@@ -598,8 +612,8 @@ public class InterfazInstructor extends JFrame {
 			textoRepetirContrasenya.setEchoChar((char) 0);
 			esVisible = false;
 		} else {
-			textoCambiarContrasenya.setEchoChar('*');
-			textoRepetirContrasenya.setEchoChar('*');
+			textoCambiarContrasenya.setEchoChar(i);
+			textoRepetirContrasenya.setEchoChar(i);
 			esVisible = true;
 		}
 	}
