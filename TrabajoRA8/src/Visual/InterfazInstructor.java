@@ -700,10 +700,10 @@ public class InterfazInstructor extends JFrame {
 					e1.printStackTrace();
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Las contrase�as no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Las contrasnyas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Debe rellenar el campo contrase�a", "Error",
+			JOptionPane.showMessageDialog(null, "Debe rellenar el campo contrasenya", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
