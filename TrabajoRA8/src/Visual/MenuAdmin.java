@@ -8,7 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class MenuAdmin extends JFrame {
-	private JButton btnCrudVehiculos,btnCrudUsuarios,btnCrudInstructores,btnInterfaz,btnVolver;
+	private JButton btnCrudVehiculos,btnCrudUsuarios,btnCrudInstructores,btnInterfaz,btnVolver, btnGrafica;
 	ManejadorA ma=new ManejadorA();
 	public MenuAdmin() {
 		super("Menu inicial ADMIN");
@@ -20,22 +20,22 @@ public class MenuAdmin extends JFrame {
 		//botones
 			//acceder crud vehiculos
 		btnCrudVehiculos = new JButton("Crud vehiculos");
-		btnCrudVehiculos.setBounds(33, 10, 220, 50);
+		btnCrudVehiculos.setBounds(80, 69, 126, 38);
 		btnCrudVehiculos.addActionListener(ma);
 		getContentPane().add(btnCrudVehiculos);
 		
 		btnCrudUsuarios = new JButton("Crud usuarios");
-		btnCrudUsuarios.setBounds(33, 70, 220, 50);
+		btnCrudUsuarios.setBounds(80, 117, 126, 38);
 		btnCrudUsuarios.addActionListener(ma);
 		getContentPane().add(btnCrudUsuarios);
 		
 		btnCrudInstructores = new JButton("Crud instructores");
-		btnCrudInstructores.setBounds(33, 130, 220, 50);
+		btnCrudInstructores.setBounds(80, 165, 126, 38);
 		btnCrudInstructores.addActionListener(ma);
 		getContentPane().add(btnCrudInstructores);
 		
 		btnInterfaz = new JButton("Interfaz principal");
-		btnInterfaz.setBounds(33, 190, 220, 50);
+		btnInterfaz.setBounds(80, 213, 126, 38);
 		btnInterfaz.addActionListener(ma);
 		getContentPane().add(btnInterfaz);
 		
@@ -43,6 +43,11 @@ public class MenuAdmin extends JFrame {
 		btnVolver.setBounds(80, 261, 126, 38);
 		btnVolver.addActionListener(ma);
 		getContentPane().add(btnVolver);
+		
+		btnGrafica = new JButton("Grafica");
+		btnGrafica.setBounds(80, 21, 126, 38);
+		getContentPane().add(btnGrafica);
+		btnGrafica.addActionListener(ma);
 		
 		
 		setVisible(true);
@@ -68,6 +73,9 @@ public class MenuAdmin extends JFrame {
 				dispose();
 			}else if(o==btnVolver) {
 				new MenuPrincipal();
+				dispose();
+			}else if(o==btnGrafica) {
+				new Grafica();
 				dispose();
 			}
 			
