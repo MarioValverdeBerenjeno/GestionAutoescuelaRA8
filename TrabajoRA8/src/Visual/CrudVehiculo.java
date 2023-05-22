@@ -24,8 +24,9 @@ import Modelos.Vehiculo;
 import Servicios.Conexion;
 import Servicios.VehiculoService;
 
+@SuppressWarnings("serial")
 public class CrudVehiculo extends JFrame {
-	private JButton btnBorrar, btnModificar, btnInsertar, btnModImg,btnVolver;
+	private JButton btnBorrar, btnModificar, btnInsertar, btnVolver;
 	private JLabel lblImagen;
 	private String[] columnas;
 	private JTable tablevehiculo;
@@ -34,7 +35,7 @@ public class CrudVehiculo extends JFrame {
 	private List<Vehiculo> ListaVehiculos;
 	VehiculoService vs = new VehiculoService();
 	ManejadorA ma = new ManejadorA();
-	ManejadorImagen mi=new ManejadorImagen();
+	ManejadorImagen mi = new ManejadorImagen();
 
 	public CrudVehiculo() {
 		super("Administrar vehiculo");
@@ -42,12 +43,12 @@ public class CrudVehiculo extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
-		
-		//Mostrar imagen
+
+		// Mostrar imagen
 		lblImagen = new JLabel("");
 		lblImagen.setBounds(431, 1, 145, 137);
 		getContentPane().add(lblImagen);
-		
+
 		// borrar
 		btnBorrar = new JButton("BORRAR");
 		btnBorrar.setBounds(458, 385, 110, 47);
@@ -63,12 +64,7 @@ public class CrudVehiculo extends JFrame {
 		btnInsertar.setBounds(458, 271, 110, 47);
 		btnInsertar.addActionListener(ma);
 		getContentPane().add(btnInsertar);
-		// modificar imagen
-		btnModImg = new JButton("Cambiar imagen");
-		btnModImg.setBounds(446, 232, 130, 21);
-		btnModImg.addActionListener(ma);
-		getContentPane().add(btnModImg);
-		//volver
+		// volver
 		btnVolver = new JButton("Volver");
 		btnVolver.setBounds(149, 432, 126, 21);
 		btnVolver.addActionListener(ma);
@@ -76,7 +72,12 @@ public class CrudVehiculo extends JFrame {
 		// JTable
 		// Crear el JTable
 		columnas = new String[] { "ID_VEHICULO", "MODELO", "TIPO", "IMAGEN VEHICULO" };
-		modelVehiculos = new DefaultTableModel(columnas, 0);
+		modelVehiculos = new DefaultTableModel(columnas, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false; // Hacer todas las celdas no editables
+			}
+		};
 		setTablevehiculo(new JTable(modelVehiculos));
 		getTablevehiculo().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablevehiculo().getTableHeader().setReorderingAllowed(false);
@@ -85,18 +86,18 @@ public class CrudVehiculo extends JFrame {
 		// Crear el ordenador de filas
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelVehiculos);
 		for (int i = 0; i < modelVehiculos.getColumnCount(); i++) {
-		    sorter.setSortable(i, false); // Deshabilitar la ordenación de columnas
+			sorter.setSortable(i, false); // Deshabilitar la ordenación de columnas
 		}
 		getTablevehiculo().setRowSorter(sorter);
 
-		//actualizar imagen
+		// actualizar imagen
 		getTablevehiculo().getSelectionModel().addListSelectionListener(mi);
 
 		// scrollpanel
 		scrollvehiculo = new JScrollPane(getTablevehiculo());
 		scrollvehiculo.setBounds(10, 10, 413, 401);
 		add(scrollvehiculo);
-
+		// rellenar
 		try {
 			ListaVehiculos = vs.getAllVehiculos(Conexion.obtener());
 			for (Vehiculo a : ListaVehiculos) {
@@ -104,50 +105,47 @@ public class CrudVehiculo extends JFrame {
 						a.getImagenVehiculo() };
 				modelVehiculos.addRow(data);
 			}
-		} catch (java.lang.NullPointerException e) {
-
-		} catch (SQLException e) {
-
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		} catch (SQLException | ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "Error", "ERROR", JOptionPane.ERROR_MESSAGE);
+		} 
+		// frame
 		setVisible(true);
 	}
 
-	// btnBorrar, btnModificar, btnInsertar, btnModImg;
 	private class ManejadorA implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object o = e.getSource();
-			if(o==btnInsertar){
+			if (o == btnInsertar) {
 				new InsModVehiculo();
 				dispose();
 
-			}else if(o==btnVolver) {
+			} else if (o == btnVolver) {
 				new MenuAdmin();
 				dispose();
-			}
-			else if (obtenerFilas()) {
+			} else if (obtenerFilas()) {
 				if (o == btnModificar) {
-					// FALTA
+					InsModVehiculo.idModificar = Integer.parseInt(
+							(getTablevehiculo().getValueAt(getTablevehiculo().getSelectedRow(), 0)).toString());
 					new InsModVehiculo();
+					dispose();
 				} else if (o == btnBorrar) {
-					int idVehiculo = Integer
-							.parseInt((getTablevehiculo().getValueAt(getTablevehiculo().getSelectedRow(), 0)).toString());
+					int idVehiculo = Integer.parseInt(
+							(getTablevehiculo().getValueAt(getTablevehiculo().getSelectedRow(), 0)).toString());
 					try {
-					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres BORRAR el vehiculo?", "WARNING",
-							JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-						// si option
-						vs.removeId(Conexion.obtener(), idVehiculo);
-						//refrescar
-						JOptionPane.showMessageDialog(null, "Vehiculos borrados correctamente ","Borrados",JOptionPane.INFORMATION_MESSAGE);
-						refrescar();
-					}}catch(Exception z) {
-						JOptionPane.showMessageDialog(null, "No es posible realizar esa accion","Error",JOptionPane.ERROR_MESSAGE);
+						if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres BORRAR el vehiculo?", "WARNING",
+								JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							// si option
+							vs.removeId(Conexion.obtener(), idVehiculo);
+							// refrescar
+							JOptionPane.showMessageDialog(null, "Vehiculo borrado correctamente ", "Borrado",
+									JOptionPane.INFORMATION_MESSAGE);
+							refrescar();
+						}
+					} catch (Exception z) {
+						JOptionPane.showMessageDialog(null, "No es posible realizar esa accion", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
-				} else if (o == btnModImg) {
-					//FALTA
 				}
 			}
 		}
@@ -156,19 +154,19 @@ public class CrudVehiculo extends JFrame {
 
 	public boolean obtenerFilas() {
 		if (getTablevehiculo().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;
 		}
 	}
+
 	public class ManejadorImagen implements ListSelectionListener {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if (getTablevehiculo().getValueAt(getTablevehiculo().getSelectedRow(), 3) != null) {
-				Image img = new ImageIcon(getTablevehiculo().getValueAt(getTablevehiculo().getSelectedRow(), 3).toString())
-						.getImage();
+				Image img = new ImageIcon(
+						getTablevehiculo().getValueAt(getTablevehiculo().getSelectedRow(), 3).toString()).getImage();
 				Image newimg = img.getScaledInstance(150, 180, java.awt.Image.SCALE_SMOOTH);
 				ImageIcon imageIcon = new ImageIcon(newimg);
 				lblImagen.setIcon(imageIcon);
@@ -188,4 +186,5 @@ public class CrudVehiculo extends JFrame {
 	public void refrescar() {
 		dispose();
 		new CrudVehiculo();
-	}}
+	}
+}

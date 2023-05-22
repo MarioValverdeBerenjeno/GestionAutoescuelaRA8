@@ -31,6 +31,7 @@ public class VehiculoService {
 			consulta.setString(1, vehiculo.getImagenVehiculo());
 			consulta.setString(2, vehiculo.getModelo());
 			consulta.setString(3, vehiculo.getTipo());
+			consulta.setInt(4, vehiculo.getId_Vehiculo());
 //	         }
 			consulta.executeUpdate();
 		} catch (SQLException ex) {

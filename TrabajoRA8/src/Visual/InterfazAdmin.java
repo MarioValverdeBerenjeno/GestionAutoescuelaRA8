@@ -52,7 +52,6 @@ public class InterfazAdmin extends JFrame {
 	private List<Estudiantes> ListaAlumnos;
 	private List<Usuario> ListUsuario, ListaUsuarios, ListUsu;
 	private List<ParteAveria> ListaAverias;
-//	private Collection<Usuario> ListaUsuarios,ListUsu;
 	DefaultComboBoxModel<Usuario> modeloClave = new DefaultComboBoxModel<>();
 	// manejadores
 	ManejadorEventos me = new ManejadorEventos();
@@ -62,8 +61,6 @@ public class InterfazAdmin extends JFrame {
 	UsuarioService us = new UsuarioService();
 	InstructorService is = new InstructorService();
 	AveriaService avs = new AveriaService();
-
-	// Comparator
 
 	public InterfazAdmin() {
 		super("Interfaz administrador");
@@ -92,40 +89,39 @@ public class InterfazAdmin extends JFrame {
 		panelAverias = new JPanel();
 		panelAverias.setLayout(null);
 		panelAverias.setBounds(153, 0, 433, 463);
-		// JTABLE
+		// JTable
 		// Crear el JTable
 		columnas = new String[] { "id_Parte", "id_Vehiculo_Averiado", "datos_Averia", "dni_Instructor_Informante" };
-		comboAveria = new DefaultTableModel(columnas, 0);
+		comboAveria = new DefaultTableModel(columnas, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false; // Hacer todas las celdas no editables
+			}
+		};
 		setTablaAveria(new JTable(comboAveria));
 		getTablaAveria().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablaAveria().getTableHeader().setReorderingAllowed(false);
+
 		// Crear el ordenador de filas
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(comboAveria);
-		tablaAveria.setRowSorter(sorter);
-		// Ordenar por la columna "ID" de forma ascendente
+		getTablaAveria().setRowSorter(sorter);
 		sorter.sort();
+
 		// scrollpanel
 		scrollAverias = new JScrollPane(getTablaAveria());
 		scrollAverias.setBounds(10, 10, 413, 401);
 		panelAverias.add(scrollAverias);
-		try {
 
+		try {
 			ListaAverias = avs.getAllAverias(Conexion.obtener());
 			for (ParteAveria a : ListaAverias) {
 				String[] data = { String.valueOf(a.getIdParte()), String.valueOf(a.getIdVehiculoAveriado()),
 						a.getDatosAveria(), a.getDniInstructor() };
 				comboAveria.addRow(data);
 			}
-		} catch (java.lang.NullPointerException e) {
+		} catch (java.lang.NullPointerException | SQLException | ClassNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
-		} catch (SQLException e) {
-
-			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
-		} catch (ClassNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
+					JOptionPane.ERROR_MESSAGE);
 		}
 		// boton arreglar
 		confirmar = new JButton("Confirmar arreglo");
@@ -140,31 +136,37 @@ public class InterfazAdmin extends JFrame {
 		panelBaja = new JPanel();
 		panelBaja.setLayout(null);
 		panelBaja.setBounds(153, 0, 433, 463);
-		// JTABLE
+		// JTable
 		// Crear el JTable
-		columnas = new String[] { "ID", "Nombre", "Role", };
-		comboBajaEstudiante = new DefaultTableModel(columnas, 0);
+		columnas = new String[] { "ID", "Nombre", "Role" };
+		comboBajaEstudiante = new DefaultTableModel(columnas, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false; // Hacer todas las celdas no editables
+			}
+		};
 		setTablaBaja(new JTable(comboBajaEstudiante));
 		getTablaBaja().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablaBaja().getTableHeader().setReorderingAllowed(false);
+
 		// Crear el ordenador de filas
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(comboBajaEstudiante);
-		tablaBaja.setRowSorter(sorter);
-		// Ordenar por la columna "ID" de forma ascendente
+		getTablaBaja().setRowSorter(sorter);
 		sorter.sort();
+
 		// scrollpanel
 		scrollBaja = new JScrollPane(getTablaBaja());
 		scrollBaja.setBounds(10, 10, 413, 401);
 		panelBaja.add(scrollBaja);
+
 		// boton confirmar
 		darbaja = new JButton("Dar de baja");
 		darbaja.setBounds(140, 421, 140, 21);
 		darbaja.addActionListener(ma);
 		panelBaja.add(darbaja);
+
 		// Rellenar tabla alumno
-
 		try {
-
 			ListUsuario = us.getAllUsuarios(Conexion.obtener());
 			for (Usuario a : ListUsuario) {
 				if (!a.getRol().equalsIgnoreCase("ADMIN")) {
@@ -172,18 +174,12 @@ public class InterfazAdmin extends JFrame {
 					comboBajaEstudiante.addRow(data);
 				}
 			}
-		} catch (java.lang.NullPointerException e) {
+		} catch (java.lang.NullPointerException | SQLException | ClassNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
-		} catch (SQLException e) {
-
-			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
-		} catch (ClassNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
+					JOptionPane.ERROR_MESSAGE);
 		}
 		add(panelBaja);
+
 		panelBaja.setVisible(false);
 	}
 
@@ -194,19 +190,26 @@ public class InterfazAdmin extends JFrame {
 		// JTABLE
 		// Crear el JTable
 		columnas = new String[] { "ID", "DNI", "Nombre", "Direccion", "Activado" };
-		comboADEstudiante = new DefaultTableModel(columnas, 0);
+		comboADEstudiante = new DefaultTableModel(columnas, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false; // Hacer todas las celdas no editables
+			}
+		};
 		setTablaAD(new JTable(comboADEstudiante));
 		getTablaAD().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTablaAD().getTableHeader().setReorderingAllowed(false);
+
 		// Crear el ordenador de filas
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(comboADEstudiante);
-		tablaAD.setRowSorter(sorter);
-		// ordenar
+		getTablaAD().setRowSorter(sorter);
 		sorter.sort();
+
 		// scrollpanel
 		scrollActDes = new JScrollPane(getTablaAD());
 		scrollActDes.setBounds(10, 10, 413, 401);
 		panelEstudiantes.add(scrollActDes);
+
 		// Rellenar tabla alumno
 		try {
 			ListaAlumnos = es.getAllAlumnos(Conexion.obtener());
@@ -220,16 +223,9 @@ public class InterfazAdmin extends JFrame {
 						Activado };
 				comboADEstudiante.addRow(data);
 			}
-		} catch (java.lang.NullPointerException e) {
+		} catch (java.lang.NullPointerException | ClassNotFoundException | SQLException e) {
 			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
-		} catch (SQLException e) {
-
-			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
-		} catch (ClassNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
+					JOptionPane.ERROR_MESSAGE);
 		}
 		// boton activar
 		activarEstudiante = new JButton("Activar");
@@ -296,16 +292,12 @@ public class InterfazAdmin extends JFrame {
 					ListUsu.add(usu);
 				}
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-					JOptionPane.ERROR_MESSAGE);		
+					JOptionPane.ERROR_MESSAGE);
 		}
 		// seleccionar estudiante ??
 		modeloClave = new DefaultComboBoxModel<>();
-//
 		modeloClave.addAll(ListUsu);
 		comboClaveEstudiantes = new JComboBox<Usuario>(modeloClave);
 		comboClaveEstudiantes.setMaximumRowCount(10);
@@ -336,7 +328,6 @@ public class InterfazAdmin extends JFrame {
 		panelClave.setVisible(false);
 	}
 
-	// "Averias", "Gestionar estudiantes", "Reestablecer clave","Dar de baja"
 	// Manejador de eventos
 	private class ManejadorEventos implements ItemListener {
 		@Override
@@ -346,8 +337,6 @@ public class InterfazAdmin extends JFrame {
 		}
 	}
 
-	// activarEstudiante, desactivarEstudiante, volver, darbaja,
-	// confirmar,reestablecer;
 	// Botones
 	private class ManejadorAction implements ActionListener {
 		@SuppressWarnings("deprecation")
@@ -361,10 +350,9 @@ public class InterfazAdmin extends JFrame {
 				try {
 					Usuario selectedUser = (Usuario) comboClaveEstudiantes.getSelectedItem();
 					int id = selectedUser.getId();
-					System.out.println(id);
-
 					// Comprobar contraseña iguales
-					if ((reestablecernueva.getText().equals(reestablecerclave.getText()) && reestablecerclave.getText().equals(" "))) {
+					if ((reestablecernueva.getText().equals(reestablecerclave.getText())
+							&& reestablecerclave.getText().equals(" "))) {
 						Usuario modiUsuario = us.getUsuario(Conexion.obtener(), id);
 						modiUsuario.setPassword(reestablecernueva.getText());
 						us.save(Conexion.obtener(), modiUsuario);
@@ -375,16 +363,12 @@ public class InterfazAdmin extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 				} catch (ClassNotFoundException | SQLException e1) {
 					JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-							JOptionPane.ERROR_MESSAGE);				}
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
-
 			// Boton dar de baja
 			try {
 				if (o == darbaja && obtenerFilasBaja()) {
-
-//				int idUsuario = Integer.parseInt((getTablaBaja().getValueAt(getTablaBaja().getSelectedRow(), 0)).toString()) ;
-//					String Role = (getTablaBaja().getValueAt(getTablaBaja().getSelectedRow(), 0)).toString();
-
 					if (JOptionPane.showConfirmDialog(null, "¿Seguro que quieres dar de baja?", "WARNING",
 							JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						// si option
@@ -394,28 +378,30 @@ public class InterfazAdmin extends JFrame {
 						for (int row : selectedRows) {
 							// Recorre las columnas de la fila actual
 							int todasId = Integer.parseInt(getTablaBaja().getValueAt(row, 0).toString());
-							
+
 							String rol = getTablaBaja().getValueAt(row, 2).toString();
-//							System.out.println("Valor de la celda (" + row + ", " + 0 + "): " + todasId);
 							if (rol.equalsIgnoreCase("ALUMNO")) {
 								es.removeId(Conexion.obtener(), todasId);
 								us.removeId(Conexion.obtener(), todasId);
-								JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente","BAJA",JOptionPane.INFORMATION_MESSAGE);
+								JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente", "BAJA",
+										JOptionPane.INFORMATION_MESSAGE);
 							} else if (rol.equalsIgnoreCase("INSTRUCTOR")) {
-								//COmrpobar que no exista en una averia y si es asi pues no poder borrar al instructor
-								if(avs.getAveriaDNI_Instructor(Conexion.obtener(), is.getInstructor(Conexion.obtener(), todasId).getDni())==null) {
-									is.removeId(Conexion.obtener(),todasId);
+								// COmrpobar que no exista en una averia y si es asi pues no poder borrar al
+								// instructor
+								if (avs.getAveriaDNI_Instructor(Conexion.obtener(),
+										is.getInstructor(Conexion.obtener(), todasId).getDni()) == null) {
+									is.removeId(Conexion.obtener(), todasId);
 									us.removeId(Conexion.obtener(), todasId);
-									JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente","BAJA",JOptionPane.INFORMATION_MESSAGE);
-								}else
-									JOptionPane.showMessageDialog(null, "No se puede dar de baja correctamente"
-											+ "ya que el instructor esta relacionado con uno o varios partes"
-											+ "de averia.","ERROR",JOptionPane.INFORMATION_MESSAGE);
+									JOptionPane.showMessageDialog(null, "Usuarios dados de baja correctamente", "BAJA",
+											JOptionPane.INFORMATION_MESSAGE);
+								} else
+									JOptionPane.showMessageDialog(null,
+											"No se puede dar de baja correctamente"
+													+ "ya que el instructor esta relacionado con uno o varios partes"
+													+ "de averia.",
+											"ERROR", JOptionPane.INFORMATION_MESSAGE);
 
-									
 							}
-							
-//							 getTablaBaja().getModel()).fireTableDataChanged();
 						}
 						refrescar();
 					}
@@ -429,53 +415,55 @@ public class InterfazAdmin extends JFrame {
 							JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						// si option
 						avs.removeId(Conexion.obtener(), idAveria);
-						//refrescar
-						JOptionPane.showMessageDialog(null, "Averia arregladada","ARREGLO",JOptionPane.INFORMATION_MESSAGE);
+						// refrescar
+						JOptionPane.showMessageDialog(null, "Averia arregladada", "ARREGLO",
+								JOptionPane.INFORMATION_MESSAGE);
 						refrescar();
 					}
 				}
 
 				// BOTONES ACTIVAR DESACTIVAR
 				try {
-				if (o == desactivarEstudiante && obtenerFilasAD()) {
-					int idUsuario = Integer
-							.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
-					obtenerFilasAD();
+					if (o == desactivarEstudiante && obtenerFilasAD()) {
+						int idUsuario = Integer
+								.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
+						obtenerFilasAD();
 
-					es.desactivarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
-					JOptionPane.showMessageDialog(null, "Usuarios desactivados","DESACTIVAR",JOptionPane.INFORMATION_MESSAGE);
-					refrescar();
-				} else if (o == activarEstudiante && obtenerFilasAD()) {
-					int idUsuario = Integer
-							.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
+						es.desactivarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
+						JOptionPane.showMessageDialog(null, "Usuarios desactivados", "DESACTIVAR",
+								JOptionPane.INFORMATION_MESSAGE);
+						refrescar();
+					} else if (o == activarEstudiante && obtenerFilasAD()) {
+						int idUsuario = Integer
+								.parseInt((getTablaAD().getValueAt(getTablaAD().getSelectedRow(), 0)).toString());
 
-					es.activarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
-					JOptionPane.showMessageDialog(null, "Usuarios activados","ACTIVAR",JOptionPane.INFORMATION_MESSAGE);
-					refrescar();
-					
-				}
-				}catch(SQLException x) {
-					JOptionPane.showMessageDialog(null, "No es posible realizar esa accion","Error",JOptionPane.ERROR_MESSAGE);
+						es.activarEstudiante(Conexion.obtener(), es.getAlumno(Conexion.obtener(), idUsuario));
+						JOptionPane.showMessageDialog(null, "Usuarios activados", "ACTIVAR",
+								JOptionPane.INFORMATION_MESSAGE);
+						refrescar();
+
+					}
+				} catch (SQLException x) {
+					JOptionPane.showMessageDialog(null, "No es posible realizar esa accion", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 
 			} catch (ClassNotFoundException | SQLException e1) {
 				JOptionPane.showMessageDialog(null, "No se pudo completar la operacion", "ERROR!!",
-						JOptionPane.ERROR_MESSAGE);		
+						JOptionPane.ERROR_MESSAGE);
 			}
 
 		}
 	}
 
-	
-
 	public void refrescar() {
 		InterfazAdmin.this.dispose();
-		new InterfazAdmin();		
+		new InterfazAdmin();
 	}
+
 	public boolean obtenerFilasBaja() {
 		if (getTablaBaja().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;
@@ -484,8 +472,7 @@ public class InterfazAdmin extends JFrame {
 
 	public boolean obtenerFilasAD() {
 		if (getTablaAD().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;
@@ -494,8 +481,7 @@ public class InterfazAdmin extends JFrame {
 
 	public boolean obtenerFilasAveria() {
 		if (getTablaAveria().getSelectedRow() < 0) {
-			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No hay ninguna fila seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			return true;

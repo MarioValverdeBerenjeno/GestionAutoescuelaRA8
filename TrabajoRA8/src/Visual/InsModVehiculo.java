@@ -22,11 +22,14 @@ import Modelos.Vehiculo;
 import Servicios.Conexion;
 import Servicios.VehiculoService;
 
+@SuppressWarnings("serial")
 public class InsModVehiculo extends JFrame {
 	private JTextField textFieldModelo;
 	private JLabel lblModelo, lblTipo, lblImagen;
 	private JComboBox<String> comboBoxTipo;
 	private JButton btnSeleccionar, btnConfirmar, btnVolver;
+
+	static int idModificar;
 
 	// Extension de la imagenes
 	private String extension;
@@ -54,15 +57,15 @@ public class InsModVehiculo extends JFrame {
 		getContentPane().add(textFieldModelo);
 		textFieldModelo.setColumns(10);
 		// label modelo
-		JLabel lblModelo = new JLabel("Modelo:");
-		lblModelo.setBounds(10, 29, 45, 13);
+		lblModelo = new JLabel("Modelo:");
+		lblModelo.setBounds(10, 29, 50, 13);
 		getContentPane().add(lblModelo);
 		// label tipo
-		JLabel lblTipo = new JLabel("Tipo:");
+		lblTipo = new JLabel("Tipo:");
 		lblTipo.setBounds(10, 63, 45, 13);
 		getContentPane().add(lblTipo);
 		// label imagen
-		JLabel lblImagen = new JLabel("Imagen:");
+		lblImagen = new JLabel("Imagen:");
 		lblImagen.setBounds(10, 99, 45, 13);
 		getContentPane().add(lblImagen);
 		// combobox tipo vehiculo
@@ -73,7 +76,7 @@ public class InsModVehiculo extends JFrame {
 		comboBoxTipo.setBounds(140, 59, 133, 21);
 		getContentPane().add(comboBoxTipo);
 		// boton seleccionar
-		JButton btnSeleccionar = new JButton("Seleccionar");
+		btnSeleccionar = new JButton("Seleccionar");
 		btnSeleccionar.setBounds(150, 95, 107, 21);
 		btnSeleccionar.addActionListener(insIma);
 		getContentPane().add(btnSeleccionar);
@@ -88,71 +91,77 @@ public class InsModVehiculo extends JFrame {
 		btnVolver.addActionListener(ma);
 		getContentPane().add(btnVolver);
 
+		// Rellenar si es Update de Vehiculo
+		if (idModificar != 0) {
+			try {
+				Vehiculo vehi = vs.getVehiculo(Conexion.obtener(), idModificar);
+				textFieldModelo.setText(vehi.getModelo());
+				if (vehi.getTipo().equalsIgnoreCase("COCHE")) {
+					comboBoxTipo.setSelectedIndex(0);
+				} else if (vehi.getTipo().equalsIgnoreCase("MOTO")) {
+					comboBoxTipo.setSelectedIndex(1);
+				} else if (vehi.getTipo().equalsIgnoreCase("CAMION")) {
+					comboBoxTipo.setSelectedIndex(2);
+				}
+				File imagenes = new File(vehi.getImagenVehiculo());
+				destination = imagenes.toPath();
+				comboBoxTipo.setSelectedIndex(0);
+
+			} catch (ClassNotFoundException | SQLException e) {
+				JOptionPane.showMessageDialog(null, "Error", "ERROR", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		setVisible(true);
 
 	}
-
-	// Comprobar repetidos
-//		public boolean getRepetido() throws FileNotFoundException, IOException, ClassNotFoundException {
-//			boolean testeado = true;
-//			if (games.exists()) {
-//				File file = new File("ficheros/games");
-//				FileReader fr = new FileReader(file);
-//				if (fr.read() > 0) {
-//					ObjectInputStream is = new ObjectInputStream(new FileInputStream(games));
-//					PerfilJuego juegox = (PerfilJuego) is.readObject();
-//					try {
-//						while (juegox != null) {
-//							if (juegox.getNombre().equals(jtNombre.getText()))
-//								testeado = false;
-//							juegox = (PerfilJuego) is.readObject();
-//						}
-//					} catch (Exception ex) {
-//					}
-//					is.close();
-//					fr.close();
-//					if (testeado == false)
-//						JOptionPane.showMessageDialog(null, "Este nombre ya se encuentra en la base de datos", "",
-//								JOptionPane.ERROR_MESSAGE);
-//				}
-//			}
-//			return testeado;
-//		}
 
 	public class Manejador implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			Object o = e.getSource();
-//				if (getRepetido() == true && comprobarDatos() == true) {
 			if (o == btnVolver) {
+				idModificar = 0;
 				dispose();
 				new CrudVehiculo();
-				
+
 			} else if (o == btnConfirmar) {
 				try {
 					String modelo = textFieldModelo.getText();
 					String tipoVehi = (String) comboBoxTipo.getSelectedItem();
 					String dirImg = "imagen/vehiculos/" + textFieldModelo.getText() + extension;
+					// Modificar si pulsa el boton
+					if (idModificar != 0) {
+						try {
+							vs.saveUpdate(Conexion.obtener(), new Vehiculo(idModificar, dirImg, modelo, tipoVehi));
 
-					// Insertar vehiculo
-					try {
-						vs.saveNewVehiculo(Conexion.obtener(), new Vehiculo(dirImg, modelo, tipoVehi));
-					} catch (ClassNotFoundException | SQLException e1) {
-						JOptionPane.showMessageDialog(InsModVehiculo.this, "No se ha podido insertar", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						} catch (ClassNotFoundException | SQLException e1) {
+							JOptionPane.showMessageDialog(InsModVehiculo.this, "No se ha podido MODIFICAR", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						JOptionPane.showMessageDialog(InsModVehiculo.this, "El vehiculo se ha MODIFICADO correctamente",
+								"Informacion", JOptionPane.INFORMATION_MESSAGE);
+						dispose();
+						new CrudVehiculo();
+						idModificar = 0;
+					} else {
+						// Insertar vehiculo
+						try {
+							vs.saveNewVehiculo(Conexion.obtener(), new Vehiculo(dirImg, modelo, tipoVehi));
+						} catch (ClassNotFoundException | SQLException e1) {
+							JOptionPane.showMessageDialog(InsModVehiculo.this, "No se ha podido insertar", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						JOptionPane.showMessageDialog(InsModVehiculo.this, "El vehiculo se ha insertado correctamente",
+								"Informacion", JOptionPane.INFORMATION_MESSAGE);
 					}
-					JOptionPane.showMessageDialog(InsModVehiculo.this, "El vehiculo se ha insertado correctamente",
-							"Informacion", JOptionPane.INFORMATION_MESSAGE);
-
 					if (sourcer != null)
 						Files.copy(sourcer, destination);
-					
+
 //				}
 
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(InsModVehiculo.this, "Error", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 				refrescar();
 			}

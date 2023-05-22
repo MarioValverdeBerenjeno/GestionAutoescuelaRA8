@@ -21,6 +21,7 @@ import Servicios.EstudianteService;
 import Servicios.InstructorService;
 import Servicios.UsuarioService;
 
+@SuppressWarnings("serial")
 public class CrudUsuarios extends JFrame {
 	// Instancias
 	ManejadorA ma = new ManejadorA();
@@ -35,6 +36,7 @@ public class CrudUsuarios extends JFrame {
 	private JScrollPane scrollusuario;
 	private List<Usuario> ListaUsuarios;
 
+	@SuppressWarnings("serial")
 	public CrudUsuarios() {
 		super("Administrar usuarios");
 		setTitle("CRUD USUARIO");
@@ -66,8 +68,13 @@ public class CrudUsuarios extends JFrame {
 		getContentPane().add(btnVolver);
 		// JTable
 		// Crear el JTable
-		columnas = new String[] { "IDUSUARIO, ", "ROL", "NOMBRE", "CONTRASENYA" };
-		modelUsuarios = new DefaultTableModel(columnas, 0);
+		columnas = new String[] { "IDUSUARIO", "ROL", "NOMBRE", "CONTRASENYA" };
+		modelUsuarios = new DefaultTableModel(columnas, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false; // Hacer todas las celdas no editables
+			}
+		};
 		setTableusuarios(new JTable(modelUsuarios));
 		getTableusuarios().setPreferredScrollableViewportSize(new Dimension(250, 100));
 		getTableusuarios().getTableHeader().setReorderingAllowed(false);
@@ -88,19 +95,12 @@ public class CrudUsuarios extends JFrame {
 		try {
 			ListaUsuarios = us.getAllUsuarios(Conexion.obtener());
 			for (Usuario a : ListaUsuarios) {
-				// "IDUSUARIO, ","ROL", "NOMBRE", "CONTRASENYA"
 				String[] data = { String.valueOf(a.getId()), a.getRol(), a.getNombre(), a.getPassword() };
 				modelUsuarios.addRow(data);
 			}
-		} catch (java.lang.NullPointerException e) {
-
-		} catch (SQLException e) {
-
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-
+		}catch (SQLException | ClassNotFoundException | java.lang.NullPointerException e) {
+			JOptionPane.showMessageDialog(null, "Error", "ERROR", JOptionPane.ERROR_MESSAGE);
+		} 
 		setVisible(true);
 	}
 
@@ -125,7 +125,11 @@ public class CrudUsuarios extends JFrame {
 				dispose();
 			} else if (obtenerFilas()) {
 				if (o == btnModificar) {
+					InsModUser.IdUserModi = Integer.parseInt(
+							(getTableusuarios().getValueAt(getTableusuarios().getSelectedRow(), 0)).toString());
+					dispose();
 					new InsModUser();
+
 				} else if (o == btnBorrar) {
 					int idUser = Integer.parseInt(
 							(getTableusuarios().getValueAt(getTableusuarios().getSelectedRow(), 0)).toString());
