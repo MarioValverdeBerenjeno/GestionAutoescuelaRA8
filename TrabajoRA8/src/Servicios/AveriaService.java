@@ -1,4 +1,4 @@
- package Servicios;
+package Servicios;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,9 +18,9 @@ public class AveriaService {
 		try {
 			PreparedStatement consulta;
 			if (parte.getIdParte() == 0) {
-				consulta = conexion.prepareStatement("INSERT INTO " + this.tabla
-						+ "(datos_averia,dni_Instructor_Informante,id_Parte,id_Veh+"
-						+ "iculo_Averiado) VALUES(?, ?, ?, ?)");
+				consulta = conexion.prepareStatement(
+						"INSERT INTO " + this.tabla + "(datos_averia,dni_Instructor_Informante,id_Parte,id_Veh+"
+								+ "iculo_Averiado) VALUES(?, ?, ?, ?)");
 				consulta.setString(1, parte.getDatosAveria());
 				consulta.setString(2, parte.getDniInstructor());
 				consulta.setInt(3, parte.getIdParte());
@@ -74,15 +74,14 @@ public class AveriaService {
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		System.out.println(parte);
 		return parte;
 	}
+
 	public ParteAveria getAveriaDNI_Instructor(Connection conexion, String dni_instructor) throws SQLException {
 		ParteAveria parte = null;
 		try {
-			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT id_Parte,datos_averia,id_Vehiculo_Averiado " + " FROM "
-							+ this.tabla + " WHERE dni_Instructor_Informante = ?");
+			PreparedStatement consulta = conexion.prepareStatement("SELECT id_Parte,datos_averia,id_Vehiculo_Averiado "
+					+ " FROM " + this.tabla + " WHERE dni_Instructor_Informante = ?");
 			consulta.setString(1, dni_instructor);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
@@ -93,48 +92,27 @@ public class AveriaService {
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		System.out.println(parte);
 		return parte;
 	}
-	// devuelve el usuario a traves de pasarle como parametro el nombre de usuario
-//	public Usuario getAveriaNombre(Connection conexion, String nombre) throws SQLException {
-//		Usuario user = null;
-//		
-//	      try{
-//	         PreparedStatement consulta = conexion.prepareStatement("SELECT idUsuario,nombre,contrasenya,rol "
-//	                 + " FROM " + this.tabla + " WHERE nombre = ?" );
-//	         consulta.setString(1, nombre);
-//	         ResultSet resultado = consulta.executeQuery();
-//	         while(resultado.next()){
-//	        	 user = new Usuario(resultado.getInt("idUsuario"),resultado.getString("nombre"), resultado.getString("contrasenya"), 
-//		                    resultado.getString("rol") );
-//	         }
-//	      }catch(SQLException ex){
-//	         throw new SQLException(ex);
-//	      }
-//	      System.out.println(user.getId());
-//	      return user;
-//	   }
 	
-	// id_Parte, int idVehiculoAveriado, String datosAveria, String dniInstructor
-	//listar todas las averias
+	// listar todas las averias
 	public List<ParteAveria> getAllAverias(Connection conexion) throws SQLException {
 		List<ParteAveria> averias = new ArrayList<>();
 		try {
 			PreparedStatement consulta = conexion
-					.prepareStatement("SELECT id_Parte,id_Vehiculo_Averiado,datos_Averia,dni_Instructor_Informante" + " FROM " + this.tabla);
+					.prepareStatement("SELECT id_Parte,id_Vehiculo_Averiado,datos_Averia,dni_Instructor_Informante"
+							+ " FROM " + this.tabla);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
-				averias.add(new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("id_Vehiculo_Averiado"), resultado.getString("datos_Averia"), resultado.getString("dni_Instructor_Informante")));
+				averias.add(new ParteAveria(resultado.getInt("id_Parte"), resultado.getInt("id_Vehiculo_Averiado"),
+						resultado.getString("datos_Averia"), resultado.getString("dni_Instructor_Informante")));
 			}
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		for (ParteAveria a : averias) {
-			System.out.println(a.getIdParte() + " " + a.getDatosAveria());
-		}
 		return averias;
 	}
+
 	// elimina pasandole un usuario como parametro
 	public void remove(Connection conexion, ParteAveria parte) throws SQLException {
 		try {

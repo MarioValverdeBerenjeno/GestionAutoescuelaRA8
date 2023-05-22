@@ -36,10 +36,12 @@ import Servicios.Conexion;
 import Servicios.EstudianteService;
 import Servicios.UsuarioService;
 
+@SuppressWarnings("serial")
 public class InterfazAlumno extends JFrame {
 	// Principal
 	private JPanel principal;
 	private JLabel imgPerfil, lblBienvenida;
+	@SuppressWarnings("rawtypes")
 	private JComboBox opciones;
 	private static String[] listaOpciones = { "Ver perfil", "Modificar perfil", "Solicitar clase",
 			"Ver clases solicitadas", "Evaluaciones" };
@@ -55,7 +57,9 @@ public class InterfazAlumno extends JFrame {
 	private char i;
 	// SolicitarClase
 	private JLabel lblTituloSolicitarClase;
+	@SuppressWarnings("rawtypes")
 	private static JList listaClasesJList;
+	@SuppressWarnings("unused")
 	private List<ClaseConducir> listaClases = new ArrayList<>();
 	private static JButton btnSolicitarClase;
 	private JScrollPane scrollListaClases;
@@ -84,6 +88,7 @@ public class InterfazAlumno extends JFrame {
 	private static ClaseConducirService ccs = new ClaseConducirService();
 	private static UsuarioService us = new UsuarioService();
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public InterfazAlumno(String nombre) {
 		super("Interfaz Alumno");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(pruebas.class.getResource("/Visual/imagenes/estudiante.jpg")));
@@ -108,7 +113,7 @@ public class InterfazAlumno extends JFrame {
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		// Panel Principal
@@ -468,11 +473,11 @@ public class InterfazAlumno extends JFrame {
 								e1.printStackTrace();
 							}
 						} else {
-							JOptionPane.showMessageDialog(null, "Ambas contraseñas no coinciden", "Error",
+							JOptionPane.showMessageDialog(null, "Ambas contraseï¿½as no coinciden", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					} else {
-						JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseña", "Error",
+						JOptionPane.showMessageDialog(null, "Debe rellenar el campo contraseï¿½a", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
@@ -494,9 +499,7 @@ public class InterfazAlumno extends JFrame {
 			textDniP.setText(es.getAlumno(Conexion.obtener(), id).getDni());
 			textDireccionP.setText(es.getAlumno(Conexion.obtener(), id).getDireccion());
 		} catch (ClassNotFoundException | SQLException e) {
-
-			e.printStackTrace();
-
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -506,7 +509,7 @@ public class InterfazAlumno extends JFrame {
 		try {
 			listaClases = ccs.getAllClases(Conexion.obtener());
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		PreparedStatement consulta;
@@ -519,7 +522,7 @@ public class InterfazAlumno extends JFrame {
 				listaIdClases.add(resultado.getInt("s.id_clase_conducir"));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		for (int i = 0; i < listaClases.size(); i++) {
@@ -549,6 +552,7 @@ public class InterfazAlumno extends JFrame {
 
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void setListaClases() {
 		List<Integer> listaIdClases = new ArrayList<>();
 		List<ClaseConducir> listaClases = new ArrayList<>();
@@ -557,7 +561,7 @@ public class InterfazAlumno extends JFrame {
 		try {
 			listaClases = ccs.getAllClases(Conexion.obtener());
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		PreparedStatement consulta;
@@ -570,7 +574,7 @@ public class InterfazAlumno extends JFrame {
 				listaIdClases.add(resultado.getInt("a.id_clase"));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		for (int i = 0; i < listaClases.size(); i++) {
@@ -594,8 +598,7 @@ public class InterfazAlumno extends JFrame {
 				noValidas.add(resultado.getInt("id_clase_conducir"));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		for (int i = 0; i < listaClases.size(); i++) {
@@ -626,7 +629,7 @@ public class InterfazAlumno extends JFrame {
 				listaEvaluaciones.add(new Evaluacion(resultado.getInt("id_clase"), resultado.getFloat("evaluacion")));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		PreparedStatement consulta;
@@ -639,7 +642,7 @@ public class InterfazAlumno extends JFrame {
 				listaIdClases.add(resultado.getInt("a.id_clase"));
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 		}
 
 		for (int i = 0; i < listaEvaluaciones.size(); i++) {
@@ -666,6 +669,7 @@ public class InterfazAlumno extends JFrame {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void solicitarClases() {
 		PreparedStatement consultaInsertar;
 		List<ClaseConducir> clasesSolicitadas = listaClasesJList.getSelectedValuesList();
@@ -679,10 +683,8 @@ public class InterfazAlumno extends JFrame {
 				consultaInsertar.setInt(3, cc.getId_Clase());
 				consultaInsertar.executeUpdate();
 				JOptionPane.showMessageDialog(null, "Clase/s solicitadas satisfactoriamente");
-
 			} catch (ClassNotFoundException | SQLException e) {
-
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Error", "ERROR!!", JOptionPane.ERROR_MESSAGE);
 			}
 			setListaClases();
 		}

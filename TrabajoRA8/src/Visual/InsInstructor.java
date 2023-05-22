@@ -113,7 +113,6 @@ public class InsInstructor extends JFrame {
 						is.saveNewInstructor(Conexion.obtener(), new Instructor(txtDni.getText(), txtNombre.getText(), 
 								txtDireccion.getText(), Integer.parseInt(txtId.getText())));
 					} catch (ClassNotFoundException | SQLException e) {
-						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(null, "Error al crear el instructor", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				} else

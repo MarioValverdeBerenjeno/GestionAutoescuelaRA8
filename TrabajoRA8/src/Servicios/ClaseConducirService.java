@@ -19,16 +19,6 @@ public class ClaseConducirService {
 	public void saveUpdate(Connection conexion, ClaseConducir claseconducir) throws SQLException {
 		try {
 			PreparedStatement consulta;
-//	         if(claseconducir.getId_Clase() == 0){
-//			consulta = conexion.prepareStatement(
-//					"INSERT INTO " + this.tabla + "(id_Clase, fecha, hora, id_Vehiculo, dni_Instructor) VALUES(?, ?, ?)");
-//			consulta.setInt(1, claseconducir.getId_Clase());
-//			consulta.setDate(2, claseconducir.getFecha());
-//			consulta.setTime(3, claseconducir.getHora());
-//			consulta.setInt(4, claseconducir.getId_Vehiculo());
-//			consulta.setString(5, claseconducir.getDni_Instructor());
-
-//	         }else{
 			consulta = conexion.prepareStatement("UPDATE " + this.tabla
 					+ " SET fecha = ?,hora = ?, id_vehiculo = ?, dni_instructor = ? WHERE id_Clase = ?");
 			consulta.setDate(1, claseconducir.getFecha());
@@ -36,7 +26,6 @@ public class ClaseConducirService {
 			consulta.setInt(3, claseconducir.getId_Vehiculo());
 			consulta.setString(4, claseconducir.getDni_Instructor());
 			consulta.setInt(5, claseconducir.getId_Clase());
-//	         }
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
@@ -86,7 +75,6 @@ public class ClaseConducirService {
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		System.out.println(claseconducir);
 		return claseconducir;
 	}
 
@@ -106,9 +94,7 @@ public class ClaseConducirService {
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		for (ClaseConducir c : clases) {
-			System.out.println(c.getId_Clase() + " " + c.getFecha() + " " + c.getHora());
-		}
+
 		return clases;
 	}
 

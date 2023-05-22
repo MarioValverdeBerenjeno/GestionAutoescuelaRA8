@@ -18,21 +18,12 @@ public class VehiculoService {
 	public void saveUpdate(Connection conexion, Vehiculo vehiculo) throws SQLException {
 		try {
 			PreparedStatement consulta;
-//	         if(vehiculo.getId_Vehiculo() == 0){
-//			consulta = conexion.prepareStatement(
-//					"INSERT INTO " + this.tabla + "(imagenVehiculo, modelo, tipo) VALUES(?, ?, ?)");
-//			consulta.setString(1, vehiculo.getImagenVehiculo());
-//			consulta.setString(2, vehiculo.getModelo());
-//			consulta.setString(3, vehiculo.getTipo());
-
-//	         }else{
 			consulta = conexion
 					.prepareStatement("UPDATE " + this.tabla + " SET imagen = ?,modelo = ?, tipo = ? WHERE id = ?");
 			consulta.setString(1, vehiculo.getImagenVehiculo());
 			consulta.setString(2, vehiculo.getModelo());
 			consulta.setString(3, vehiculo.getTipo());
 			consulta.setInt(4, vehiculo.getId_Vehiculo());
-//	         }
 			consulta.executeUpdate();
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
@@ -74,7 +65,6 @@ public class VehiculoService {
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		System.out.println(vehiculo);
 		return vehiculo;
 	}
 
@@ -93,9 +83,7 @@ public class VehiculoService {
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		}
-		for (Vehiculo v : vehiculos) {
-			System.out.println(v.getId_Vehiculo() + " " + v.getModelo() + " " + v.getTipo());
-		}
+
 		return vehiculos;
 	}
 
